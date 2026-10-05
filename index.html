@@ -570,7 +570,9 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .kc{width:38px;height:38px;border-radius:50%;border:3px solid transparent;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
 .kc.on{border-color:var(--ink)}
 .dchips{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.whorow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.whorow{display:flex;flex-wrap:wrap;align-items:center;gap:5px;row-gap:5px}
+.whorow .dc{min-height:36px;font-size:12.5px;padding:3px 9px;flex:0 1 auto}
+.whorow .wholab{min-width:100%}
 .wizjobwrap{display:flex;flex-direction:column;align-items:stretch}
 .wizjobwrap .whorow{margin-top:4px}
 .wizjobwrap .dc{min-height:30px;font-size:13px}
@@ -597,8 +599,8 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
   #wizSheet .wizgrid{display:block}
   #wizSheet .wizjobwrap{margin:0;border-bottom:1px solid color-mix(in srgb,var(--line) 40%,transparent)}
   #wizSheet .wizjobwrap:last-child{border-bottom:none}
-  #wizSheet .wizjobwrap .whorow{margin:0 0 6px 52px}
-  #wizSheet .whorow .dc{min-height:32px;font-size:13px;padding:3px 10px}
+  #wizSheet .wizjobwrap .whorow{margin:0 0 6px 52px;width:calc(100% - 52px);row-gap:5px}
+  #wizSheet .whorow .dc{min-height:36px;font-size:12.5px;padding:2px 8px}
   #wizSheet .prgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:-2px}
   #wizSheet .prgrid .wizjob{min-height:52px;height:auto;padding:6px 3px;font-size:12.5px}
   #wizSheet .prgrid .wj-e{font-size:21px}
@@ -1979,7 +1981,7 @@ function wizKids(){
 function wizWhoChips(sec,id){ if(wiz.kids.length<2||sec==="hp") return "";
   const cur=(wiz.who||{})[sec+"_"+id];
   const chips = wiz.kids.map(c=>`<button class="dc wc ${cur===c.id?"on":""}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name||"Kid "+(wiz.kids.indexOf(c)+1))}</button>`).join("");
-  return `<div class="dchips whorow" style="margin-top:4px"><span class="wholab">For:</span>${chips}<button class="dc ${!cur?"on":""}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="">Both</button></div>`; }
+  return `<div class="dchips whorow" style="margin-top:4px"><span class="wholab">Who does this one?</span>${chips}<button class="dc ${!cur?"on":""}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="">Everyone</button></div>`; }
 function wizJobs(){
   const cats = [["am","\u2600\uFE0F Morning"],["pm","🎒 After school"],["bt","🌙 Bedtime"],["hp","🧹 Helper"]];
   return `<p class="hint" style="margin-top:0">Tap a job to turn it on or off. ${wiz.kids.length>1?"Under each job, tap a kid's name to give it just to them. ":""}Helper jobs rotate one per kid per day.</p>` +
@@ -2697,7 +2699,7 @@ function listSheet(){
       <input class="in tx" data-li="${i}" data-f="t" value="${esc(j.t||"")}" maxlength="40" aria-label="Name">
       <button class="btn ghost sm" data-a="listDel" data-i="${i}" aria-label="Remove">🗑</button></div>
       ${withDays?`<div class="dchips">${[...DAYS].map((d,n)=>`<button class="dc ${!j.days||j.days.includes(n)?"on":""}" data-a="listDay" data-i="${i}" data-d="${n}">${d}</button>`).join("")}</div>`:""}
-      ${(withDays&&FAMILY.kids.length>1)?`<div class="dchips whorow"><span class="wholab">For:</span>${FAMILY.kids.map(c=>`<button class="dc wc ${(j.who===c.id)?"on":""}" data-a="listWho" data-i="${i}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name)}</button>`).join("")}<button class="dc ${!j.who?"on":""}" data-a="listWho" data-i="${i}" data-k="">Both</button></div>`:""}</div>`).join("");
+      ${(withDays&&FAMILY.kids.length>1)?`<div class="dchips whorow"><span class="wholab">For:</span>${FAMILY.kids.map(c=>`<button class="dc wc ${(j.who===c.id)?"on":""}" data-a="listWho" data-i="${i}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name)}</button>`).join("")}<button class="dc ${!j.who?"on":""}" data-a="listWho" data-i="${i}" data-k="">Everyone</button></div>`:""}</div>`).join("");
   paintSheet("listSheet",listSec,`<div class="ov"><div class="sheet gsheet" id="listSheet">
     <div class="ghead"><h2>${SEC[listSec][0]}</h2><button class="btn" data-a="famOpen">Back</button></div>
     <p class="hint">${note}</p><div class="grp">${rows||'<div class="srow"><span class="sl"><small>None yet.</small></span></div>'}</div>
