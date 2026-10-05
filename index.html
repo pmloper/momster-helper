@@ -1324,6 +1324,8 @@ function jobsFor(r,dow,kid,wk){ kid=kid||view.kid||FIRST_KID;
   return activeFor(r,dow) ? r.jobs.filter(j=>(!j.who||j.who===kid)&&activeFor(j,dow)) : []; }
 const pts = id => String(id).startsWith("h_") ? 2 : 1;
 function possibleThisWeek(){ let n=0; for(const kid of KID_IDS){ let m=0; for(let d=0; d<7; d++){ ROUTINES.forEach(r=>{ const js=jobsFor(r,d,kid); js.forEach(j=>m+=pts(j.id)); if(js.length) m+=1; }); if(pickList().length) m+=2; } if(m>n) n=m; } return n; }
+function teamPossible(){ let n=0; for(const kid of KID_IDS){ for(let d=0; d<7; d++){ ROUTINES.forEach(r=>{ const js=jobsFor(r,d,kid); js.forEach(j=>n+=pts(j.id)); if(js.length) n+=1; }); if(pickList().length) n+=2; } } return n; }
+const POOL_FRAC = 0.8; // a week of ~80% effort busts the Momster
 function defaultRoutine(){ const h=new Date().getHours(), dow=todayDow();
   if(h<11) return "am"; if(h<17 && activeFor(ROUTINES[1],dow)) return "pm"; return "bt"; }
 
@@ -1569,7 +1571,7 @@ const MOODS = [[85,["HA! This house is MINE now!","You'll NEVER clean me up!","M
   [0,["PLEASE stop cleaning! I have a family!","Noooo! Not the folding!","I'm melting... into a clean room!","Tell my mess... I loved her!"]]];
 function moodLine(){ const left=monsterLeft(), pct=left/monsterHP()*100; if(!left) return "I'll be back next week... with MORE mess!";
   const lines=MOODS.find(([t])=>pct>t)[1]; return lines[new Date().getDay()%lines.length]; }
-const monsterHP = () => Math.round((settings.monsterHP || 110*KID_IDS.length) * DMG_MULT);
+const monsterHP = () => Math.round((teamPossible() * POOL_FRAC) * DMG_MULT);
 const monsterLeft = () => Math.max(0, monsterHP() - teamDamage());
 const palPic = (k,size) => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:`style="height:${size}px;width:${size}px"`}) : `<span style="font-size:${Math.round(size*.8)}px;line-height:1">${avHtml(rawAv(k))}</span>`;
 function monsterStrip(){ const m=monster(), left=monsterLeft(), pct=left/monsterHP()*100;
