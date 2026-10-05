@@ -1522,6 +1522,10 @@ const isWeak = id => (monster()[5]||[]).includes(String(id));
 const COMBO_DMG = 3;
 const DMG_MULT = 5;   // kid-visible health numbers: 1 star of effort = 5 health of damage
 const COMBO_NAMES = {am:["☀️","Sunrise Smash"], pm:["🎒","Backpack Blaster"], bt:["🌙","Moonbeam Double Doom"], hp:["🌪️","Helper Hurricane"]};
+function mysteryLeft(k){ return Math.max(0, 2-mysteryUsed(k)); }
+function mysteryUse(k){ try{ const s=JSON.parse(localStorage.getItem("starjobs_mystery")||"{}")||{};
+  const day=ymd(new Date()); const cur=(s[k]&&s[k].day===day)?(s[k].n||0):0;
+  s[k]={day, n:cur+1}; localStorage.setItem("starjobs_mystery", JSON.stringify(s)); }catch(e){} }
 function routineDoneDay(k, day, r){ const a=((weeks[k].done||{})[day])||[], js=jobsFor(r,new Date(day+"T12:00:00").getDay(),k,WEEK); return js.length>0 && js.every(j=>a.includes(j.id)); }
 function jobStreak(k, id){ const d=new Date(); let n=0;
   for(let i=0;i<30;i++){ const day=ymd(d), wk=weekStart(d);
@@ -1546,7 +1550,9 @@ function comboList(){ if(KID_IDS.length<2) return []; const days=new Set(); Obje
   [...days].sort().forEach(day=>ROUTINES.forEach(r=>{ if(Object.keys(KIDS).every(k=>routineDoneDay(k,day,r))) out.push(day+"|"+r.id); })); return out; }
 function weakHits(){ let n=0; Object.keys(KIDS).forEach(k=>{ Object.values(weeks[k].done||{}).forEach(a=>a.forEach(id=>{ if(isWeak(id)) n++; }));
   Object.values(weeks[k].extra||{}).forEach(a=>a.forEach(x=>{ if(x.ok && isWeak(x.id)) n++; })); }); return n; }
-function teamDamage(){ return Math.round((Object.keys(KIDS).reduce((n,k)=>n+stars(k),0) + weakHits() + comboList().length*COMBO_DMG) * DMG_MULT); }
+function mysteryUsed(k){ try{ const s=JSON.parse(localStorage.getItem("starjobs_mystery")||"{}")||{}; return (s[k]&&s[k].day===ymd(new Date()))?(s[k].n||0):0; }catch(e){ return 0; } }
+function teamDamage(){ const m = Object.keys(KIDS).reduce((n,k)=>n+mysteryUsed(k),0);
+  return Math.round((Object.keys(KIDS).reduce((n,k)=>n+stars(k),0) + m + weakHits() + comboList().length*COMBO_DMG) * DMG_MULT); }
 const STARTER_PICKS = [
   {id:"p_water", e:"🚰", t:"Water the plants"},
   {id:"p_socks", e:"🧦", t:"Sort the sock mountain"},
@@ -2614,7 +2620,12 @@ function tapJob(k, id){ settleCoins(k);
     setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r)); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r)); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐"); }, 1400);
     play(["fanfare","bonus", raceWon?"raceWin":null, fire?"streak":null, r.doneSnd||"alldone"]);
     if(!eggReady(k)) setTimeout(()=>play(["jokeintro", pickJoke()]), 4200); }
-  else { render(); pow(Math.max(1,teamDamage()-dmgB)); { const pw=Math.random()<.35, gn=Math.random()<.2; play(["ding", job.snd].concat(pw?["punch",pick("p")]:[pick("c")], [MORE(left)], gn?["BJ:"+N_LINES[Math.floor(Math.random()*N_LINES.length)]]:[])); } }
+  else { render(); let hit = Math.max(1,teamDamage()-dmgB);
+    const ms = mysteryLeft(k)>0 && Math.random()<0.12;
+    if(ms){ mysteryUse(k); hit += 5; }
+    pow(hit);
+    if(ms) setTimeout(()=>{ cheer("💥","MYSTERY HIT! Double damage! Lucky you!"); play(["magic","punch"]); }, 1300);
+    { const pw=Math.random()<.35||ms, gn=Math.random()<.2; play(["ding", job.snd].concat(pw?["punch",pick("p")]:[pick("c")], [MORE(left)], gn?["BJ:"+N_LINES[Math.floor(Math.random()*N_LINES.length)]]:[])); } }
   if(comboList().length>cbB) setTimeout(()=>comboFx(r), 2600);
   checkMonster(); checkStickers(k);
   if(!left && eggReady(k)) setTimeout(()=>{ eggTaps=0; eggSheet(k); play(["eggearn"]); }, 3200);
