@@ -126,7 +126,8 @@ button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
 .sw{width:58px;height:58px;border-radius:50%;border:4px solid var(--line)}
 .sw.on{border-color:var(--ink)}
 .who{font-size:clamp(28px,5vw,44px);font-weight:800;color:var(--k);line-height:1;flex:1;min-width:0;white-space:nowrap;display:flex;align-items:center;gap:8px}
-.whoAv{display:flex;align-items:center;justify-content:center;flex:none;height:clamp(44px,7vh,54px);width:clamp(44px,7vh,54px)}
+.whoAv{display:flex;align-items:center;justify-content:center;flex:none;height:clamp(44px,7vh,54px);width:clamp(44px,7vh,54px);line-height:1}
+.whoAv img{display:block;vertical-align:baseline!important;margin:auto}
 .whoAv svg,.whoAv span{height:100%!important;width:100%!important;vertical-align:middle}
 .layout{flex:1;min-height:0;display:grid;grid-template-columns:1fr clamp(210px,24vw,290px);gap:14px}
 .main{display:flex;flex-direction:column;min-height:0;overflow-y:auto}
@@ -763,6 +764,8 @@ body:has(#layer > .sheet) .botnav{display:none}
 .i-facts{display:flex;flex-direction:column;gap:6px;margin:4px 0 14px;font-size:17px;font-weight:800;width:100%}
 .i-facts span{background:var(--bg);border-radius:14px;padding:6px 10px}
 button.who{display:flex;align-items:center;gap:8px;text-align:left;font-family:var(--disp);font-weight:600;color:var(--k);padding:0;cursor:pointer}
+.who>*{flex-shrink:0}
+.who .wn{flex-shrink:1}
 .who .wn{display:flex;flex-direction:column;min-width:0;line-height:1.15}
 .who .wn small{overflow:hidden;max-width:100%}
 .who .wn small{font-family:var(--font);font-weight:900;font-size:clamp(10px,1.5vh,13px);opacity:.8;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
@@ -1401,6 +1404,7 @@ setInterval(()=>{ const w=weekStart(); if(w!==WEEK){ WEEK=w; Object.keys(KIDS).f
 const rawAv = k => (settings.avatars||{})[k] || KIDS[k].av;
 const avHtml = a => PIC[a] ? `<img src="${PIC[a]}" alt="" style="height:1em;width:1em;vertical-align:-0.14em">` : a;
 const av = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:'style="height:1.2em;width:1.2em;vertical-align:-0.22em;overflow:visible"'}) : avHtml(rawAv(k));
+const avC = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, vb:"0 47 200 150", attrs:'style="height:1.1em;width:1.1em;display:block;margin:auto;overflow:visible"'}) : avHtml(rawAv(k));
 // +1 "finished the whole routine" bonus for every routine completed that day
 function starsFor(k,w,wk){ let n=w.bonus||0;
   { const p=w.pick||{}; if(p.day===ymd(new Date()) && ((w.done||{})[ymd(new Date())]||[]).includes("pk_"+p.id)) n+=2; }
@@ -2125,7 +2129,7 @@ function homeView(){
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
-      <div class="av">${av(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${KIDS[k].name}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
+      <div class="av">${avC(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${KIDS[k].name}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
       <div class="bar big slim"><i style="width:${Math.min(100,n/g*100)}%"></i></div>
       <div class="kchips"><span>🪙 ${coins(k)}</span>${r?`<span>${r.e} prize</span>`:`<span>🎁 pick a prize</span>`}${eggReady(k)?`<span class="hot">🥚 egg!</span>`:""}</div></button>`; }).join("")}</div>
   <nav class="botnav">
@@ -2155,7 +2159,7 @@ function kidView(k){
     const tw=twistFor(k,r,new Date());
     body = `<div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile ${isDone(k,j.id)?"done":""} ${(isWeak(j.id)&&!isDone(k,j.id))||pts(j.id)>1?"hasB":""} ${tw&&tw.job===j.id&&!isDone(k,j.id)?"hasTw":""} ${pts(j.id)>1?"hasX2":""}" data-a="job" data-j="${j.id}">${tw&&tw.job===j.id&&!isDone(k,j.id)?`<span class="twist">🤪 ${TWISTS[tw.n-1]}${isWeak(j.id)?" · 💥x2":""}</span>`:""}${(()=>{ const b=(isWeak(j.id)&&!isDone(k,j.id)&&!(tw&&tw.job===j.id)?'<span class="wk">💥x2</span>':"")+(pts(j.id)>1?'<span class="x2">⭐⭐</span>':""); return b?`<span class="badges">${b}</span>`:""; })()}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div></button>`).join("")}</div>`; }
   return `<div class="top bar-card" style="--k:${KIDS[k].color}"><button class="back" data-a="home" aria-label="Back">⬅️</button>
-    <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${av(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
+    <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
     <button class="coinBtn" data-a="buddy" aria-label="My sidekick">${buddies[k].made? buddySvg(buddies[k].look,buddies[k].wear,{noBg:true,attrs:'style="height:44px;width:auto"'}) : "🛍️"}</button>
     <button class="back" data-a="voiceSheet" aria-label="Pick a voice">${(CHARS.find(c=>c[0]===curVoice(k))||findTts(curVoice(k))||["","🗣️"])[1]}</button>
     <button class="spk" data-a="sound" aria-label="Sound">${volIcon()}</button></div>

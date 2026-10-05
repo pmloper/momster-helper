@@ -1,0 +1,64 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0">
+<div id="log" style="font:11px monospace;white-space:pre-wrap"></div>
+<iframe id="fr" style="border:0;position:absolute;top:0;left:0"></iframe>
+<script>
+(function(){
+const q = new URLSearchParams(location.search);
+const VW = +q.get("vw"), VH = +q.get("vh");
+const fr = document.getElementById("fr");
+fr.style.width = VW+"px"; fr.style.height = VH+"px";
+const vlog = s => document.getElementById("log").textContent += s + "\n";
+const vsleep = ms => new Promise(r=>setTimeout(r,ms));
+localStorage.removeItem("starjobs_family");
+localStorage.setItem("starjobs_settings", JSON.stringify({pin:"0000",goal:100}));
+fr.src = "/index.html";
+(async () => { try {
+  await vsleep(6500);
+  const w = fr.contentWindow, doc = () => fr.contentDocument;
+  const vis = el => { const r = el.getBoundingClientRect(); return r.width>0 && r.height>0; };
+  const v$ = q2 => [...doc().querySelectorAll(q2)].filter(vis);
+  const bad = [];
+  const scan = (label) => {
+    doc().querySelectorAll(".ov .sheet *").forEach(el=>{
+      if(!vis(el)) return;
+      const t=(el.childNodes.length===1 && el.firstChild.nodeType===3)?el.textContent.trim():"";
+      if(!t || t.length<3 || el.closest("script,style")) return;
+      const st = getComputedStyle(el);
+      if(el.scrollWidth > el.clientWidth+2 && st.overflowX==="hidden") bad.push(label+" W:"+t.slice(0,24)+" ["+String(el.className).slice(0,18)+"]");
+      if(el.scrollHeight > el.clientHeight+3 && st.overflowY==="hidden" && el.clientHeight>0 && !el.classList.contains("sheet")) bad.push(label+" H:"+t.slice(0,24)+" ["+String(el.className).slice(0,18)+"]");
+    });
+  };
+  // add 2 kids -> 4 total, name them, re-render
+  for(let i=0;i<2;i++){ const add=doc().querySelector('[data-a="wizAddKid"]'); if(add){ add.click(); await vsleep(350); } }
+  w.eval('(function(){ wiz.kids[0].name="Jeff"; wiz.kids[1].name="Chris"; wiz.kids[2].name="Max"; wiz.kids[3].name="Zoe"; wizSheet(); })()');
+  await vsleep(400);
+  let lastTitle = "";
+  for(let s2=0;s2<8;s2++){
+    const ttl = (doc().querySelector(".sheet h2")||{}).textContent || "";
+    if(ttl === lastTitle && s2>0) break;
+    lastTitle = ttl;
+    scan("wiz:"+ttl.trim().slice(0,16));
+    vlog("step "+s2+": "+ttl.trim().slice(0,32));
+    if(String(ttl).toLowerCase().includes("prize")){
+      const pg = doc().querySelector('.prgrid');
+      if(pg){ vlog("  prgrid cols: "+getComputedStyle(pg).gridTemplateColumns.split(" ").length); }
+    }
+    if(ttl.includes("jobs")){
+      const rows = v$(".wjrow");
+      const sheet = doc().querySelector(".ov .sheet");
+      if(sheet){ sheet.scrollTop = sheet.scrollHeight; await vsleep(250); }
+      const lr = rows[rows.length-1];
+      if(lr){ const r2 = lr.getBoundingClientRect(); vlog("  last job row reachable="+(r2.bottom<=VH+2)); }
+      const chips = v$(".whorow .dc");
+      const small = chips.filter(c=>c.getBoundingClientRect().height<34).length;
+      vlog("  chips: "+chips.length+" under34px: "+small);
+    }
+    const n = v$('[data-a="wizNext"]');
+    if(!n.length){ vlog("  (no Next - end)"); break; }
+    n[n.length-1].click(); await vsleep(650);
+  }
+  vlog(bad.length? "FAIL "+bad.length+"\n"+bad.slice(0,10).join("\n") : "PASS");
+  vlog("DONE");
+} catch(e){ vlog("ERR: "+(e&&e.message)); } })();
+})();
+</script></body></html>

@@ -1,0 +1,80 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0">
+<div id="log" style="font:11px monospace;white-space:pre-wrap"></div>
+<iframe id="fr" style="border:0;position:absolute;top:0;left:0"></iframe>
+<script>
+(function(){
+const q = new URLSearchParams(location.search);
+const VW = +q.get("vw"), VH = +q.get("vh");
+const fr = document.getElementById("fr");
+fr.style.width = VW+"px"; fr.style.height = VH+"px";
+const vlog = s => document.getElementById("log").textContent += s + "\n";
+const vsleep = ms => new Promise(r=>setTimeout(r,ms));
+localStorage.setItem("starjobs_family", JSON.stringify({kids:[
+  {id:"k1",name:"Lily",color:"#F06292"},{id:"k2",name:"Logan",color:"#42A5F5"},{id:"k3",name:"Max",color:"#FFB300"}]}));
+localStorage.setItem("starjobs_settings", JSON.stringify({pin:"0000",goal:100,setupDone:true}));
+fr.src = "/index.html";
+(async () => { try {
+  await vsleep(6500);
+  const w = fr.contentWindow, doc = () => fr.contentDocument;
+  const vis = el => { const r = el.getBoundingClientRect(); return r.width>0 && r.height>0; };
+  const v$ = q2 => [...doc().querySelectorAll(q2)].filter(vis);
+  const bad = [];
+  const scan = (label) => {
+    doc().querySelectorAll(".screen *, .ov .sheet *").forEach(el=>{
+      if(!vis(el)) return;
+      const t=(el.childNodes.length===1 && el.firstChild.nodeType===3)?el.textContent.trim():"";
+      if(!t || t.length<3 || el.closest("script,style")) return;
+      const st = getComputedStyle(el);
+      if(el.scrollWidth > el.clientWidth+2 && st.overflowX==="hidden" && !el.classList.contains("tiles")) bad.push(label+" W:"+t.slice(0,24)+" ["+String(el.className).slice(0,18)+"]");
+    });
+    // any visible element hanging past the viewport bottom with no scrollable ancestor = unreachable
+    doc().querySelectorAll(".screen *").forEach(el=>{
+      if(!vis(el) || el.closest(".tiles")) return;
+      const r = el.getBoundingClientRect();
+      if(r.bottom > VH+2){
+        let a = el.parentElement, scrollable = false;
+        while(a && a !== doc().body){ const s2 = getComputedStyle(a); if(s2.overflowY==="auto"||s2.overflowY==="scroll"){ scrollable = true; break; } a = a.parentElement; }
+        if(!scrollable) bad.push(label+" PAST-BOTTOM:"+el.textContent.trim().slice(0,20)+" b="+Math.round(r.bottom));
+      }
+    });
+  };
+  let go = doc().querySelector('[data-a="introGo"]'); if(go){ go.click(); await vsleep(500); }
+  scan("home");
+  const cards = v$('[data-a="kid"]');
+  const cardBottom = cards.length? Math.max(...cards.map(c=>c.getBoundingClientRect().bottom)) : 0;
+  vlog("home kidCards: "+cards.length+" bottom="+Math.round(cardBottom)+" vh="+VH+" fits="+(cardBottom<=VH));
+  const nav = v$('.nav, [data-a="joke"], [data-a="hq"]');
+  vlog("bottom nav visible: "+(nav.length>0));
+  // kid page
+  const kid = doc().querySelector('[data-a="kid"]'); vlog("kidbtn:"+(!!kid)); if(kid){ kid.click(); await vsleep(2200); vlog("kidpage loaded"); }
+  go = doc().querySelector('[data-a="introGo"]'); if(go && vis(go)){ go.click(); await vsleep(400); }
+  scan("kid");
+  try {
+  const tilesEl = doc().querySelector(".tiles");
+  if(tilesEl){
+    tilesEl.scrollTop = tilesEl.scrollHeight; await vsleep(250);
+    const lt = v$(".tile").pop();
+    if(lt){ const r2 = lt.getBoundingClientRect();
+    vlog("kid lastTile reachable="+(r2.bottom<=VH+2)+" b="+Math.round(r2.bottom)); }
+  } } catch(e2){ vlog("tilecheck err "+e2.message); }
+  try {
+  const bnTab = v$(".tab").find(x=>x.textContent.includes("Bonus"));
+  if(bnTab){ bnTab.click(); await vsleep(600); scan("bonus"); vlog("bonus scanned"); }
+  } catch(e3){ vlog("bonus err "+e3.message); }
+  try {
+  w.eval('(function(){ view.kid=null; render(); })()'); await vsleep(800); vlog("back home");
+  } catch(e4){ vlog("home err "+e4.message); }
+  go = doc().querySelector('[data-a="introGo"]'); if(go && vis(go)){ go.click(); await vsleep(400); }
+  scan("home2");
+  try {
+  const gear = doc().querySelector('[data-a="gear"]'); vlog("gear:"+(!!gear));
+  if(gear){ gear.click(); await vsleep(1200); }
+  const zeros = v$('[data-n]').filter(x=>x.textContent.trim()==="0");
+  for(let i=0;i<4 && zeros.length;i++){ zeros[0].click(); await vsleep(200); }
+  await vsleep(1500); scan("grownups"); vlog("grownups scanned");
+  } catch(e5){ vlog("grownups err "+e5.message); }
+  vlog(bad.length? "FAIL "+bad.length+"\n"+bad.slice(0,12).join("\n") : "PASS");
+  vlog("DONE");
+} catch(e){ vlog("ERR: "+(e&&e.message)); } })();
+})();
+</script></body></html>
