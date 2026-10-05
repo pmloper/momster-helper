@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0">
+<iframe id="fr" src="http://127.0.0.1:8663/index.html" style="width:390px;height:844px;border:0;position:absolute;left:0;top:0"></iframe>
+<script>
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{try{
+ const fr=document.getElementById("fr");
+ await new Promise(r=>{fr.onload=r; setTimeout(r,6000);}); await sleep(1500);
+ let w=fr.contentWindow, d=fr.contentDocument;
+ const click=el=>el.dispatchEvent(new w.MouseEvent("click",{bubbles:true,cancelable:true,view:w}));
+ const $=s=>d.querySelector(s), $$=s=>[...d.querySelectorAll(s)];
+ const next=async()=>{const b=$$('[data-a="wizNext"]')[0]; if(!b) return false; click(b); await sleep(550); return true;};
+ $$('#wizSheet input[data-wk]').forEach((inp,i)=>{inp.value=["Lily","Logan"][i];inp.dispatchEvent(new Event("input",{bubbles:true}));});
+ for(let s=0;s<7;s++) await next();
+ "1357".split("").forEach(n=>{const b=$('.pin button[data-n="'+n+'"]'); if(b) click(b);});
+ await sleep(1600);
+ click($$('.kidBtn')[0]); await sleep(900);
+ // force a twist on the first job tile
+ const tile=$('.tile:not(.bonus)');
+ tile.classList.add("hasTw");
+ const span=document.createElement("span");
+ span.className="twist";
+ span.textContent="🤪 hop like a frog";
+ tile.prepend(span);
+ await sleep(700);
+ document.title="READY";
+}catch(e){document.title="ERR "+e.message;}})();
+</script></body></html>
