@@ -365,6 +365,10 @@ details summary{font-size:20px;font-weight:800;cursor:pointer;margin:6px 0}
 .wvicons{flex:1;display:flex;flex-wrap:wrap;gap:6px}
 .wvr{display:inline-flex;align-items:center;gap:2px;border-radius:12px;padding:2px 8px;background:var(--bg);font-size:20px;border:2px solid var(--line)}
 .wvr small{font-size:13px;font-weight:800;color:var(--soft)}
+.wvr small.wvdone{color:#22c55e;font-weight:900;font-size:16px}
+/* leave-by rows: extra rhythm for hurried thumbs */
+.fgrid > .fld{padding-top:8px}
+.fgrid > .fld:first-child{padding-top:0}
 .wvr.full{border-color:var(--doneInk);background:var(--done)}.wvr.full small{color:var(--doneInk)}
 .wvr.part{border-color:var(--gold2)}
 .wvgo{font-size:20px}
@@ -385,6 +389,7 @@ details summary{font-size:20px;font-weight:800;cursor:pointer;margin:6px 0}
 .bopt.armed{box-shadow:0 4px 0 var(--gold2);animation:wiggle .8s infinite}
 .bopt.cant{opacity:1}.bopt.cant .ie{filter:grayscale(.7);opacity:.55}
 .pill{border-radius:999px;padding:2px 10px;font-size:15px;font-weight:800;line-height:1.4;white-space:nowrap}
+.bopt .pill{padding:5px 14px;font-size:16px;min-height:30px}
 .p-buy{background:#FFE6A3;color:#6B4A00}.p-cant{background:var(--line);color:var(--soft)}
 .p-wear{background:#D7E9FF;color:#1D4E89}.p-on{background:var(--doneInk);color:#fff}
 .bopt .tag{top:4px;right:6px;font-size:16px}
@@ -1443,6 +1448,13 @@ function doneOn(k, date, rid){ const ds=ymd(date), wk=weekStart(date), w = wk===
 function streak(k){ const d=new Date(); if(!doneOn(k,d,"bt")) d.setDate(d.getDate()-1); let n=0;
   for(let i=0;i<14 && doneOn(k,d,"bt");i++){ n++; d.setDate(d.getDate()-1); } return n; }
 const flame = k => { const n=streak(k); return n>=3 ? `<span class="flame" title="${n} nights in a row">🔥${n}</span>` : ""; };
+function streakStore(){ try{ return JSON.parse(localStorage.getItem("starjobs_streaks")||"{}")||{}; }catch(e){ return {}; } }
+function saveStreaks(s){ try{ localStorage.setItem("starjobs_streaks", JSON.stringify(s)); }catch(e){} }
+function bumpStreak(k, rid, day){ const s=streakStore(); s[k]=s[k]||{}; const cur=s[k][rid]||{n:0,last:""};
+  const y=new Date(day+"T12:00:00"); y.setDate(y.getDate()-1);
+  cur.n = (cur.last === ymd(y)) ? cur.n+1 : 1; cur.last = day; s[k][rid]=cur; saveStreaks(s); return cur.n; }
+function streakChip(k,rid){ const s=streakStore(); const c=(s[k]||{})[rid]; return (c&&c.n>=3 && c.last===ymd(new Date())) ? "🔥"+c.n : ""; }
+
 const rewardOf = k => REWARDS.find(r=>r.id===weeks[k].reward);
 function party(emojis){ const p=document.createElement("div"); p.className="party";
   for(let i=0;i<26;i++){ const s=document.createElement("span"); s.textContent=emojis[i%emojis.length];
@@ -1509,6 +1521,25 @@ const COMBO_DMG = 3;
 const DMG_MULT = 5;   // kid-visible health numbers: 1 star of effort = 5 health of damage
 const COMBO_NAMES = {am:["☀️","Sunrise Smash"], pm:["🎒","Backpack Blaster"], bt:["🌙","Moonbeam Double Doom"], hp:["🌪️","Helper Hurricane"]};
 function routineDoneDay(k, day, r){ const a=((weeks[k].done||{})[day])||[], js=jobsFor(r,new Date(day+"T12:00:00").getDay(),k,WEEK); return js.length>0 && js.every(j=>a.includes(j.id)); }
+function jobStreak(k, id){ const d=new Date(); let n=0;
+  for(let i=0;i<30;i++){ const day=ymd(d), wk=weekStart(d);
+    let w=null; try{ w=JSON.parse(localStorage.getItem("starjobs_w_"+wk+"_"+k)||"null"); }catch(e){}
+    const a=(w&&w.done&&w.done[day])||[];
+    if(a.includes(id)) n++; else if(i===0){ d.setDate(d.getDate()-1); continue; } else break;
+    d.setDate(d.getDate()-1); }
+  return n; }
+// jobs that look automatic (14+ days in a row) - for the grown-ups whisper
+function autoJobs(k){ const out=[]; const seen=new Set();
+  Object.values((weeks[k]||{}).done||{}).forEach(a=>a.forEach(id=>{ if(!seen.has(id)&&!String(id).startsWith("pk_")){ seen.add(id); const n=jobStreak(k,id); if(n>=14) out.push({id,n}); } }));
+  return out; }
+// specific, effort-anchored praise (never "good job" alone)
+function effortPraise(k, r){ const day=ymd(new Date()), dd=((weeks[k].done||{})[day])||[];
+  const done=jobsFor(r,todayDow(),k).filter(j=>dd.includes(j.id)).map(j=>j.t);
+  if(!done.length) return "All done!";
+  const first=done[0], two=done.length>1? " and "+done[done.length-1] : "";
+  const openers=["Nice hustle","Look at that","Boom","You crushed it","Way to go","Nailed it"];
+  const pick1=openers[Math.abs(day.split("-").join("")*7 + kidIndex(k))%openers.length];
+  return pick1+"! "+first+two+" - all done without being asked twice!"; }
 function comboList(){ if(KID_IDS.length<2) return []; const days=new Set(); Object.keys(KIDS).forEach(k=>Object.keys(weeks[k].done||{}).forEach(d=>days.add(d))); const out=[];
   [...days].sort().forEach(day=>ROUTINES.forEach(r=>{ if(Object.keys(KIDS).every(k=>routineDoneDay(k,day,r))) out.push(day+"|"+r.id); })); return out; }
 function weakHits(){ let n=0; Object.keys(KIDS).forEach(k=>{ Object.values(weeks[k].done||{}).forEach(a=>a.forEach(id=>{ if(isWeak(id)) n++; }));
@@ -2065,6 +2096,7 @@ const lastCoins={};
 function render(){
   try{ fixCostumes(); }catch(e){ console.warn(e); }
   app.innerHTML = '<div class="screen">' + (view.kid ? kidView(view.kid) : homeView()) + '</div>';
+
   if(!view.kid && !introOpen && !layer.innerHTML && !loadLocal("intro_"+WEEK) && monsterLeft()>0) setTimeout(()=>{ if(!view.kid && !layer.innerHTML && !introOpen) villainIntro(); }, 600);
   else if(!view.kid && !layer.innerHTML && todayDow()===0 && new Date().getHours()>=17 && !loadLocal("report_"+WEEK)) setTimeout(()=>{ if(!view.kid && !layer.innerHTML){ saveLocal("report_"+WEEK,1); hqSheet("report"); play(["fanfare","BJ:Mission report! Look what the Momster Helpers did this week!"]); } }, 900);
   if(!view.kid) checkRank();
@@ -2089,9 +2121,10 @@ function homeView(){
 }
 function kidView(k){
   const dow=todayDow(), r=ROUTINES.find(x=>x.id===view.routine)||{jobs:[],name:"Bonus"}, list=r.id?jobsFor(r,dow):[];
+  const chips = streakStore()[k]||{};
   const tabs = ROUTINES.map(x=>{ const js=jobsFor(x,dow), left=js.filter(j=>!isDone(k,j.id)).length;
     const cls = x.id===view.routine?"on":(js.length? "" :"off");
-    return `<button class="tab ${cls}" style="--rc:${x.rc}" data-a="routine" data-r="${x.id}"><b>${js.length&&!left?"✅":x.icon}</b><span><em class="lg">${x.name}</em><em class="sm">${x.short||x.name}</em><small>${js.length? (left? left+" left":"done!") : "not today"}</small></span></button>`; }).join("");
+    return `<button class="tab ${cls}" style="--rc:${x.rc}" data-a="routine" data-r="${x.id}"><b>${js.length&&!left?"✅":x.icon}</b><span><em class="lg">${x.name}</em><em class="sm">${x.short||x.name}</em><small>${js.length? (left? left+" left":"done!"+(chips[x.id]&&chips[x.id].n>=3&&chips[x.id].last===ymd(new Date())?" · "+chips[x.id].n+" in a row":"")): "not today"}</small></span></button>`; }).join("");
   const used=regExtra(k).length;
   const bonusTab = `<button class="tab ${view.routine==="bn"?"on":""}" style="--rc:#12B886" data-a="routine" data-r="bn"><b>💪</b><span>Bonus<small>${used>=BONUS_MAX?"all used":(BONUS_MAX-used)+" left"}</small></span></button>`;
   let body;
@@ -2236,8 +2269,8 @@ function panel(){
     <button class="hero" data-a="weekView"><span class="hero-ic">📅</span><span><b>Week view</b><small>See every day and add stars you forgot</small></span><span class="chev">›</span></button>
 
     <div class="grp-t">Kids this week</div>
-    ${Object.keys(KIDS).map(k=>{ const r=rewardOf(k), n=stars(k);
-      return `<div class="grp" style="--k:${KIDS[k].color}">
+    ${Object.keys(KIDS).map(k=>{ const r=rewardOf(k), n=stars(k); const auto=autoJobs(k);
+      return `<div class="grp" style="--k:${KIDS[k].color}">${auto.length?`<div class="srow" style="background:color-mix(in srgb,#2ECC71 10%,transparent)"><span class="sl"><small>🌱 Habit watch: ${auto.map(a=>{ const jt=(()=>{ for(const rr of ROUTINES){ const f=(FAMILY.jobs&&FAMILY.jobs[rr.id]||[]).find(x=>x.id===a.id); if(f) return f.t; } const st=STARTER_JOBS.am.concat(STARTER_JOBS.pm||[],STARTER_JOBS.bt||[],STARTER_HELPER||[]).find(x=>x.id===a.id); return st?st.t:a.id; })(); return jt+" ("+a.n+" days in a row)"; }).join(", ")} — looking automatic! Consider retiring it from the paid list so the habit stands on its own.</small></span></div>`:""}
         <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${KIDS[k].name}</b><small>⭐ ${n} of ${g} · 🪙 ${coins(k)} coins</small></span></div>
         <div class="srow"><span class="sl">Bonus stars<small>${weeks[k].bonus||0} given this week</small></span>
           <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1">+1 star</button></span></div>
@@ -2306,7 +2339,9 @@ function weekView(){
   const total=starsFor(wvKid,w,wk);
   const rows=days.map(d=>{ const ds=ymd(d), future=ds>todayStr, a=(w.done||{})[ds]||[], dow=d.getDay();
     const icons=ROUTINES.map(r=>{ const js=jobsFor(r,dow,wvKid,wk); if(!js.length) return ""; const n=js.filter(j=>a.includes(j.id)).length;
-      return `<span class="wvr ${n===js.length?"full":(n?"part":"")}">${r.icon}<small>${n}/${js.length}</small></span>`; }).join("");
+      return n===js.length
+        ? `<span class="wvr full">${r.icon}<small class="wvdone">✓</small></span>`
+        : `<span class="wvr ${n?"part":""}">${r.icon}<small>${n}/${js.length}</small></span>`; }).join("");
     const extra=((w.extra||{})[ds]||[]).filter(x=>x.ok).length, race=(w.race||{})[ds];
     let detail="";
     if(wvOpen===ds && !future){ detail = `<div class="wvd">${ROUTINES.map(r=>{ const js=jobsFor(r,dow,wvKid,wk); if(!js.length) return "";
@@ -2570,11 +2605,11 @@ function tapJob(k, id){ settleCoins(k);
   saveWeek(k);
   const left=jobsFor(r,todayDow()).filter(j=>!isDone(k,j.id)).length, after=stars(k), g=goal();
   if(before<g && after>=g && otherFull){ render(); party(["⭐","🎉",teamPrize().e,"🤝"]); cheer(teamPrize().e,"TEAM WIN! "+teamPrize().t); play(["fanfare","jarfull","teamwin"]); }
-  else if(before<g && after>=g){ render(); party(["⭐","🎉",rewardOf(k)?.e||"🎁","🌟"]); cheer(rewardOf(k)?.e||"🎁","Star jar full!"); play(["fanfare","jarfull"]); }
-  else if(!left){ setTimeout(render,700); party(["⭐","🌟","✨"]); setTimeout(()=>{ const dd=(weeks[k].done||{})[day]||[];
+  else if(before<g && after>=g){ render(); party(["⭐","🎉",rewardOf(k)?.e||"🎁","🌟"]); cheer(rewardOf(k)?.e||"🎁","Star jar full! You saved up for that - that's what I call stick-to-it!"); play(["fanfare","jarfull"]); }
+  else if(!left){ bumpStreak(k, r.id, day); setTimeout(render,700); party(["⭐","🌟","✨"]); setTimeout(()=>{ const dd=(weeks[k].done||{})[day]||[];
         const dmgR=(jobsFor(r,todayDow(),k).reduce((n,j)=>n+pts(j.id)+(dd.includes(j.id)&&isWeak(j.id)?1:0),0)+1+(raceWon?1:0)+(comboList().length>cbB?COMBO_DMG:0))*DMG_MULT;
         dmgPop(Math.max(1,dmgR)); },650); const sk = r.id==="bt" ? streak(k) : 0, fire = [3,5,7,10,14].includes(sk);
-    setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐"); else if(fire) cheer("🔥", sk+" nights in a row!"); else cheer(r.doneIcon||"🎉", (r.doneMsg||"All done!")+" +1 bonus ⭐"); }, 1400);
+    setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r)); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r)); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐"); }, 1400);
     play(["fanfare","bonus", raceWon?"raceWin":null, fire?"streak":null, r.doneSnd||"alldone"]);
     if(!eggReady(k)) setTimeout(()=>play(["jokeintro", pickJoke()]), 4200); }
   else { render(); pow(Math.max(1,teamDamage()-dmgB)); { const pw=Math.random()<.35, gn=Math.random()<.2; play(["ding", job.snd].concat(pw?["punch",pick("p")]:[pick("c")], [MORE(left)], gn?["BJ:"+N_LINES[Math.floor(Math.random()*N_LINES.length)]]:[])); } }
