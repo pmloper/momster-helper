@@ -631,7 +631,11 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .pickcard .pk-lab{display:block;font-weight:800;font-size:14px;margin-bottom:6px}
 .pickcard.done{background:color-mix(in srgb,#2ECC71 14%,var(--card));border-style:solid;font-size:13.5px;padding:8px 10px;margin-bottom:8px}
 .pickcard.done b{display:inline}
-.pickcard .tile.pick{width:100%;min-height:56px;padding:10px 14px;font-size:15px}
+.pickcard .pickrow{width:100%;display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 12px;font-size:15px;border-radius:12px;border:2px solid var(--gold2);background:var(--card);text-align:left}
+.pickcard .pickrow .em{font-size:26px;flex:none;line-height:1}
+.pickcard .pickrow .tx{flex:1;font-size:15px;line-height:1.3;font-weight:800;overflow-wrap:anywhere}
+.pickcard .pickrow .st{flex:none;font-size:14px;font-weight:900;color:#B8860B}
+.pickcard .pickrow:active{transform:scale(.98)}
 .pickcard .tile.pick .em{font-size:30px}
 .pickcard .tile.pick .tx{font-size:16px;line-height:1.25;-webkit-line-clamp:3}
 .pkopts{display:flex;gap:8px;flex-wrap:wrap}
@@ -2016,9 +2020,9 @@ function wizReading(){
   const seg=(on,v,ic,t,sub,extra)=>`<button class="srow link" data-a="wizRead" data-v="${v}" style="width:100%;${extra||""}">
     <span class="sl"><b>${ic} ${t}</b><small>${sub}</small></span><span class="chev">${on?"✓":""}</span></button>`;
   return `<p class="hint" style="margin-top:0">Can your kids read? The app reads every job out loud with silly voices either way, but non-readers get bigger buttons and no surprises they can't follow.</p>
-    <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", wiz.voice===true ? "Tap once, read it yourself too." : "","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
+    <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", wiz.voice===true ? "Jobs show words AND the app reads them out loud." : "","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
   <div class="grp">
-    ${seg(wiz.voice===false, "nonreaders", "👂 Not yet — read everything to them", "Big picture-first setup. App says every job out loud.", "")}
+    ${seg(wiz.voice===false, "nonreaders", "👂 Not yet — read everything to them", "Bigger buttons, picture-first. App says every job out loud.", "")}
   </div>
   <div class="grp-t">Sound</div>
   <div class="grp">${[[1,"🔊 Loud","Talking + sound effects"],[0.4,"🔉 Quiet","Sound effects only"],[0,"🔇 Off","No sound at all"]].map(([v,ic,t])=>`<button class="srow link" data-a="wizVol" data-v="${v}" style="width:100%">
@@ -2170,7 +2174,7 @@ function pickStrip(k){ const today=todayPick(k); if(!pickList().length) return "
   const day=ymd(new Date());
   const done = today && ((weeks[k].done||{})[day]||[]).includes("pk_"+today.id);
   if(done) return `<div class="pickcard done">🎯 Special mission complete: <b>${esc(today.e)} ${esc(today.t)}</b> ⭐⭐ Nice!</div>`;
-  if(today) return `<div class="pickcard chosen"><span class="pk-lab">🎯 ${plannedPick()===today?"Today's special mission from your grown-up:":"Today's special mission (your pick!):"}</span> <button class="tile pick hasB" data-a="pkDo" data-j="pk_${esc(today.id)}"><div class="em">${esc(today.e)}</div><div class="tx">${esc(today.t)} ⭐⭐</div></button></div>`;
+  if(today) return `<div class="pickcard chosen"><span class="pk-lab">🎯 ${plannedPick()===today?"Today's special mission from your grown-up:":"Today's special mission (your pick!):"}</span><button class="pickrow" data-a="pkDo" data-j="pk_${esc(today.id)}"><span class="em">${esc(today.e)}</span><span class="tx">${esc(today.t)}</span><span class="st">⭐⭐</span></button></div>`;
   const opts = pickChoices(k);
   if(!opts.length) return "";
   return `<div class="pickcard"><span class="pk-lab">🎯 Your special mission today — pick one:</span><div class="pkopts">${opts.map(o=>`<button class="pkopt" data-a="pkChoose" data-j="${esc(o.id)}"><span class="em">${esc(o.e)}</span><span class="tx">${esc(o.t)}</span></button>`).join("")}</div></div>`;
@@ -2225,14 +2229,14 @@ function readDraft(){ document.querySelectorAll(".in").forEach(el=>{ const j=dra
 function toast(msg){ const c=document.createElement("div"); c.className="cheer"; c.style.fontSize="22px"; c.textContent=msg; document.body.appendChild(c); setTimeout(()=>c.remove(),3500); }
 function rewardSheet(k){
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
-    <div class="ghead"><h2>${av(k)} Pick your prize!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap one to hear it. Tap it again to pick it.</p>
+    <div class="ghead"><h2>${av(k)} Pick your prize!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap a prize to choose it, then tap Yes to confirm.</p>
     <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div></div></div>`;
 }
 function voiceSheet(k){
   const cur=curVoice(k), tts=ttsPresets();
   const btn=([id,e,n])=>`<button class="rw ${cur===id?"on":""}" data-a="vc" data-v="${id}"><b>${e}</b>${esc(n)}</button>`;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
-    <div class="ghead"><h2>${av(k)} Pick your helper voice!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap one to hear it. Tap it again to pick it.</p>
+    <div class="ghead"><h2>${av(k)} Pick your helper voice!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap a voice to hear it, then tap Yes to pick it.</p>
     ${tts.length? `<p>Fun voices</p><div class="rewards">${tts.filter(p=>!p[0].startsWith("tts:v:")).map(btn).join("")}</div>
       ${tts.some(p=>p[0].startsWith("tts:v:"))? `<p style="margin-top:12px">More real voices</p><div class="rewards">${tts.filter(p=>p[0].startsWith("tts:v:")).map(btn).join("")}</div>`:""}
       <p style="margin-top:12px">Robot characters</p>` : ""}
