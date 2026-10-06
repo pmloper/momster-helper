@@ -14,7 +14,7 @@ console.log('script tag count:', scriptTagCount);
 
 // CACHE check
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v59') ? 'OK: CACHE v59' : 'ERROR: CACHE not v59');
+console.log(sw.includes('momster-helper-v60') ? 'OK: CACHE v60' : 'ERROR: CACHE not v60');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');

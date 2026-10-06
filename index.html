@@ -1022,6 +1022,8 @@ const URLS = {};
 function toUrl(b64){ try{ const bin=atob(b64), arr=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
   return URL.createObjectURL(new Blob([arr],{type:"audio/mpeg"})); }catch(e){ return "data:audio/mpeg;base64,"+b64; } }
 function getUrl(set,k){ const c=CLIPS[set]; if(!c||!c[k]) return null; URLS[set]=URLS[set]||{}; return URLS[set][k] || (URLS[set][k]=toUrl(c[k])); }
+// MOM_EMBED values are raw base64; assigning them to player.src makes the browser treat them as a relative URL and fail silently, so convert to a blob: URL (cached).
+function getMomEmbed(k){ if(!MOM_EMBED || !MOM_EMBED[k]) return null; URLS.__mom=URLS.__mom||{}; return URLS.__mom[k] || (URLS.__mom[k]=toUrl(MOM_EMBED[k])); }
 const CHARS = [["squeaky","🐿️","Squeaky"],["fairy","🧚","Sparkle Fairy"],["dino","🦖","Dino"],["bear","🐻","Big Bear"],["robo","🤖","Robo"],["ghost","👻","Silly Ghost"]];
 const NOVELTY = {Bubbles:"🫧",Bells:"🔔",Boing:"🏀",Jester:"🃏",Superstar:"🌟",Trinoids:"👽",Whisper:"🤫",Wobble:"🍮",Zarvox:"🛸","Good News":"🎵",Cellos:"🎻",Bahh:"🐑",Junior:"👦",Ralph:"🧔",Albert:"👴",Fred:"🎩",Kathy:"👩"};
 const ACCENTS = [["en-GB","🇬🇧","British friend"],["en-AU","🇦🇺","Aussie friend"],["en-IE","🇮🇪","Irish friend"],["en-ZA","🇿🇦","South African friend"],["en-IN","🇮🇳","Indian friend"]];
@@ -1047,7 +1049,7 @@ const findTts = id => ttsPresets().find(p=>p[0]===id);
 const rawChoice = kid => ((settings.kidVoice||{})[kid||view.kid||FIRST_KID]) || "tts:friendly";
 function curVoice(kid){ kid=kid||view.kid||FIRST_KID; const v=rawChoice(kid);
   if(v.startsWith("tts:")) return findTts(v) ? v : "squeaky"; return CHARS.some(c=>c[0]===v) ? v : "squeaky"; }
-const clipUrl = k => MOM_EMBED[k] || getUrl("sfx",k) || getUrl(curVoice(),k) || getUrl("squeaky",k);
+const clipUrl = k => getMomEmbed(k) || getUrl("sfx",k) || getUrl(curVoice(),k) || getUrl("squeaky",k);
 let queue=[], soundOk=null, ttsOk=false, ttsVoice=null;
 const VOICE = {};           // recorded clips: key -> object URL
 const SFX = new Set(["ding","fanfare","bonus","silent","coin","pop","crack","magic","sparkle","punch","whoosh","boing","music"]);
@@ -1073,7 +1075,7 @@ function nextClip(){
   const k=queue.shift(); if(!k) return;
   if(k.startsWith("BJ:")){ return enVoices().length ? speakText(k.slice(3), nextClip, findTts(curVoice())||null) : nextClip(); }
   if(k.startsWith("momster_")){ const u=MOMSTER_CLIPS[k]; if(u) return playUrl(u); const txt=MOMSTER_LINES[k]; const cv=curVoice(); if(txt && cv && cv.startsWith("tts:")) return speakText(txt, nextClip, findTts(cv)); if(txt && enVoices().length) return speakText(txt, nextClip, findTts(curVoice())||null); return nextClip(); }
-  if(VOICE[k]) return playUrl(VOICE[k],k);   if(MOM_EMBED[k]) return playUrl(MOM_EMBED[k],k);
+  if(VOICE[k]) return playUrl(VOICE[k],k);   const mUrl=getMomEmbed(k); if(mUrl) return playUrl(mUrl,k);
   const cv=curVoice();
   if(!SFX.has(k) && cv.startsWith("tts:")){ const pr=findTts(cv), txt = k==="intro" ? "Hi! I'm "+pr[2]+"! Pick me!" : PHRASE_TEXT[k]; if(txt) return speakText(txt, nextClip, pr); }
   const u=clipUrl(k); if(u) playUrl(u,k); else nextClip(); }
