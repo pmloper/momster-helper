@@ -646,7 +646,7 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .prizeIco b{font-size:24px;line-height:1}
 .wholab{font-size:13px;font-weight:700;opacity:.7}
 .wc.on{background:color-mix(in srgb,var(--kc) 30%,var(--card));border-color:var(--kc)}
-.dc{min-height:36px;border-radius:10px;font-weight:900;font-size:13px;background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.dc{min-height:36px;border-radius:10px;font-weight:900;font-size:13px;background:var(--card);color:var(--ink);border:1.5px solid color-mix(in srgb,var(--ink) 22%,transparent)}
 .dc.on{background:var(--doneInk);color:#fff;border-color:var(--doneInk)}
 .tile.done::after{top:40%;font-size:min(38cqh,42cqw)}
 .tile.done .tx{position:relative;z-index:1}
@@ -1058,7 +1058,7 @@ function pickVoice(){ try{ const vs=speechSynthesis.getVoices(); if(!vs.length) 
 function speakText(text, done, preset){
   try{ const u=new SpeechSynthesisUtterance(text);
     const v = preset ? speechSynthesis.getVoices().find(x=>x.name===preset[3]) : (ttsVoice||pickVoice());
-    if(v){ u.voice=v; u.lang=v.lang; } u.volume=voiceLvl; u.pitch=preset?preset[4]:1.1; u.rate=preset?preset[5]:.95;
+    if(v){ u.voice=v; u.lang=v.lang; } u.volume=Math.min(1,voiceLvl*1.15); u.pitch=preset?preset[4]:1.05; u.rate=preset?preset[5]:1.0;
     let fin=false; const f=()=>{ if(!fin){ fin=true; done(); } };
     u.onend=f; u.onerror=f; setTimeout(f, 1200+text.length*120);
     speechSynthesis.speak(u); }catch(e){ done(); } }
@@ -1348,8 +1348,8 @@ let settings = loadLocal("settings") || {pin:DEFAULT_PIN, goal:DEFAULT_GOAL, ava
 const bonusJobs = () => (settings.bonusJobs && settings.bonusJobs.length) ? settings.bonusJobs : DEFAULT_BONUS;
 let weeks = {};
 Object.keys(KIDS).forEach(k=>weeks[k] = Object.assign(blankWeek(), loadLocal("w_"+WEEK+"_"+k) || {}));
-function blankWeek(){ return {done:{}, bonus:0, reward:null, rewardGiven:false, extra:{}, race:{}}; }
-function normWeek(d){ d=d||{}; return {done:JSON.parse(JSON.stringify(d.done||{})), bonus:d.bonus||0, reward:d.reward||null, rewardGiven:!!d.rewardGiven,
+function blankWeek(){ return {done:{}, bonus:0, reward:null, reward2:null, rewardGiven:false, extra:{}, race:{}}; }
+function normWeek(d){ d=d||{}; return {done:JSON.parse(JSON.stringify(d.done||{})), bonus:d.bonus||0, reward:d.reward||null, reward2:d.reward2||null, rewardGiven:!!d.rewardGiven,
   extra:JSON.parse(JSON.stringify(d.extra||{})), race:Object.assign({},d.race||{})}; }
 let prevWeeks = {}, team = {given:false};
 const prevWeekKey = () => { const d=new Date(WEEK+"T12:00:00"); d.setDate(d.getDate()-7); return ymd(d); };
@@ -1483,7 +1483,7 @@ function cheer(big,text){ const c=document.createElement("div"); c.className="ch
 // Non-readers mode: read UI text out loud.
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
-function speakRead(text, preset){ if(!text || !readsAll() || !window.speechSynthesis) return;
+function speakRead(text, preset, force){ if(!text || (!force && !readsAll()) || !window.speechSynthesis) return;
   try{ if(ttsOk) speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(String(text));
     const pr = preset||findTts(curVoice())||null; const v = pr ? speechSynthesis.getVoices().find(x=>x.name===pr[3]) : ttsVoice;
     if(v){ u.voice=v; u.lang=v.lang; } u.volume=voiceLvl; u.pitch=pr?pr[4]:1.15; u.rate=pr?pr[5]:.95;
@@ -1638,7 +1638,7 @@ function dmgPop(n){ const m=monster(), left=monsterLeft(), hp=monsterHP(), pct=M
     <div class="dp-name">${esc(m[1])} <small>${left>0? left+" health left":"BUSTED!"}</small></div>
     <div class="mbar dp-bar"><i style="width:${pct}%"></i></div>
     <div class="dp-react">💬 ${esc(react)}</div>
-    <div class="dp-mom">🦷 <span>Momster says: <b>${momSay}</b></span></div>
+    <div class="dp-mom">💪 <span>Momster says: <b>${momSay}</b></span></div>
     <button class="chip go" onclick="this.closest('.dmgpop-ov').remove()" style="margin-top:10px">💪 Keep helping Momster!</button>
   </div>`;
   document.body.appendChild(o); setTimeout(()=>{ if(o.parentNode) o.remove(); }, 4500);
@@ -1969,11 +1969,11 @@ function wizSheet(){
   const pct = Math.round((wiz.step) / (WIZ_STEPS.length) * 100);
   const back = wiz.step>0 ? `<button class="btn ghost sm" data-a="wizBack">‹ Back</button>` : "";
   layer.innerHTML = `<div class="ov"><div class="sheet gsheet" id="wizSheet" style="max-width:680px">
-    <div class="ghead wiz-head"><div class="wiz-title"><h2>${titles[s]}</h2><span class="wiz-pct">${wiz.step+1}/${WIZ_STEPS.length}</span></div><div class="wiz-btns">${back}<button class="btn primary" data-a="wizNext">${wiz.step===WIZ_STEPS.length-1?"Start":"Next ›"}</button></div></div>
+    <div class="ghead wiz-head"><div class="wiz-title"><h2>${titles[s]}</h2><span class="wiz-pct">${wiz.step+1}/${WIZ_STEPS.length}</span></div><div class="wiz-btns">${back}${WIZ_STEPS[wiz.step]!=="pin"?`<button class="btn primary" data-a="wizNext">Next ›</button>`:""}</div></div>
     <div class="wizfoot"><button class="btn ghost" data-a="tmEnter">🧪 Test Mode</button><small>Try everything without saving</small></div>
     <div style="height:8px;border-radius:4px;background:var(--line);margin:0 0 14px"><div style="height:8px;border-radius:4px;width:${pct}%;background:linear-gradient(90deg,#FFD866,#FFB800)"></div></div>
     <div id="wizBody">${wizBody(s)}</div>
-    <div class="wiz-footbtns">${back||""}<button class="btn primary" data-a="wizNext" style="flex:1;min-height:48px;font-size:18px">${wiz.step===WIZ_STEPS.length-1?"Start the fun 💪":"Next ›"}</button></div>
+    <div class="wiz-footbtns">${back||""}<button class="btn primary" data-a="wizNext" style="flex:1;min-height:48px;font-size:18px">${WIZ_STEPS[wiz.step]==="pin"?"Save PIN and start 💪":(wiz.step===WIZ_STEPS.length-1?"Start the fun 💪":"Next ›")}</button></div>
   </div></div>`;
 }
 function wizBody(s){
@@ -1989,7 +1989,7 @@ function wizBody(s){
 function wizKids(){
   const momster = `<div class="grp" style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:12px;background:color-mix(in srgb,var(--gold) 10%,var(--card));border:2px solid var(--gold2)">
     <span style="flex:none">${buddySvg({body:"blob",shape:"round",color:"#F5A623",ears:"none",eyes:"sparkle",mouth:"smile"},{hat:"h_crown"},{noBg:true,attrs:'style="width:72px;height:72px;display:block"'})}</span>
-    <span style="font-size:14.5px;line-height:1.35"><b>Hi! I'm the Momster! 🦷</b><br><small>A silly villain-fighting superhero needs YOUR help. Set up your helpers and we'll beat the mess monsters together!</small></span></div>`;
+    <span style="font-size:14.5px;line-height:1.35"><b>Hi! I'm the Momster! 💪</b><br><small>Moms and dads: set up your helpers below. Then we'll team up to beat the mess monsters together!</small></span></div>`;
   const rows = wiz.kids.map((c,i)=>`<div class="grp" style="--k:${c.color};margin-bottom:10px"><div class="srow stack">
     <div class="tpgrid"><span class="fpal">${buddySvg(Object.assign({},DEFAULT_LOOK,{color:c.color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}),{},{noBg:true})}</span>
       <label class="fld"><span>Name</span><input class="in tx" data-wk="${i}" value="${esc(c.name||"")}" maxlength="16" placeholder="Kid's name"></label></div>
@@ -2025,10 +2025,10 @@ function wizPrizes(){
 function wizReading(){
   const seg=(on,v,ic,t,sub,extra)=>`<button class="srow link" data-a="wizRead" data-v="${v}" style="width:100%;${extra||""}">
     <span class="sl"><b>${ic} ${t}</b><small>${sub}</small></span><span class="chev">${on?"✓":""}</span></button>`;
-  return `<p class="hint" style="margin-top:0">Can your kids read yet? The app reads every job out loud either way. Non-readers just get bigger buttons. Mixed family? Pick "Not yet" — readers still see all the words.</p>
-    <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", wiz.voice===true ? "Jobs show words AND the app reads them out loud." : "","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
+  return `<p class="hint" style="margin-top:0">Can your kids read yet? Either way, the app reads every job out loud.</p>
+    <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", wiz.voice===true ? "Words on screen + voice" : "","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
   <div class="grp">
-    ${seg(wiz.voice===false, "nonreaders", "👂 Not yet — read everything to them", "Bigger buttons, picture-first. App says every job out loud.", "")}
+    ${seg(wiz.voice===false, "nonreaders", "👂 Not yet", "Bigger buttons, everything read aloud", "")}
   </div>
   <div class="grp-t">Sound</div>
   <div class="grp">${[[1,"🔊 Loud","Talking + sound effects"],[0.4,"🔉 Quiet","Sound effects only"],[0,"🔇 Off","No sound at all"]].map(([v,ic,t])=>`<button class="srow link" data-a="wizVol" data-v="${v}" style="width:100%">
@@ -2061,7 +2061,7 @@ function wizPin(){
     <div class="sheet" style="max-width:340px;margin:0 auto;background:var(--card);text-align:center;padding:12px">
       <div class="dots" id="wizDots"></div>
       <div class="pin">${[1,2,3,4,5,6,7,8,9,"",0,"\u232B"].map(n=>n===""?"<span></span>":`<button data-a="wizPin" data-n="${n}">${n}</button>`).join("")}</div>
-    <button class="btn primary" data-a="wizPinGo" style="margin-top:8px;min-width:180px;min-height:44px">Save PIN and start ›</button>
+    <button class="btn primary" data-a="wizPinGo" style="margin-top:8px;min-width:180px;min-height:44px"></button>
     </div>`;
 }
 function wizReadInputs(){
@@ -2143,7 +2143,7 @@ function homeView(){
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
       <div class="av">${avC(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${KIDS[k].name}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
       <div class="bar big slim"><i style="width:${Math.min(100,n/g*100)}%"></i></div>
-      <div class="kchips"><span>🪙 ${coins(k)}</span>${r?`<span>${r.e} prize</span>`:`<span>🎁 pick a prize</span>`}${eggReady(k)?`<span class="hot">🥚 egg!</span>`:""}</div></button>`; }).join("")}</div>
+      <div class="kchips"><span>🪙 ${coins(k)}</span>${r?`<span>${r.e} prize${weeks[k].reward2?" +"+((REWARDS.find(x=>x.id===weeks[k].reward2)||{}).e||""):""}</span>`:`<span>🎁 pick a prize</span>`}${eggReady(k)?`<span class="hot">🥚 egg!</span>`:""}</div></button>`; }).join("")}</div>
   <nav class="botnav">
     <button class="bn-btn" data-a="jokeSheet" aria-label="Joke of the day"><b>🤣</b><small>Joke</small></button>
     <button class="bn-btn" data-a="hq" aria-label="Hero HQ"><b>🏆</b><small>Hero HQ</small></button>
@@ -2235,9 +2235,12 @@ function bonusEditor(){
 function readDraft(){ document.querySelectorAll(".in").forEach(el=>{ const j=draft[+el.dataset.i]; if(!j) return; j[el.dataset.f] = el.dataset.f==="pts" ? +el.value : el.value; }); }
 function toast(msg){ const c=document.createElement("div"); c.className="cheer"; c.style.fontSize="22px"; c.textContent=msg; document.body.appendChild(c); setTimeout(()=>c.remove(),3500); }
 function rewardSheet(k){
+  const p1 = weeks[k].reward ? (REWARDS.find(x=>x.id===weeks[k].reward)||{}) : null;
+  const p2 = weeks[k].reward2 ? (REWARDS.find(x=>x.id===weeks[k].reward2)||{}) : null;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
     <div class="ghead"><h2>${av(k)} Pick your prize!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap a prize to choose it, then tap Yes to confirm.</p>
-    <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div></div></div>`;
+    <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id||weeks[k].reward2===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div>
+    <p class="hint" style="text-align:center;margin-top:8px">${p1? "Prize 1: "+(p1.t||"")+" · "+(p2?"Prize 2: "+p2.t:"Pick a 2nd prize (optional)") : "Pick your first prize!"}</p></div></div>`;
 }
 function voiceSheet(k){
   const cur=curVoice(k), tts=ttsPresets();
@@ -2312,7 +2315,7 @@ function panel(){
         <div class="srow"><span class="sl">Bonus stars<small>${weeks[k].bonus||0} given this week</small></span>
           <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1">+1 star</button></span></div>
         <div class="srow wrap"><span class="sl">Prize<small>${r? r.e+" "+esc(r.t) : "Not picked yet"}</small></span>
-          ${r?`<span class="ctl"><button class="btn ghost sm" data-a="clearRw" data-k="${k}" title="Clears the prize so ${KIDS[k].name} picks a new one">Change prize</button><label class="tl">Given ${sw(weeks[k].rewardGiven,"given",`data-k="${k}"`)}</label></span>`:""}</div>
+          ${r?`<span class="ctl"><button class="btn ghost sm" data-a="clearRw" data-k="${k}" title="Clears the prize so ${KIDS[k].name} picks a new one">Change prize</button><label class="tl">Given ${sw(weeks[k].rewardGiven,"given",`data-k="${k}"`)}</label>${weeks[k].reward2?`<small>Prize 2: ${(REWARDS.find(x=>x.id===weeks[k].reward2)||{}).t||""}</small>`:""}</span>`:""}</div>
       </div>`; }).join("")}
 
     <div class="grp-t">Today</div>
@@ -2522,7 +2525,7 @@ document.addEventListener("click", e=>{
       c.innerHTML=`<span style="font-weight:800;font-size:16px">${r.e} ${esc(r.t)}?</span><button class="btn primary" data-a="rwYes" data-r="${r.id}" style="min-height:48px">Yes! Pick this one</button><button class="btn ghost" data-a="rwNo" style="min-height:48px">Keep looking</button>`;
       const box=document.querySelector(".rewards"); if(box) box.after(c); else document.querySelector(".sheet").appendChild(c);
       try{ sr("You picked "+r.t+". Tap Yes to confirm."); }catch(e){} } break;
-    case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ weeks[k].reward=r.id; weeks[k].rewardGiven=false; saveWeek(k); } close(); render(); play(["fanfare","picked"]); } break;
+    case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ if(!weeks[k].reward){ weeks[k].reward=r.id; } else if(weeks[k].reward!==r.id){ if(weeks[k].reward2===r.id){ delete weeks[k].reward2; } else { weeks[k].reward2=r.id; } } weeks[k].rewardGiven=false; saveWeek(k); } if(weeks[k].reward && weeks[k].reward2){ close(); } else { rewardSheet(k); } render(); play(["fanfare","picked"]); } break;
     case "rwNo": { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); const oc=document.querySelector(".rwConfirm"); if(oc) oc.remove(); play(["pop"]); } break;
     case "gear": pinSheet(); break;
     case "rideQuick": if(raceDay()){ pendingRide=true; pinSheet(); } else { rideSheet(); } break;
@@ -2643,9 +2646,10 @@ function tapJob(k, id){ settleCoins(k);
   }
   const before=stars(k), otherFull=Object.keys(KIDS).filter(x=>x!==k).every(x=>stars(x)>=goal()), dmgB=teamDamage(), cbB=comboList().length;
   list.push(id);
-  if(readsAll() && job){ const tw=twistFor(k,r,new Date());
+  if(job && voiceLvl>0){ const tw=twistFor(k,r,new Date());
+    const hasClip = job.snd && (typeof CLIPS!=="undefined") && CLIPS[job.snd];
     const parts=[job.t]; if(tw&&tw.job===id) parts.push("Silly twist: "+TWISTS[tw.n-1]); if(isWeak(id)) parts.push("That one hurts the "+(monster()[1]||"monster")+" DOUBLE!");
-    speakRead(parts.join(". ")); }
+    if(readsAll()) speakRead(parts.join(". ")); else if(!hasClip){ speakRead(parts.join(". "), null, true); sr("Job: "+parts.join(". ")); } }
   let raceWon=false;
   if(r.id==="am" && raceOpen() && jobsFor(r,todayDow(),k).every(j=>list.includes(j.id)) && !(w.race||{})[day]){ w.race=w.race||{}; w.race[day]=true; raceWon=true; }
   saveWeek(k);
@@ -2728,6 +2732,8 @@ function starterList(sec){
 }
 function listRead(){ document.querySelectorAll("[data-li]").forEach(el=>{ const j=listDraft[+el.dataset.li]; if(j) j[el.dataset.f]=el.value; }); }
 function listSheet(){
+  const _sc = document.getElementById("listSheet");
+  const _sy = _sc ? _sc.scrollTop : 0;
   const withDays = !["hp","prizes","pk"].includes(listSec);
   const note = listSec==="hp" ? "Each kid gets one helper job a day (worth ⭐⭐). They rotate so kids get different ones." : listSec==="prizes" ? "Kids pick one of these each week to fill their star jar for." : listSec==="pk" ? "Kids choose ONE of these as their special mission each day (worth ⭐⭐). It's their choice, from your list." : (FAMILY.kids.length>1 ? "Tap the days to choose when each job shows up. Tap a name under a job to give it to just that kid." : "Tap the days to choose when each job shows up.");
   const rows=listDraft.map((j,i)=>`<div class="srow stack"><div class="tpgrid" style="grid-template-columns:64px minmax(0,1fr) auto">
@@ -2745,6 +2751,7 @@ function listSheet(){
         return `<button class="srow link" data-a="planCycle" data-dy="${dy}" style="width:100%"><span class="sl"><b>${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getDay()]} ${dy.slice(5)}</b><small>${cur? (list.find(x=>x.id===cur)? list.find(x=>x.id===cur).e+" "+list.find(x=>x.id===cur).t : "Surprise") : "🎲 Surprise (kid picks)"}</small></span><span class="chev">${n===0?"today":""}</span></button>`; }).join("")}</div>`; })() :""}
     <div class="sact" style="margin-top:10px;justify-content:space-between"><button class="btn" data-a="listAdd">+ Add</button><button class="btn ghost sm" data-a="listReset">Reset to starter list</button></div>
     <div class="sact" style="margin-top:14px"><small class="saved"></small><button class="btn primary" data-a="listSave">Save</button></div></div></div>`);
+  const _sc2 = document.getElementById("listSheet"); if(_sc2 && _sy) _sc2.scrollTop = _sy;
 }
 document.addEventListener("click", e=>{
   const t=e.target.closest("[data-a]"); if(!t) return; const a=t.dataset.a, i=+t.dataset.i;
