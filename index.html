@@ -2288,9 +2288,15 @@ function panel(){
     <p class="hint" id="gNote">Undo a star: press and hold it · Approve a bonus job: tap it</p>
     <button class="hero" data-a="weekView"><span class="hero-ic">📅</span><span><b>Week view</b><small>See every day and add stars you forgot</small></span><span class="chev">›</span></button>
 
+    ${(()=>{ const kids=Object.keys(KIDS); const day=ymd(new Date());
+      const doneJobs=kids.reduce((a,k)=>a+Object.values(weeks[k].done||{}).reduce((b,arr)=>b+(arr||[]).filter(x=>!String(x).startsWith("pk_")).length,0),0);
+      const totStars=kids.reduce((a,k)=>a+stars(k),0);
+      const left=monsterLeft();
+      const best=kids.map(k=>[k,Object.values(weeks[k].done||{}).reduce((b,arr)=>b+(arr||[]).filter(x=>!String(x).startsWith("pk_")).length,0)]).sort((a,b)=>b[1]-a[1]);
+      return `<div class="grp-t">This week so far</div><div class="grp" style="background:color-mix(in srgb,var(--gold) 8%,var(--card))"><div class="srow"><span class="sl"><b>📋 Weekly recap</b><small>${doneJobs} jobs done · ${totStars} stars earned · ${left?"Villain has "+left+" health left":"🏆 Villain busted!"}${best[0]&&best[0][1]>0?" · Most help: "+KIDS[best[0][0]].name:""}</small></span></div></div>`; })()}
     <div class="grp-t">Kids this week</div>
     ${Object.keys(KIDS).map(k=>{ const r=rewardOf(k), n=stars(k); const auto=autoJobs(k);
-      return `<div class="grp" style="--k:${KIDS[k].color}">${auto.length?`<div class="srow" style="background:color-mix(in srgb,#2ECC71 10%,transparent)"><span class="sl"><small>🌱 Habit watch: ${auto.map(a=>{ const jt=(()=>{ for(const rr of ROUTINES){ const f=(FAMILY.jobs&&FAMILY.jobs[rr.id]||[]).find(x=>x.id===a.id); if(f) return f.t; } const st=STARTER_JOBS.am.concat(STARTER_JOBS.pm||[],STARTER_JOBS.bt||[],STARTER_HELPER||[]).find(x=>x.id===a.id); return st?st.t:a.id; })(); return jt+" ("+a.n+" days in a row)"; }).join(", ")} — looking automatic! Consider retiring it from the paid list so the habit stands on its own.</small></span></div>`:""}
+      return `<div class="grp" style="--k:${KIDS[k].color}">${auto.length?`<div class="srow" style="background:color-mix(in srgb,#2ECC71 10%,transparent)"><span class="sl"><small>🌱 Habit watch: ${auto.map(a=>{ const jt=(()=>{ for(const rr of ROUTINES){ const f=(FAMILY.jobs&&FAMILY.jobs[rr.id]||[]).find(x=>x.id===a.id); if(f) return f.t; } const st=STARTER_JOBS.am.concat(STARTER_JOBS.pm||[],STARTER_JOBS.bt||[],STARTER_HELPER||[]).find(x=>x.id===a.id); return st?st.t:a.id; })(); return jt+" ("+a.n+" days in a row)"; }).join(", ")}</small></span><button class="btn ghost sm" data-a="fadeChart" style="flex:none">Fade the chart →</button></div><div class="srow" style="padding-top:0"><span class="sl"><small>Graduating these from the paid list keeps the stars and lets the habit stand on its own.</small></span></div>`:""}
         <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${KIDS[k].name}</b><small>⭐ ${n} of ${g} this week · 🪙 ${coins(k)} coins to spend (spending never removes stars)</small></span></div>
         <div class="srow"><span class="sl">Bonus stars<small>${weeks[k].bonus||0} given this week</small></span>
           <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1">+1 star</button></span></div>
@@ -2309,6 +2315,7 @@ function panel(){
 
     <div class="grp-t">Settings</div>
     <div class="grp">
+      ${(window._deferredInstall && !loadLocal("installedHint"))?`<button class="srow link" data-a="pwaInstall"><span class="sl">📲 Install Momster Helper<small>Real app icon on your home screen. Works offline.</small></span><span class="chev">›</span></button>`:""}
       <button class="srow link" data-a="famOpen"><span class="sl">👨‍👩‍👧 Family setup<small>Kids, jobs and prizes</small></span><span class="chev">›</span></button>
       <div class="srow"><span class="sl">Weekly star goal<small>${possibleThisWeek()} possible</small></span>
         <span class="seg"><button data-a="goal" data-d="-5">−</button><b class="segv">${g}</b><button data-a="goal" data-d="5">+</button></span></div>
@@ -2737,6 +2744,8 @@ document.addEventListener("click", e=>{
     case "famSave": famRead(); { const firstRun=!FAMILY_SET; const kids=famDraft.map(c=>({id:c.id, name:(c.name||"").trim(), av:(c.av||"").trim()||"⭐", color:c.color})).filter(c=>c.name);
       if(!kids.length){ const n=document.getElementById("famNote"); if(n){ n.style.color="#E5484D"; n.textContent="Add at least one name"; } break; }
       FAMILY.kids=kids; saveFamily(); applyKids(); FAMILY_SET=true; famDraft=null; view.kid=null; close(); render(); play(["fanfare"]); if(firstRun){ pinMode="first"; pinSheet(); } } break;
+    case "pwaInstall": { const d=window._deferredInstall; if(d){ d.prompt(); try{ saveLocal("installedHint","1"); }catch(e){} window._deferredInstall=null; } panel(); play(["fanfare"]); break; }
+    case "fadeChart": famDraft=null; famSheet(false); setTimeout(()=>{ const b=[...document.querySelectorAll('[data-a="listOpen"]')].find(x=>x.textContent.includes("Morning")); if(b){ b.click(); } },350); play(["pop"]); break;
     case "listOpen": listSec=t.dataset.s; listDraft=curList(listSec); if(listSec==="pk") famPlanDraft=Object.assign({}, (FAMILY.pickPlan)||{}); listSheet(); break;
     case "planCycle": { const list=pickList(); const dy=t.dataset.dy; const ids=[null].concat(list.map(x=>x.id)); const cur=(famPlanDraft||{})[dy]; const ci=cur? ids.indexOf(cur) : 0; const next=ids[(ci+1)%ids.length];
         if(!famPlanDraft) famPlanDraft={}; if(next) famPlanDraft[dy]=next; else delete famPlanDraft[dy]; listSheet(); play(["pop"]); break; }
@@ -2784,6 +2793,7 @@ document.addEventListener("click", e=>{
   if(a==="tmExit"){ tmExit(); return; }
 });
 try{ document.documentElement.setAttribute("data-season", new Date().getMonth()===9 ? "spooky" : ""); }catch(e){}
+window._deferredInstall=null; window.addEventListener("beforeinstallprompt",(e)=>{ e.preventDefault(); window._deferredInstall=e; try{ if(!loadLocal("installedHint")) render(); }catch(err){} });
 render();
 if(!FAMILY_SET) wizStart();
 else if(!settings.setupDone && !loadLocal("wizOffered")){ saveLocal("wizOffered",1); }
