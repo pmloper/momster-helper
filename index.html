@@ -876,7 +876,7 @@ button.bpal{border:0;background:none;padding:0;cursor:pointer}
 @media (max-width:600px),(max-height:520px){
   .tile.bonus{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:10px;row-gap:0;padding:4px 12px!important;text-align:left}
   .tile.bonus .em{grid-row:1/span 2;font-size:min(70cqh,34px)!important}
-  .tile.bonus .tx{grid-column:2;text-align:left;font-size:clamp(14px,34cqh,17px)!important;-webkit-line-clamp:3}
+  .tile.bonus .tx{grid-column:2;text-align:left;font-size:clamp(13.5px,34cqh,16px)!important;-webkit-line-clamp:unset;overflow:visible}
   .tile.bonus .wait{grid-column:2;font-size:13px}
   .tile.bonus:not(.waiting) .tx{grid-row:1/span 2}
   .tile.bonus .badges{position:static;grid-column:3;grid-row:1/span 2;justify-content:flex-end}
@@ -2148,7 +2148,7 @@ function kidView(k){
   const used=regExtra(k).length;
   const bonusTab = `<button class="tab ${view.routine==="bn"?"on":""}" style="--rc:#12B886" data-a="routine" data-r="bn"><b>💪</b><span>Bonus<small>${used>=BONUS_MAX?"all used":(BONUS_MAX-used)+" left"}</small></span></button>`;
   let body;
-  if(view.routine==="bn"){ const bj=kidBonusJobs(), land=innerWidth>innerHeight&&innerWidth>700, cols=land?(innerHeight<=520?2:4):(innerWidth<=600?1:2);
+  if(view.routine==="bn"){ const bj=kidBonusJobs(), land=innerWidth>innerHeight&&innerWidth>700, cols=land?(innerHeight<=520?2:4):2;
     body = `<div class="tiles" style="--cols:${cols}">${bj.map(j=>{ const x=extraOf(k,j.id), st=x?(x.ok?"done":"waiting"):(used>=BONUS_MAX&&!j.ev?"off":"");
       return `<button class="tile bonus hasB ${st} ${j.ev?"evt":""}" data-a="bjob" data-j="${j.id}"><span class="badges">${isWeak(j.id)&&!x?'<span class="wk">💥x2</span>':""}<span class="x2">${"⭐".repeat(Math.min(3,j.pts||2))}</span></span><div class="em">${esc(j.e)}</div><div class="tx">${esc(j.t)}</div>${st==="waiting"?'<div class="wait">⏳ Ask a grown-up</div>':""}</button>`; }).join("")}</div>`; }
   else if(!list.length) body = `<div class="fullmsg rest"><div class="big">😎</div>No ${r.name.toLowerCase()} jobs today!</div>`;
