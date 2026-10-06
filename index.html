@@ -178,7 +178,8 @@ button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
 /* Portrait / narrow: jar becomes a strip */
 @media (orientation:portrait), (max-width:700px){
   .layout{grid-template-columns:1fr;grid-template-rows:auto 1fr}
-  .jarCard{order:-1;flex-direction:row;padding:8px 12px;gap:10px;text-align:left;align-items:center}
+  .layout>.main{grid-row:2}
+  .layout>.jarCard{grid-row:1;flex-direction:row;padding:8px 12px;gap:10px;text-align:left;align-items:center}
   .jarCard h2,.jarCard .left{display:none}
   .jarCard .jar{width:64px;height:auto;flex:none}
   .jarCard .jar text{font-size:13px}
@@ -645,8 +646,8 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .prizeIco b{font-size:24px;line-height:1}
 .wholab{font-size:13px;font-weight:700;opacity:.7}
 .wc.on{background:color-mix(in srgb,var(--kc) 30%,var(--card));border-color:var(--kc)}
-.dc{min-height:36px;border-radius:10px;font-weight:900;font-size:15px;background:color-mix(in srgb,var(--ink) 7%,var(--card));color:var(--soft)}
-.dc.on{background:var(--doneInk);color:#fff}
+.dc{min-height:36px;border-radius:10px;font-weight:900;font-size:13px;background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.dc.on{background:var(--doneInk);color:#fff;border-color:var(--doneInk)}
 .tile.done::after{top:40%;font-size:min(38cqh,42cqw)}
 .tile.done .tx{position:relative;z-index:1}
 .donebar{flex:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:8px 12px;border-radius:22px;border:2px solid var(--doneInk);background:linear-gradient(90deg,color-mix(in srgb,var(--doneInk) 18%,var(--card)),var(--card));box-shadow:var(--shadow)}
@@ -907,14 +908,14 @@ button.bpal{border:0;background:none;padding:0;cursor:pointer}
 @media (max-width:600px){.wizgrid{grid-template-columns:1fr 1fr}}
 
 /* ---- Test mode ---- */
-#tmBanner{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:12px;
-  background:linear-gradient(90deg,#7C5CFF,#FF5DA2);color:#fff;padding:8px 14px;font-weight:800;font-size:15px;
+#tmBanner{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:8px;
+  background:linear-gradient(90deg,#7C5CFF,#FF5DA2);color:#fff;padding:6px 10px;font-weight:800;font-size:13px;
   box-shadow:0 4px 14px rgba(0,0,0,.25)}
-#tmBanner b{font-family:var(--disp);letter-spacing:.5px}
-#tmBanner span{flex:1;font-size:13px;opacity:.9}
-#tmBanner button{background:#fff;color:#1B2140;border-radius:999px;padding:6px 14px;font-weight:900;font-size:14px;white-space:nowrap}
+#tmBanner b{font-family:var(--disp);letter-spacing:.5px;white-space:nowrap;font-size:13px}
+#tmBanner span{flex:1;font-size:12px;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tmBanner button{background:#fff;color:#1B2140;border-radius:999px;padding:5px 12px;font-weight:900;font-size:12px;white-space:nowrap;flex:none}
 #tmBanner button:active{transform:translateY(1px)}
-body.tm{padding-top:44px}
+body.tm{padding-top:40px}
 .wizfoot{display:flex;align-items:center;gap:10px;margin:2px 0 10px;flex-wrap:wrap}
 .wizfoot small{opacity:.7}
 .wizfoot small{color:var(--soft);font-weight:700;font-size:13px}
@@ -1407,8 +1408,8 @@ setInterval(()=>{ const w=weekStart(); if(w!==WEEK){ WEEK=w; Object.keys(KIDS).f
 /* ---------- Helpers ---------- */
 const rawAv = k => (settings.avatars||{})[k] || KIDS[k].av;
 const avHtml = a => PIC[a] ? `<img src="${PIC[a]}" alt="" style="height:1em;width:1em;vertical-align:-0.14em">` : a;
-const av = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:'style="height:1.2em;width:1.2em;vertical-align:-0.22em;overflow:visible"'}) : avHtml(rawAv(k));
-const avC = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, vb:"0 47 200 150", attrs:'style="height:1.1em;width:1.1em;display:block;margin:auto;overflow:visible"'}) : avHtml(rawAv(k));
+const av = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:'style="height:1.2em;width:1.2em;vertical-align:middle;overflow:visible"'}) : avHtml(rawAv(k));
+const avC = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, vb:"0 18 200 182", attrs:'style="height:1.1em;width:1.1em;display:block;margin:auto;overflow:visible"'}) : avHtml(rawAv(k));
 // +1 "finished the whole routine" bonus for every routine completed that day
 function starsFor(k,w,wk){ let n=w.bonus||0;
   { const p=w.pick||{}; if(p.day===ymd(new Date()) && ((w.done||{})[ymd(new Date())]||[]).includes("pk_"+p.id)) n+=2; }
@@ -1891,6 +1892,8 @@ function tmEnter(){
   if(!FAMILY_SET){
     FAMILY.kids = [{id:"k1", name:"Lily", av:"🦄", color:"#E2468A"},{id:"k2", name:"Logan", av:"🦖", color:"#1A9C74"}];
     try{ localStorage.setItem("starjobs_family", JSON.stringify(FAMILY)); }catch(e){}
+    const s=(typeof settings==="object"&&settings)||{}; s.pin="0000"; s.setupDone=true;
+    try{ localStorage.setItem("starjobs_settings", JSON.stringify(s)); }catch(e){}
     applyKids();
   }
   view.kid=null; view.routine=defaultRoutine();
@@ -1914,7 +1917,7 @@ function tmBanner(){
   const old=document.getElementById("tmBanner"); if(old) old.remove();
   if(!testMode) return;
   const b=document.createElement("div"); b.id="tmBanner";
-  b.innerHTML=`<b>🧪 TEST MODE</b><span>Tap anything! Nothing gets saved.</span><button data-a="tmExit">Turn off test mode</button>`;
+  b.innerHTML=`<b>🧪 TEST MODE</b><span>Nothing is saved · Grown-ups PIN: 0000</span><button data-a="tmExit">Exit</button>`;
   document.body.appendChild(b);
   document.body.classList.add("tm");
 }
@@ -1984,12 +1987,15 @@ function wizBody(s){
   return "";
 }
 function wizKids(){
+  const momster = `<div class="grp" style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:12px;background:color-mix(in srgb,var(--gold) 10%,var(--card));border:2px solid var(--gold2)">
+    <span style="flex:none">${buddySvg({body:"blob",shape:"round",color:"#F5A623",ears:"none",eyes:"sparkle",mouth:"smile"},{hat:"h_crown"},{noBg:true,attrs:'style="width:72px;height:72px;display:block"'})}</span>
+    <span style="font-size:14.5px;line-height:1.35"><b>Hi! I'm the Momster! 🦷</b><br><small>A silly villain-fighting superhero needs YOUR help. Set up your helpers and we'll beat the mess monsters together!</small></span></div>`;
   const rows = wiz.kids.map((c,i)=>`<div class="grp" style="--k:${c.color};margin-bottom:10px"><div class="srow stack">
     <div class="tpgrid"><span class="fpal">${buddySvg(Object.assign({},DEFAULT_LOOK,{color:c.color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}),{},{noBg:true})}</span>
       <label class="fld"><span>Name</span><input class="in tx" data-wk="${i}" value="${esc(c.name||"")}" maxlength="16" placeholder="Kid's name"></label></div>
     <div class="kcolors">${KID_COLORS.map(col=>`<button class="kc ${c.color===col?"on":""}" style="background:${col}" data-a="wizColor" data-i="${i}" data-c="${col}" aria-label="color"></button>`).join("")}
       ${wiz.kids.length>1?`<button class="btn ghost sm" data-a="wizDelKid" data-i="${i}">Remove</button>`:""}</div></div></div>`).join("");
-  return `<p class="hint" style="margin-top:0">Add each kid — their own jar, coins, and sidekick.</p>${rows}
+  return `${momster}<p class="hint" style="margin-top:0">Add each kid — their own jar, coins, and sidekick.</p>${rows}
     ${wiz.kids.length<4?'<button class="btn" data-a="wizAddKid">+ Add a kid</button>':""}`;
 }
 function wizWhoChips(sec,id){ if(wiz.kids.length<2||sec==="hp") return "";
@@ -2019,7 +2025,7 @@ function wizPrizes(){
 function wizReading(){
   const seg=(on,v,ic,t,sub,extra)=>`<button class="srow link" data-a="wizRead" data-v="${v}" style="width:100%;${extra||""}">
     <span class="sl"><b>${ic} ${t}</b><small>${sub}</small></span><span class="chev">${on?"✓":""}</span></button>`;
-  return `<p class="hint" style="margin-top:0">Can your kids read? The app reads every job out loud with silly voices either way, but non-readers get bigger buttons and no surprises they can't follow.</p>
+  return `<p class="hint" style="margin-top:0">Can your kids read yet? The app reads every job out loud either way. Non-readers just get bigger buttons.</p>
     <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", wiz.voice===true ? "Jobs show words AND the app reads them out loud." : "","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
   <div class="grp">
     ${seg(wiz.voice===false, "nonreaders", "👂 Not yet — read everything to them", "Bigger buttons, picture-first. App says every job out loud.", "")}
@@ -2055,7 +2061,7 @@ function wizPin(){
     <div class="sheet" style="max-width:340px;margin:0 auto;background:var(--card);text-align:center;padding:12px">
       <div class="dots" id="wizDots"></div>
       <div class="pin">${[1,2,3,4,5,6,7,8,9,"",0,"\u232B"].map(n=>n===""?"<span></span>":`<button data-a="wizPin" data-n="${n}">${n}</button>`).join("")}</div>
-    <button class="btn primary" data-a="wizPinGo" style="margin-top:8px;min-width:180px;min-height:44px">Start the fun ›</button>
+    <button class="btn primary" data-a="wizPinGo" style="margin-top:8px;min-width:180px;min-height:44px">Save PIN and start ›</button>
     </div>`;
 }
 function wizReadInputs(){
@@ -2130,7 +2136,7 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1><span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="ridechip" data-a="rideQuick" aria-label="Getting to school today">${raceDay() ? RIDES_ICONS[rideToday()]+" "+tm12(raceEnd()) : RIDES_ICONS[rideToday()]}</button></div>
+  return `<div class="hello bar-card"><h1>${buddySvg({body:"blob",shape:"round",color:"#F5A623",ears:"none",eyes:"sparkle",mouth:"smile"},{hat:"h_crown"},{noBg:true,attrs:'style="height:1em;width:1em;vertical-align:-0.12em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="ridechip" data-a="rideQuick" aria-label="Getting to school today">${raceDay() ? RIDES_ICONS[rideToday()]+" "+tm12(raceEnd()) : RIDES_ICONS[rideToday()]}</button></div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
@@ -2165,7 +2171,7 @@ function kidView(k){
     body = `<div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile ${isDone(k,j.id)?"done":""} ${(isWeak(j.id)&&!isDone(k,j.id))||pts(j.id)>1?"hasB":""} ${tw&&tw.job===j.id&&!isDone(k,j.id)?"hasTw":""} ${pts(j.id)>1?"hasX2":""}" data-a="job" data-j="${j.id}">${tw&&tw.job===j.id&&!isDone(k,j.id)?`<span class="twist">🤪 ${TWISTS[tw.n-1]}${isWeak(j.id)?" · 💥x2":""}</span>`:""}${(()=>{ const b=(isWeak(j.id)&&!isDone(k,j.id)&&!(tw&&tw.job===j.id)?'<span class="wk">💥x2</span>':"")+(pts(j.id)>1?'<span class="x2">⭐⭐</span>':""); return b?`<span class="badges">${b}</span>`:""; })()}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div></button>`).join("")}</div>`; }
   return `<div class="top bar-card" style="--k:${KIDS[k].color}"><button class="back" data-a="home" aria-label="Back">⬅️</button>
     <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
-    <button class="coinBtn" data-a="buddy" aria-label="My sidekick">${buddies[k].made? buddySvg(buddies[k].look,buddies[k].wear,{noBg:true,attrs:'style="height:44px;width:auto"'}) : "🛍️"}</button>
+    
     <button class="back" data-a="voiceSheet" aria-label="Pick a voice">${(CHARS.find(c=>c[0]===curVoice(k))||findTts(curVoice(k))||["","🗣️"])[1]}</button>
     <button class="spk" data-a="sound" aria-label="Sound">${volIcon()}</button></div>
   <div class="layout" style="--k:${KIDS[k].color};--rc:${view.routine==="bn"?"#12B886":(r.rc||"#FFA41B")}"><div class="main">${eventBar(k)}<div class="tabs">${tabs}${bonusTab}</div>${raceBar(k)}${pickStrip(k)}${body}</div>${jarCard(k)}</div>`;
@@ -2673,7 +2679,7 @@ let rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(render,1
 
 /* ---------- Family setup screens ---------- */
 let famDraft=null, listDraft=null, listSec=null, famPlanDraft=null;
-const DAYS="SMTWTFS";
+const DAYS=["Su","Mo","Tu","We","Th","Fr","Sa"];
 const SEC = {am:["☀️ Morning jobs","am"], pm:["🎒 After-school jobs","pm"], bt:["🌙 Bedtime jobs","bt"], hp:["🧹 Helper jobs","hp"], prizes:["🎁 Weekly prizes","prizes"], pk:["🎯 Special missions","pk"]};
 // Apply kid changes right away (no page reload needed).
 function applyKids(){
