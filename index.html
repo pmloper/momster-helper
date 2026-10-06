@@ -1574,7 +1574,8 @@ const STARTER_PICKS = [
   {id:"p_dust", e:"🪣", t:"Dust one shelf"}
 ];
 function pickList(){ return (FAMILY.picks && FAMILY.picks.length) ? FAMILY.picks : STARTER_PICKS; }
-function todayPick(k){ const p=(weeks[k].pick)||{}; return (p.day===ymd(new Date()) && pickList().find(x=>x.id===p.id)) || null; }
+function plannedPick(){ const plan=(FAMILY.pickPlan)||{}; const id=plan[ymd(new Date())]; return (id && pickList().find(x=>x.id===id)) || null; }
+function todayPick(k){ const planned=plannedPick(); if(planned) return planned; const p=(weeks[k].pick)||{}; return (p.day===ymd(new Date()) && pickList().find(x=>x.id===p.id)) || null; }
 function pickChoices(k){ const pool=pickList(); const day=ymd(new Date());
   // deterministic per kid+day: 3 rotated options
   const seed = day.split("-").join("")*1 + kidIndex(k)*7;
@@ -2169,7 +2170,7 @@ function pickStrip(k){ const today=todayPick(k); if(!pickList().length) return "
   const day=ymd(new Date());
   const done = today && ((weeks[k].done||{})[day]||[]).includes("pk_"+today.id);
   if(done) return `<div class="pickcard done">🎯 Special mission complete: <b>${esc(today.e)} ${esc(today.t)}</b> ⭐⭐ Nice!</div>`;
-  if(today) return `<div class="pickcard chosen"><span class="pk-lab">🎯 Today's special mission (your pick!):</span> <button class="tile pick hasB" data-a="pkDo" data-j="pk_${esc(today.id)}"><div class="em">${esc(today.e)}</div><div class="tx">${esc(today.t)} ⭐⭐</div></button></div>`;
+  if(today) return `<div class="pickcard chosen"><span class="pk-lab">🎯 ${plannedPick()===today?"Today's special mission from your grown-up:":"Today's special mission (your pick!):"}</span> <button class="tile pick hasB" data-a="pkDo" data-j="pk_${esc(today.id)}"><div class="em">${esc(today.e)}</div><div class="tx">${esc(today.t)} ⭐⭐</div></button></div>`;
   const opts = pickChoices(k);
   if(!opts.length) return "";
   return `<div class="pickcard"><span class="pk-lab">🎯 Your special mission today — pick one:</span><div class="pkopts">${opts.map(o=>`<button class="pkopt" data-a="pkChoose" data-j="${esc(o.id)}"><span class="em">${esc(o.e)}</span><span class="tx">${esc(o.t)}</span></button>`).join("")}</div></div>`;
@@ -2495,8 +2496,15 @@ document.addEventListener("click", e=>{
         <button class="chip go big" data-a="closeOv">OK!</button></div></div>`;
       play(["pop", "BJ:This is your prize this week! Ask a grown-up if you want to change it."]); } break;
     case "rw": { const r=REWARDS.find(x=>x.id===t.dataset.r);
-      if(t.dataset.armed){ weeks[k].reward=r.id; weeks[k].rewardGiven=false; saveWeek(k); close(); render(); play(["fanfare","picked"]); }
-      else { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); t.classList.add("on"); t.dataset.armed="1"; play([r.snd||"BJ:"+r.t,"tapagain"]); } } break;
+      document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;});
+      t.classList.add("on"); t.dataset.armed="1"; play([r.snd||"BJ:"+r.t]);
+      const old=document.querySelector(".rwConfirm"); if(old) old.remove();
+      const c=document.createElement("div"); c.className="rwConfirm"; c.style.cssText="display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0 4px;flex-wrap:wrap";
+      c.innerHTML=`<span style="font-weight:800;font-size:16px">${r.e} ${esc(r.t)}?</span><button class="btn primary" data-a="rwYes" data-r="${r.id}" style="min-height:48px">Yes! Pick this one</button><button class="btn ghost" data-a="rwNo" style="min-height:48px">Keep looking</button>`;
+      const box=document.querySelector(".rewards"); if(box) box.after(c); else document.querySelector(".sheet").appendChild(c);
+      try{ sr("You picked "+r.t+". Tap Yes to confirm."); }catch(e){} } break;
+    case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ weeks[k].reward=r.id; weeks[k].rewardGiven=false; saveWeek(k); } close(); render(); play(["fanfare","picked"]); } break;
+    case "rwNo": { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); const oc=document.querySelector(".rwConfirm"); if(oc) oc.remove(); play(["pop"]); } break;
     case "gear": pinSheet(); break;
     case "rideQuick": if(raceDay()){ pendingRide=true; pinSheet(); } else { rideSheet(); } break;
     case "ridePick": { const v=t.dataset.v; settings.rideMode=v; settings.rideDate=ymd(new Date()); saveSettings(); rideSheet(); render(); play(["pop","BJ:"+(v==="walk"?"Walking today!":v==="bus"?"Bus today!":"Driving today!")]); } break;
@@ -2653,7 +2661,7 @@ document.addEventListener("contextmenu", e=>{ if(e.target.closest(".tile")) e.pr
 let rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(render,150); });
 
 /* ---------- Family setup screens ---------- */
-let famDraft=null, listDraft=null, listSec=null;
+let famDraft=null, listDraft=null, listSec=null, famPlanDraft=null;
 const DAYS="SMTWTFS";
 const SEC = {am:["☀️ Morning jobs","am"], pm:["🎒 After-school jobs","pm"], bt:["🌙 Bedtime jobs","bt"], hp:["🧹 Helper jobs","hp"], prizes:["🎁 Weekly prizes","prizes"], pk:["🎯 Special missions","pk"]};
 // Apply kid changes right away (no page reload needed).
@@ -2712,6 +2720,10 @@ function listSheet(){
   paintSheet("listSheet",listSec,`<div class="ov"><div class="sheet gsheet" id="listSheet">
     <div class="ghead"><h2>${SEC[listSec][0]}</h2><button class="btn" data-a="famOpen">Back</button></div>
     <p class="hint">${note}</p><div class="grp">${rows||'<div class="srow"><span class="sl"><small>None yet.</small></span></div>'}</div>
+    ${listSec==="pk"? (()=>{ const plan=(famPlanDraft)||{}; const list=pickList();
+      const days=[...Array(7)].map((_,n)=>{ const d=new Date(); d.setDate(d.getDate()+n); return ymd(d); });
+      return `<div class="grp-t">📅 Plan ahead (optional)</div><p class="hint">Tap a day to pick that day's special mission for everyone. Kids can still choose on days left as Surprise.</p><div class="grp" style="padding:6px">${days.map((dy,n)=>{ const dd=new Date(dy+"T12:00:00"); const cur=plan[dy]; const mi=cur? list.findIndex(x=>x.id===cur) : -1;
+        return `<button class="srow link" data-a="planCycle" data-dy="${dy}" style="width:100%"><span class="sl"><b>${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getDay()]} ${dy.slice(5)}</b><small>${cur? (list.find(x=>x.id===cur)? list.find(x=>x.id===cur).e+" "+list.find(x=>x.id===cur).t : "Surprise") : "🎲 Surprise (kid picks)"}</small></span><span class="chev">${n===0?"today":""}</span></button>`; }).join("")}</div>`; })() :""}
     <div class="sact" style="margin-top:10px;justify-content:space-between"><button class="btn" data-a="listAdd">+ Add</button><button class="btn ghost sm" data-a="listReset">Reset to starter list</button></div>
     <div class="sact" style="margin-top:14px"><small class="saved"></small><button class="btn primary" data-a="listSave">Save</button></div></div></div>`);
 }
@@ -2725,7 +2737,9 @@ document.addEventListener("click", e=>{
     case "famSave": famRead(); { const firstRun=!FAMILY_SET; const kids=famDraft.map(c=>({id:c.id, name:(c.name||"").trim(), av:(c.av||"").trim()||"⭐", color:c.color})).filter(c=>c.name);
       if(!kids.length){ const n=document.getElementById("famNote"); if(n){ n.style.color="#E5484D"; n.textContent="Add at least one name"; } break; }
       FAMILY.kids=kids; saveFamily(); applyKids(); FAMILY_SET=true; famDraft=null; view.kid=null; close(); render(); play(["fanfare"]); if(firstRun){ pinMode="first"; pinSheet(); } } break;
-    case "listOpen": listSec=t.dataset.s; listDraft=curList(listSec); listSheet(); break;
+    case "listOpen": listSec=t.dataset.s; listDraft=curList(listSec); if(listSec==="pk") famPlanDraft=Object.assign({}, (FAMILY.pickPlan)||{}); listSheet(); break;
+    case "planCycle": { const list=pickList(); const dy=t.dataset.dy; const ids=[null].concat(list.map(x=>x.id)); const cur=(famPlanDraft||{})[dy]; const ci=cur? ids.indexOf(cur) : 0; const next=ids[(ci+1)%ids.length];
+        if(!famPlanDraft) famPlanDraft={}; if(next) famPlanDraft[dy]=next; else delete famPlanDraft[dy]; listSheet(); play(["pop"]); break; }
     case "listAdd": listRead(); listDraft.push({id:(listSec==="hp"?"h_":(listSec==="prizes"?"p_":(listSec==="pk"?"p_":"j_")))+Date.now().toString(36), e:"⭐", t:"", days:null}); listSheet();
       setTimeout(()=>{ const ins=document.querySelectorAll('#listSheet .in.tx'); const last=ins[ins.length-1]; if(last){ last.focus(); last.scrollIntoView({block:"center"}); } },50); break;
     case "listDel": listRead(); listDraft.splice(i,1); listSheet(); break;
@@ -2733,7 +2747,7 @@ document.addEventListener("click", e=>{
     case "listDay": listRead(); { const j=listDraft[i], d=+t.dataset.d; let ds=j.days?j.days.slice():[0,1,2,3,4,5,6]; ds = ds.includes(d)? ds.filter(x=>x!==d) : ds.concat(d).sort(); j.days = ds.length===7?null:ds; } listSheet(); break;
     case "listWho": listRead(); { const j=listDraft[i]; j.who = (t.dataset.k||""); } listSheet(); break;
     case "listSave": listRead(); { const clean=listDraft.map(j=>Object.assign({id:j.id, e:(j.e||"").trim()||"⭐", t:(j.t||"").trim()}, j.days?{days:j.days}:{}, j.who?{who:j.who}:{})).filter(j=>j.t);
-      if(listSec==="prizes"){ FAMILY.prizes=clean; } else if(listSec==="hp") FAMILY.helper=clean; else if(listSec==="pk") FAMILY.picks=clean; else { FAMILY.jobs=Object.assign({},FAMILY.jobs||{},{[listSec]:clean}); }
+      if(listSec==="prizes"){ FAMILY.prizes=clean; } else if(listSec==="hp") FAMILY.helper=clean; else if(listSec==="pk"){ FAMILY.picks=clean; FAMILY.pickPlan=famPlanDraft||{}; if(!FAMILY.pickPlan||!Object.keys(FAMILY.pickPlan).length) delete FAMILY.pickPlan; } else { FAMILY.jobs=Object.assign({},FAMILY.jobs||{},{[listSec]:clean}); }
       saveFamily(); applyJobs(); famDraft=null; famSheet(false); render(); { const n=document.getElementById("famNote"); if(n) n.textContent = clean.length ? "✓ "+SEC[listSec][0].replace(/^\S+\s/,"")+" saved" : (listSec==="prizes" ? "✓ Prizes are now a surprise — kids just see the jar fill up" : "✓ Saved (empty list)"); } } break;
   }
 });
