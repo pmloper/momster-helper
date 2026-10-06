@@ -2203,7 +2203,7 @@ function jarCard(k){
                   : `<button class="prize prizeIco" data-a="pickReward" title="Surprise prize" aria-label="Surprise prize"><b>🗣️</b></button>`;
   const status = n>=g ? (weeks[k].rewardGiven? "Prize done! Keep going!":"Ask a grown-up for your prize!") : left+" more to go";
   return `<div class="jarCard" style="--k:${KIDS[k].color}"><h2>${n>=g? "You did it! 🎉" : ""}</h2>
-    <div class="left">${n>=g? status : ""}</div>${jar}${eggReady(k)?`<button class="prize eggBtn" data-a="egg"><b>🥚</b>Open your egg!</button>`:""}<button class="prize shopBtn" data-a="buddy" style="background:transparent;border:2px dashed var(--gold2)"><b>🪙</b>${coins(k)} ${coins(k)===1?"coin":"coins"} · shop</button>
+    <div class="left">${n>=g? status : ""}</div>${jar}${eggReady(k)?`<button class="prize eggBtn" data-a="egg"><b>🥚</b>Open your egg!</button>`:""}<button class="prize shopBtn" data-a="buddy" style="background:transparent;border:2px dashed var(--gold2)"><b>🪙</b>${coins(k)} ${coins(k)===1?"coin":"coins"} to spend · shop</button>
     <div class="mini"><div>⭐ ${n} of ${g}</div><div class="bar" style="max-width:none"><i style="width:${Math.min(100,n/g*100)}%"></i></div></div>${prize}</div>`;
 }
 
@@ -2268,7 +2268,7 @@ function buddySheet(k){ if(!k) return; const b=buddies[k], have=coins(k);
   const hint = bTab==="stickers"||bTab==="build" ? "" : `<div class="bsec" style="margin-top:0">1 ⭐ = 1 🪙${SLOT_KEYS[bTab]?" · Wear up to 2!":""}</div>`;
   opts = hint + opts;
   paintSheet("buddySheet", bTab+":"+bPart, `<div class="ov" data-a="closeOv"><div class="sheet" id="buddySheet" style="max-width:1000px;width:100%;--k:${KIDS[k].color}">
-    <div class="bwrap"><div class="bprev"><button class="sidepoke" data-a="poke" aria-label="Poke your sidekick">${big}</button><div class="bfoot"><div class="bcoins">🪙 ${have}</div><button class="chip go big" data-a="bDone">Done</button></div></div>
+    <div class="bwrap"><div class="bprev"><button class="sidepoke" data-a="poke" aria-label="Poke your sidekick">${big}</button><div class="bfoot"><div class="bcoins">🪙 ${have} to spend<small style="display:block;font-size:12px;font-weight:700;opacity:.75">Coins never take away your stars!</small></div><button class="chip go big" data-a="bDone">Done</button></div></div>
     <div class="bside"><div class="btabs">${tabs}</div><div class="bopts">${opts}</div></div></div></div></div>`);
 }
 let pinMode=null, pinBuf="", pendingUnstar=null, lpTimer=null, lpFired=false;
@@ -2290,7 +2290,7 @@ function panel(){
     <div class="grp-t">Kids this week</div>
     ${Object.keys(KIDS).map(k=>{ const r=rewardOf(k), n=stars(k); const auto=autoJobs(k);
       return `<div class="grp" style="--k:${KIDS[k].color}">${auto.length?`<div class="srow" style="background:color-mix(in srgb,#2ECC71 10%,transparent)"><span class="sl"><small>🌱 Habit watch: ${auto.map(a=>{ const jt=(()=>{ for(const rr of ROUTINES){ const f=(FAMILY.jobs&&FAMILY.jobs[rr.id]||[]).find(x=>x.id===a.id); if(f) return f.t; } const st=STARTER_JOBS.am.concat(STARTER_JOBS.pm||[],STARTER_JOBS.bt||[],STARTER_HELPER||[]).find(x=>x.id===a.id); return st?st.t:a.id; })(); return jt+" ("+a.n+" days in a row)"; }).join(", ")} — looking automatic! Consider retiring it from the paid list so the habit stands on its own.</small></span></div>`:""}
-        <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${KIDS[k].name}</b><small>⭐ ${n} of ${g} · 🪙 ${coins(k)} coins</small></span></div>
+        <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${KIDS[k].name}</b><small>⭐ ${n} of ${g} this week · 🪙 ${coins(k)} coins to spend (spending never removes stars)</small></span></div>
         <div class="srow"><span class="sl">Bonus stars<small>${weeks[k].bonus||0} given this week</small></span>
           <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1">+1 star</button></span></div>
         <div class="srow wrap"><span class="sl">Prize<small>${r? r.e+" "+esc(r.t) : "Not picked yet"}</small></span>
