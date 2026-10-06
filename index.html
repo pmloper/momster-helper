@@ -1968,13 +1968,16 @@ function wizSheet(){
   const titles = {kids:"💪 Who are the heroes?", jobs:"💪 Pick your family's jobs", prizes:"🎁 Prizes", reading:"🗣️ Reading & sound", times:"⏰ Getting to school", mission:"🚨 Your first surprise mission", pin:"🔒 Grown-up PIN"};
   const pct = Math.round((wiz.step) / (WIZ_STEPS.length) * 100);
   const back = wiz.step>0 ? `<button class="btn ghost sm" data-a="wizBack">‹ Back</button>` : "";
-  layer.innerHTML = `<div class="ov"><div class="sheet gsheet" id="wizSheet" style="max-width:680px">
+  const html = `<div class="ov"><div class="sheet gsheet" id="wizSheet" style="max-width:680px">
     <div class="ghead wiz-head"><div class="wiz-title"><h2>${titles[s]}</h2><span class="wiz-pct">${wiz.step+1}/${WIZ_STEPS.length}</span></div><div class="wiz-btns">${back}${WIZ_STEPS[wiz.step]!=="pin"?`<button class="btn primary" data-a="wizNext">Next ›</button>`:""}</div></div>
     <div class="wizfoot"><button class="btn ghost" data-a="tmEnter">🧪 Test Mode</button><small>Try everything without saving</small></div>
     <div style="height:8px;border-radius:4px;background:var(--line);margin:0 0 14px"><div style="height:8px;border-radius:4px;width:${pct}%;background:linear-gradient(90deg,#FFD866,#FFB800)"></div></div>
     <div id="wizBody">${wizBody(s)}</div>
     <div class="wiz-footbtns">${back||""}<button class="btn primary" data-a="wizNext" style="flex:1;min-height:48px;font-size:18px">${WIZ_STEPS[wiz.step]==="pin"?"Save PIN and start 💪":(wiz.step===WIZ_STEPS.length-1?"Start the fun 💪":"Next ›")}</button></div>
   </div></div>`;
+  const prev = layer.querySelector("#wizSheet"), stepChanged = !prev || prev.dataset.key !== "wiz_"+s;
+  paintSheet("wizSheet", "wiz_"+s, html);
+  if(stepChanged){ const w = layer.querySelector("#wizSheet"); if(w) w.scrollTop = 0; }
 }
 function wizBody(s){
   if(s==="kids") return wizKids();
