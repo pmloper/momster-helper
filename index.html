@@ -2219,7 +2219,7 @@ function jarCard(k){
   const aim = r ? ((r.e||"🎁")+" "+(r.t||"")) : "🎁 Surprise prize";
 return `<div class="jarCard" style="--k:${KIDS[k].color}"><h2>${n>=g? "You did it! 🎉" : aim}</h2>
     <div class="left">${status}</div>${jar}${eggReady(k)?`<button class="prize eggBtn" data-a="egg"><b>🥚</b>Open your egg!</button>`:""}<button class="prize shopBtn" data-a="buddy" style="background:transparent;border:2px dashed var(--gold2)"><b>🪙</b>${coins(k)} ${coins(k)===1?"coin":"coins"} to spend · shop</button>
-    <div class="mini"><div>⭐ ${n} of ${g}</div><div class="bar" style="max-width:none"><i style="width:${Math.min(100,n/g*100)}%"></i></div></div>${prize}</div>`;
+    <div class="mini"><div>⭐ ${n} of ${g}</div><div class="bar" style="max-width:none"><i style="width:${Math.min(100,n/g*100)}%"></i></div></div>${prize}${r && !weeks[k].reward2 ? `<button class="chip" data-a="addPrize2" title="Pick an optional 2nd prize">Add a 2nd prize 🎁</button>` : ""}</div>`;
 }
 
 /* ---------- Overlays ---------- */
@@ -2522,6 +2522,7 @@ document.addEventListener("click", e=>{
         <p style="margin-top:6px">This is your prize this week! 🔒<br>Ask a grown-up if you want to change it.</p>
         <button class="chip go big" data-a="closeOv">OK!</button></div></div>`;
       play(["pop", "BJ:This is your prize this week! Ask a grown-up if you want to change it."]); } break;
+    case "addPrize2": { rewardSheet(k); play(["pickprize"]); break; }
     case "rw": { const r=REWARDS.find(x=>x.id===t.dataset.r);
       document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;});
       t.classList.add("on"); t.dataset.armed="1"; play([r.snd||"BJ:"+r.t]);
@@ -2535,7 +2536,10 @@ document.addEventListener("click", e=>{
         const topEdge=Math.max(sh.getBoundingClientRect().top,0)+(hd&&getComputedStyle(hd).position==="sticky"?hd.getBoundingClientRect().height:0);
         if(tr.bottom>cr.top) sh.scrollTop+=Math.min(tr.bottom-cr.top,Math.max(tr.top-topEdge,0)); } }
       try{ sr("You picked "+r.t+". Tap Yes to confirm."); }catch(e){} } break;
-    case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ if(!weeks[k].reward){ weeks[k].reward=r.id; } else if(weeks[k].reward!==r.id){ if(weeks[k].reward2===r.id){ delete weeks[k].reward2; } else { weeks[k].reward2=r.id; } } weeks[k].rewardGiven=false; saveWeek(k); } if(weeks[k].reward && weeks[k].reward2){ close(); } else { rewardSheet(k); } render(); play(["fanfare","picked"]); } break;
+    case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ if(!weeks[k].reward){ weeks[k].reward=r.id; } else if(weeks[k].reward!==r.id){ if(weeks[k].reward2===r.id){ delete weeks[k].reward2; } else { weeks[k].reward2=r.id; } } weeks[k].rewardGiven=false; saveWeek(k); }
+      // Always close the picker after a single confirmation; never force the second prize.
+      // The jar card surfaces an "Add a 2nd prize" hint for kids who want one — but it's never pushed.
+      close(); render(); play(["fanfare","picked"]); } break;
     case "rwNo": { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); const oc=document.querySelector(".rwConfirm"); if(oc) oc.remove(); play(["pop"]); } break;
     case "gear": pinSheet(); break;
     case "rideQuick": if(raceDay()){ pendingRide=true; pinSheet(); } else { rideSheet(); } break;
