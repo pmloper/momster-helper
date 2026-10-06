@@ -2527,7 +2527,11 @@ document.addEventListener("click", e=>{
       const c=document.createElement("div"); c.className="rwConfirm"; c.style.cssText="display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0 4px;flex-wrap:wrap";
       c.innerHTML=`<span style="font-weight:800;font-size:16px">${r.e} ${esc(r.t)}?</span><button class="btn primary" data-a="rwYes" data-r="${r.id}" style="min-height:48px">Yes! Pick this one</button><button class="btn ghost" data-a="rwNo" style="min-height:48px">Keep looking</button>`;
       const box=document.querySelector(".rewards"); if(box) box.after(c); else document.querySelector(".sheet").appendChild(c);
-      c.scrollIntoView({block:"nearest"});
+      // Keep the confirm bar pinned to the sheet's bottom edge so picking a tile never has to scroll it away.
+      c.style.cssText+=";position:sticky;bottom:-18px;z-index:2;background:var(--card);padding:6px 0";
+      { const sh=c.closest(".sheet"), hd=sh&&sh.querySelector(".ghead"); if(sh){ const cr=c.getBoundingClientRect(), tr=t.getBoundingClientRect();
+        const topEdge=Math.max(sh.getBoundingClientRect().top,0)+(hd&&getComputedStyle(hd).position==="sticky"?hd.getBoundingClientRect().height:0);
+        if(tr.bottom>cr.top) sh.scrollTop+=Math.min(tr.bottom-cr.top,Math.max(tr.top-topEdge,0)); } }
       try{ sr("You picked "+r.t+". Tap Yes to confirm."); }catch(e){} } break;
     case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ if(!weeks[k].reward){ weeks[k].reward=r.id; } else if(weeks[k].reward!==r.id){ if(weeks[k].reward2===r.id){ delete weeks[k].reward2; } else { weeks[k].reward2=r.id; } } weeks[k].rewardGiven=false; saveWeek(k); } if(weeks[k].reward && weeks[k].reward2){ close(); } else { rewardSheet(k); } render(); play(["fanfare","picked"]); } break;
     case "rwNo": { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); const oc=document.querySelector(".rwConfirm"); if(oc) oc.remove(); play(["pop"]); } break;
