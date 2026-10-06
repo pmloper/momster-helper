@@ -2031,7 +2031,7 @@ function wizReading(){
   return `<p class="hint" style="margin-top:0">Can your kids read yet? Either way, the app reads every job out loud.</p>
     <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", "(Words on screen + voice)","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
   <div class="grp">
-    ${seg(wiz.voice===false, "nonreaders", "👂 Not yet", "Bigger buttons<br>Everything read out loud", "")}
+    ${seg(wiz.voice===false, "nonreaders", "👂", "Not yet (Everything read out loud)", "")}
   </div>
   <div class="grp-t">Sound</div>
   <div class="grp">${[[1,"🔊 Loud","Talking + sound effects"],[0.4,"🔉 Quiet","Sound effects only"],[0,"🔇 Off","No sound at all"]].map(([v,ic,t])=>`<button class="srow link" data-a="wizVol" data-v="${v}" style="width:100%">
