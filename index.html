@@ -203,8 +203,8 @@ button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
 .sheet{background:var(--card);border-radius:30px;padding:18px;max-width:900px;width:100%;max-height:96%;overflow:auto;display:flex;flex-direction:column}
 .sheet h2{margin:0 0 2px;font-size:clamp(19px,3.4vh,30px);line-height:1.1}
 .sheet p{margin:0 0 10px;color:var(--soft);font-size:18px}
-.rewards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-@media (orientation:portrait), (max-width:700px){.rewards{grid-template-columns:repeat(3,1fr)}}
+.rewards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (orientation:portrait), (max-width:700px){.rewards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .rw{border:3px solid color-mix(in srgb,var(--ink) 18%,transparent);border-radius:22px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;
   font-size:clamp(14px,2.3vh,19px);font-weight:700;line-height:1.05;text-align:center}
 .rw b{font-size:clamp(34px,7vh,56px);line-height:1.1}
@@ -2527,6 +2527,7 @@ document.addEventListener("click", e=>{
       const c=document.createElement("div"); c.className="rwConfirm"; c.style.cssText="display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0 4px;flex-wrap:wrap";
       c.innerHTML=`<span style="font-weight:800;font-size:16px">${r.e} ${esc(r.t)}?</span><button class="btn primary" data-a="rwYes" data-r="${r.id}" style="min-height:48px">Yes! Pick this one</button><button class="btn ghost" data-a="rwNo" style="min-height:48px">Keep looking</button>`;
       const box=document.querySelector(".rewards"); if(box) box.after(c); else document.querySelector(".sheet").appendChild(c);
+      c.scrollIntoView({block:"nearest"});
       try{ sr("You picked "+r.t+". Tap Yes to confirm."); }catch(e){} } break;
     case "rwYes": { const r=REWARDS.find(x=>x.id===t.dataset.r); if(r){ if(!weeks[k].reward){ weeks[k].reward=r.id; } else if(weeks[k].reward!==r.id){ if(weeks[k].reward2===r.id){ delete weeks[k].reward2; } else { weeks[k].reward2=r.id; } } weeks[k].rewardGiven=false; saveWeek(k); } if(weeks[k].reward && weeks[k].reward2){ close(); } else { rewardSheet(k); } render(); play(["fanfare","picked"]); } break;
     case "rwNo": { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); const oc=document.querySelector(".rwConfirm"); if(oc) oc.remove(); play(["pop"]); } break;
