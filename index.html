@@ -2224,14 +2224,14 @@ function readDraft(){ document.querySelectorAll(".in").forEach(el=>{ const j=dra
 function toast(msg){ const c=document.createElement("div"); c.className="cheer"; c.style.fontSize="22px"; c.textContent=msg; document.body.appendChild(c); setTimeout(()=>c.remove(),3500); }
 function rewardSheet(k){
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
-    <h2>${av(k)} Pick your prize!</h2><p>Tap one to hear it. Tap it again to pick it.</p>
+    <div class="ghead"><h2>${av(k)} Pick your prize!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap one to hear it. Tap it again to pick it.</p>
     <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div></div></div>`;
 }
 function voiceSheet(k){
   const cur=curVoice(k), tts=ttsPresets();
   const btn=([id,e,n])=>`<button class="rw ${cur===id?"on":""}" data-a="vc" data-v="${id}"><b>${e}</b>${esc(n)}</button>`;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
-    <h2>${av(k)} Pick your helper voice!</h2><p>Tap one to hear it. Tap it again to pick it.</p>
+    <div class="ghead"><h2>${av(k)} Pick your helper voice!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap one to hear it. Tap it again to pick it.</p>
     ${tts.length? `<p>Fun voices</p><div class="rewards">${tts.filter(p=>!p[0].startsWith("tts:v:")).map(btn).join("")}</div>
       ${tts.some(p=>p[0].startsWith("tts:v:"))? `<p style="margin-top:12px">More real voices</p><div class="rewards">${tts.filter(p=>p[0].startsWith("tts:v:")).map(btn).join("")}</div>`:""}
       <p style="margin-top:12px">Robot characters</p>` : ""}
