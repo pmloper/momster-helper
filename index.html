@@ -791,9 +791,9 @@ body:has(#layer > .sheet) .botnav{display:none}
 .top .spk svg,.top .spk img{width:18px!important;height:18px!important}
 .top .hdTools{grid-area:tools;justify-self:end;display:flex;align-items:center;gap:8px}
 .top .siren{background:#E5484D;border:1.5px solid #FFB3B6;animation:alarmpulse 1.4s ease-in-out infinite}
-.top .who{grid-area:who;justify-self:center;max-width:100%;flex:none;font-size:18px;gap:6px;color:#fff;overflow:hidden}
-.top .whoAv{height:28px;width:28px}
-.top .who .wn b{max-width:34vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:18px;color:#fff}
+.top .who{grid-column:1/-1;grid-row:1;justify-self:center;max-width:calc(100% - 150px);flex:none;font-size:20px;gap:6px;color:#fff;overflow:hidden}
+.top .whoAv{height:36px;width:36px}
+.top .who .wn b{max-width:38vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:20px;color:var(--k);text-shadow:0 1px 2px #12152a}
 .top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:13px;line-height:1;min-width:0;white-space:nowrap}
 .top .hdBar{grid-area:bar;display:block;width:100%;height:14px;border-radius:7px;background:rgba(255,255,255,.22);overflow:hidden}
 .top .hdBar i{display:block;height:100%;background:var(--gold);border-radius:7px}

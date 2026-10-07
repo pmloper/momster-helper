@@ -223,6 +223,9 @@ async function run(){
       // k2 already finished today's surprise and special: no siren for k2, even though k1 still has both.
       let s = await state();
       if(s.siren) fail(W,H,"kid_switch","siren shown for k2 who has no active mission");
+      const k2NameColor = await ev(`getComputedStyle(document.querySelector('.top .who .wn b')).color`);
+      const k2ChosenColor = await ev(`(() => { const e=document.createElement('span'); e.style.color=KIDS.k2.color; document.body.append(e); const c=getComputedStyle(e).color; e.remove(); return c; })()`);
+      if(k2NameColor !== k2ChosenColor) fail(W,H,"kid_switch","k2 name did not adopt its chosen color");
       p = await pill();
       if(!p || !/Pick a prize/i.test(p.txt)) fail(W,H,"pill","k2 without a prize should say Pick a prize, got "+(p&&p.txt));
       // Pick a prize through the real picker; pill updates without reload.
@@ -245,7 +248,7 @@ async function run(){
       // Text really sticks out of its box (ignores invisible ::after hit areas, which inflate scrollWidth).
       const textOut = e => { if(!e) return true; const g=document.createRange(); g.selectNodeContents(e); const t=g.getBoundingClientRect(), r=e.getBoundingClientRect(); return t.left < r.left - 0.5 || t.right > r.right + 0.5; };
       const hit = e => { if(!e) return false; const r=e.getBoundingClientRect(), el=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return !!el && (el===e || e.contains(el)); };
-      return { top:R(top), back:R(q(".top .back")), who:R(q(".top .who")), name:R(q(".top .who .wn b")), siren:R(q(".top .siren")), spk:R(q(".top .spk")),
+      return { top:R(top), back:R(q(".top .back")), who:R(q(".top .who")), avatar:R(q(".top .whoAv")), name:R(q(".top .who .wn b")), nameFont:parseFloat(getComputedStyle(q(".top .who .wn b")).fontSize), nameColor:getComputedStyle(q(".top .who .wn b")).color, chosenColor:KIDS[view.kid].color, siren:R(q(".top .siren")), spk:R(q(".top .spk")),
         pill:R(q(".top .prizePill")), stars:R(q(".top .hdStars")), coin:R(q(".top .hdCoin")),
         nameClipped: (()=>{ const b=q(".top .who .wn b"); return !!b && (b.scrollWidth>b.clientWidth+1 || b.scrollHeight>b.clientHeight+1); })(),
         coinClipped: textOut(q(".top .hdCoin")), pillOverflow: false,
@@ -265,7 +268,11 @@ async function run(){
       const g = await ev(GEO); const name = label+" ";
       if(!g.top){ fail(W,H,name+"geometry","no .top header"); continue; }
       const integrated = await ev(`(() => { const q=s=>document.querySelector(s), r=e=>e&&e.getBoundingClientRect(), top=r(q('.top')), bar=r(q('.top .hdBar')), jar=q('.layout>.jarCard'); return { bar:bar&&{w:bar.width,b:bar.bottom}, top:top&&{w:top.width,b:top.bottom}, jarVisible:!!jar&&getComputedStyle(jar).display!=='none' }; })()`);
-      if(g.top.h < 126 || g.top.h > 135) fail(W,H,name+"geometry","header should be about 50% taller than revised 87px Preview, got "+g.top.h);
+      if(Math.abs(g.top.h - 130) > .5) fail(W,H,name+"geometry","header height changed from the approved 130px: "+g.top.h);
+      if(!g.avatar || g.avatar.w < 34 || g.avatar.h < 34) fail(W,H,name+"identity","avatar should grow from 28px without growing the header: "+JSON.stringify(g.avatar));
+      if(g.nameFont < 20) fail(W,H,name+"identity","name should grow from 18px: "+g.nameFont);
+      const expectedColor = await ev(`(() => { const e=document.createElement('span'); e.style.color=KIDS[view.kid].color; document.body.append(e); const c=getComputedStyle(e).color; e.remove(); return c; })()`);
+      if(g.nameColor !== expectedColor) fail(W,H,name+"identity","name color "+g.nameColor+" differs from selected kid color "+expectedColor);
       if(g.pill && g.pill.w > 155) fail(W,H,name+"geometry","weekly-prize pill too wide: "+g.pill.w);
       if(g.pill && await ev(`/\\d+\\/\\d+|to go/.test(document.querySelector('.top .prizePill').textContent)`)) fail(W,H,name+"geometry","prize pill repeats progress instead of showing only the prize");
       if(integrated.jarVisible) fail(W,H,name+"geometry","old separate progress/jar strip still shown below header");
