@@ -125,10 +125,15 @@ async function load(cdp, base) {
       await cdp.shot(`boss-strip-${tag}.png`, { x: 0, y: Math.max(0, L.boss.t - 6), width: vp.w, height: L.boss.h + 12 });
       await cdp.shot(`header-${tag}.png`, { x: 0, y: 0, width: vp.w, height: Math.min(120, L.boss.t) });
       await cdp.ev("wizStart(); true"); await SLEEP(500);
-      const wiz = await cdp.ev(`(()=>{ const m=[...document.querySelectorAll("svg[data-momster]")].filter(e=>e.getBoundingClientRect().width>60); const r=m[0]&&m[0].getBoundingClientRect(); return {n:m.length, w:r&&r.width, inView:!!r&&r.right<=innerWidth&&r.left>=0}; })()`);
-      check(wiz && wiz.n === 1 && Math.round(wiz.w) === 72 && wiz.inView, `[${tag}] wizard welcome card renders one Momster at 72px ${JSON.stringify(wiz)}`);
+      const wiz = await cdp.ev(`(()=>{ const m=[...document.querySelectorAll("svg[data-momster]")].filter(e=>e.getBoundingClientRect().width>60); const r=m[0]&&m[0].getBoundingClientRect(); const kid=document.querySelector('.fpal svg'); const kr=kid&&kid.getBoundingClientRect(); return {n:m.length, w:r&&r.width, kidW:kr&&kr.width, inView:!!r&&r.right<=innerWidth&&r.left>=0}; })()`);
+      check(wiz && wiz.n === 1 && wiz.w >= wiz.kidW*1.2 && wiz.inView, `[${tag}] wizard Momster conspicuously larger than kid (Momster ${wiz&&wiz.w}px vs kid ${wiz&&wiz.kidW}px) ${JSON.stringify(wiz)}`);
       await cdp.shot(`wizard-${tag}.png`);
     }
+    await cdp.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
+    await load(cdp, base);
+    await cdp.ev("wizStart(); true"); await SLEEP(500);
+    const desktop = await cdp.ev(`(()=>{ const m=document.querySelector('#wizSheet svg[data-momster]') || [...document.querySelectorAll('svg[data-momster]')].find(e=>e.getBoundingClientRect().width>70); const kid=document.querySelector('.fpal svg'); const mr=m&&m.getBoundingClientRect(),kr=kid&&kid.getBoundingClientRect(); return {mom:mr&&mr.width,kid:kr&&kr.width,overflow:document.documentElement.scrollWidth>innerWidth}; })()`);
+    check(desktop && desktop.mom>=desktop.kid*1.2 && !desktop.overflow, `desktop wizard Momster conspicuously larger than kid without overflow ${JSON.stringify(desktop)}`);
   } catch (e) { fails++; log("EXCEPTION " + (e && e.stack || e)); }
   finally { cdp.close(); server.close(); }
   log(`artifacts: ${OUT}`);

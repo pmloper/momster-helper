@@ -2173,7 +2173,7 @@ function wizBody(s){
 }
 function wizKids(){
   const momster = `<div class="grp" style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:12px;background:color-mix(in srgb,var(--gold) 10%,var(--card));border:2px solid var(--gold2)">
-    <span style="flex:none">${momsterSvg({attrs:'style="width:72px;height:72px;display:block"'})}</span>
+    <span style="flex:none">${momsterSvg({attrs:'style="width:clamp(72px,8vw,96px);height:clamp(72px,8vw,96px);display:block"'})}</span>
     <span style="font-size:14.5px;line-height:1.35"><b>Hi! I'm the Momster! 💪</b><br><small>Moms and dads: set up your helpers below. Then we'll team up to beat the mess monsters together!</small></span></div>`;
   const rows = wiz.kids.map((c,i)=>`<div class="grp" style="--k:${c.color};margin-bottom:10px"><div class="srow stack">
     <div class="tpgrid"><span class="fpal">${buddySvg(Object.assign({},DEFAULT_LOOK,{color:c.color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}),{},{noBg:true})}</span>
