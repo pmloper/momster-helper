@@ -433,6 +433,29 @@ async function run(){
     })){ /* ok */ }
   }
 
+  // Tablet mission tiles must be centered within the wider popup sheet, both on
+  // initial entry and when reopened via the kid-header siren.
+  for(const [W,H] of [[768,1024],[1024,768]]){
+    await send("Emulation.setDeviceMetricsOverride", { width:W, height:H, deviceScaleFactor:2, mobile:true });
+    await scenario("tablet_mission_center_"+W+"x"+H, async () => {
+      await ev(`settings.event = { id:"tablet", e:"🎁", title:"TABLET SURPRISE!", t:"Find the hidden toy", pts:3, day:ymd(new Date()) }; saveSettings(); true`);
+      await ev(`document.querySelector('[data-a="kid"]').click()`); await sleep(900);
+      async function checkCentered(id){
+        const geometry = await ev(`(() => { const sheet=document.querySelector('#${id}'), cards=[...sheet.querySelectorAll('.mCard')];
+          if(!sheet || cards.length!==2) return {error:'expected surprise and special mission cards'};
+          const s=sheet.getBoundingClientRect(); return {sheet:[s.left,s.width], cards:cards.map(c=>{const r=c.getBoundingClientRect();return [r.left,r.width]})}; })()`);
+        if(geometry.error || geometry.cards.some(([left,width]) => Math.abs(left+width/2-geometry.sheet[0]-geometry.sheet[1]/2)>2)){
+          fails++; failures.push(W+"x"+H+"_"+id+"_not_centered");
+          console.log("FAIL tablet mission card centering", W,H,id,JSON.stringify(geometry));
+        }
+      }
+      await checkCentered("missionPop");
+      await ev(`document.querySelector('#missionPop [data-a="missionDismiss"]').click()`); await sleep(350);
+      await ev(`document.querySelector('[data-a="missionHub"]').click()`); await sleep(350);
+      await checkCentered("missionHub");
+    });
+  }
+
   console.log("");
   if(fails){
     console.log("FAILED "+fails+" checks:");
