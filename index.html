@@ -697,6 +697,7 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .bpal:nth-child(2){animation-delay:.3s}.bpal:nth-child(3){animation-delay:.6s}.bpal:nth-child(4){animation-delay:.9s}
 @keyframes palbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .bvs{font-size:26px;margin-left:14px}
+.bmom{flex:none;width:56px;height:56px;margin-right:-4px;pointer-events:none}
 .boss .minfo{gap:3px}
 .boss .minfo small{font-size:12px;color:var(--soft);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
 .boss .minfo b{font-family:var(--disp);font-weight:600;font-size:clamp(17px,2.8vh,22px);line-height:1.1}
@@ -747,7 +748,7 @@ body:has(#layer > .sheet) .botnav{display:none}
 @keyframes bt-zap{0%{transform:scale(.2);opacity:0}45%{transform:scale(1.4);opacity:1}100%{transform:scale(1)}}
 @keyframes bt-hit{0%,100%{transform:translateX(0) rotate(0)}30%{transform:translateX(10px) rotate(14deg)}60%{transform:translateX(-4px) rotate(-6deg)}}
 @keyframes bt-dmg{0%{opacity:0;transform:translate(-50%,-8px)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,10px)}}
-@media (max-width:600px){.hello.bar-card h1{font-size:clamp(20px,5.4vw,26px);white-space:normal;min-width:0;line-height:1.15;overflow:visible}.boss{gap:8px;padding:8px 10px}.bpal svg{width:36px!important;height:36px!important}.bvs{font-size:20px;margin-left:12px}.boss .minfo small{font-size:10px}}
+@media (max-width:600px){.hello.bar-card h1{font-size:clamp(20px,5.4vw,26px);white-space:normal;min-width:0;line-height:1.15;overflow:visible}.boss{gap:8px;padding:8px 10px}.bmom{width:48px;height:48px;margin-right:-14px}.bpal svg{width:36px!important;height:36px!important}.bvs{font-size:20px;margin-left:6px}.boss .minfo small{font-size:10px}}
 .mood{font-size:13px;font-style:italic;color:var(--soft);line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .tile .wk{position:absolute;left:6px;top:6px;background:#1E2A47;color:#fff;border:2px solid #FFD84D;border-radius:10px;padding:1px 8px;font-size:clamp(12px,2vh,16px);font-weight:900;line-height:1.4;text-shadow:none;box-shadow:0 2px 5px rgba(0,0,0,.3)}
 .tile.evt{border-color:#E5484D;box-shadow:0 5px 0 #E5484D,var(--shadow)}
@@ -1355,6 +1356,43 @@ function buddySvg(look, wear, opts){
     ${em("hold",sp.hands[1],sp.hands[2],46)}${em("hold2",sp.hands[0],sp.hands[2],46)}</g>${em("pet",30,172,38)}${em("pet2",172,176,38)}
   </svg>`;
 }
+// Momster portrait (the lavender lady monster with the orange cape, gold crown and yellow-glove fist).
+// One shared pure-SVG drawing for every Momster call site; flat fills only (no ids) so many copies can sit on one page.
+function momsterSvg(opts){ opts=opts||{};
+  const O='stroke="#3A1760" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"', T='stroke="#3A1760" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"';
+  const SK="#C2A6F2", HAIR="#7A38CC", HAIRD="#5A27A2", MK="#8C62D6", OR="#FF7A1A", ORD="#E2560C", GD="#FFC93C", GL="#FFE03D";
+  const eye=(cx,cy)=>`<ellipse cx="${cx}" cy="${cy}" rx="7.5" ry="7" fill="#fff" ${T}/><circle cx="${cx+2}" cy="${cy}" r="4.6" fill="#2B1450"/><circle cx="${cx+3.6}" cy="${cy-1.8}" r="1.5" fill="#fff"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="${opts.label||"Momster"}" data-momster="1" ${opts.attrs||'style="width:72px;height:72px;display:block"'}>
+<path d="M34 92C20 94 8 100 2 112C16 112 22 118 30 120H90C98 116 108 112 118 108C112 98 100 92 86 90Z" fill="${OR}" ${O}/>
+<path d="M14 112C22 108 28 104 32 98M106 110C98 106 92 102 88 96" fill="none" stroke="${ORD}" stroke-width="3" stroke-linecap="round"/>
+<path d="M84 104C92 92 96 72 97 54" fill="none" stroke="#3A1760" stroke-width="18.5" stroke-linecap="round"/>
+<path d="M84 104C92 92 96 72 97 54" fill="none" stroke="${SK}" stroke-width="12.5" stroke-linecap="round"/>
+<ellipse cx="94" cy="76" rx="3.2" ry="4.4" fill="${MK}" transform="rotate(12 94 76)"/>
+<path d="M88 52L106 52L108 40L87 40Z" fill="#F5C400" ${O}/>
+<rect x="86" y="12" width="23" height="29" rx="9" fill="${GL}" ${O}/>
+<path d="M92 14V24M97.5 13V24M103 14V24" ${T} fill="none"/><path d="M87 30C83 30 82 36 88 37" fill="${GL}" ${T}/>
+<ellipse cx="54" cy="122" rx="35" ry="26" fill="${SK}" ${O}/><ellipse cx="54" cy="128" rx="21" ry="17" fill="#D2BCF6"/>
+<ellipse cx="30" cy="114" rx="5" ry="3.4" fill="${MK}"/><ellipse cx="78" cy="116" rx="4" ry="3" fill="${MK}"/>
+<path d="M22 96Q54 116 88 94L92 101Q54 124 18 104Z" fill="${OR}" ${O}/>
+<path d="M56 98L59 104.5L66 105L60.8 109.5L62.5 116.5L56 112.8L49.5 116.5L51.2 109.5L46 105L53 104.5Z" fill="${GD}" ${O} transform="translate(0 -2)"/>
+<ellipse cx="46" cy="52" rx="38" ry="31" fill="${HAIRD}" ${O}/>
+<circle cx="44" cy="22" r="17" fill="${HAIR}" ${O}/>
+<path d="M30 12Q20 2 14 10Q12 16 18 16M28 30Q18 30 14 38M72 8Q80 6 82 14" fill="none" stroke="${HAIR}" stroke-width="3.2" stroke-linecap="round"/>
+<path d="M36 18Q44 10 52 18M40 26Q46 20 52 26" fill="none" stroke="${HAIRD}" stroke-width="2.2" stroke-linecap="round"/>
+<ellipse cx="54" cy="68" rx="31" ry="26" fill="${SK}" ${O}/>
+<ellipse cx="28" cy="72" rx="2.6" ry="2" fill="${MK}"/><ellipse cx="80" cy="60" rx="2.4" ry="1.8" fill="${MK}"/>
+<path d="M22 66C18 44 36 33 56 35C76 37 90 48 86 66C82 55 76 49 70 53C66 45 56 47 52 53C46 47 36 51 33 60C31 63 26 67 22 66Z" fill="${HAIR}" ${O}/>
+<path d="M34 46Q42 40 50 42M64 42Q74 42 80 50" fill="none" stroke="${HAIRD}" stroke-width="2.4" stroke-linecap="round"/>
+<g transform="rotate(-22 34 40)"><path d="M22 42L24 26L30 33L34 22L38 33L44 26L46 42Z" fill="${GD}" ${O}/><circle cx="34" cy="38" r="2" fill="#E5484D"/></g>
+${eye(44,69)}${eye(69,67)}
+<path d="M35.500 63Q44 58 52 63M61 61Q69 56 77 61L80 58" fill="none" stroke="#3A1760" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M36 56Q44 51 52 55M62 54Q70 49 77 53" fill="none" stroke="${HAIRD}" stroke-width="3" stroke-linecap="round"/>
+<ellipse cx="35" cy="80" rx="6.500" ry="4.200" fill="#FF8FB0" opacity=".85"/><ellipse cx="77" cy="78" rx="6.500" ry="4.200" fill="#FF8FB0" opacity=".85"/>
+<path d="M45 81Q58 86 72 79Q69 95 58 95Q48 94 45 81Z" fill="#8E1740" ${O}/>
+<path d="M52 92Q58 87 65 92Q61 95 58 95Q54 95 52 92Z" fill="#FF7FA0"/>
+<path d="M49 82.500L55.500 83.500L52.500 90Z" fill="#fff" ${T}/>
+<path d="M57 75Q59 78 62 76" fill="none" stroke="#3A1760" stroke-width="2" stroke-linecap="round"/>
+</svg>`; }
 
 /* ---------- Dates ---------- */
 const pad = n => String(n).padStart(2,"0");
@@ -1630,7 +1668,7 @@ const monsterLeft = () => Math.max(0, monsterHP() - teamDamage());
 const palPic = (k,size) => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:`style="height:${size}px;width:${size}px"`}) : `<span style="font-size:${Math.round(size*.8)}px;line-height:1">${avHtml(rawAv(k))}</span>`;
 function monsterStrip(){ const m=monster(), left=monsterLeft(), pct=left/monsterHP()*100;
   return `<div class="boss ${left?"":"dead"}">
-    <span class="bpals">${Object.keys(KIDS).map(k=>`<button class="bpal" data-a="toot" aria-label="Toot attack">${palPic(k,46)}</button>`).join("")}<span class="bvs">${left?"⚔️":"🏆"}</span></span>
+    <span class="bpals"><span class="bmom">${momsterSvg({attrs:'style="width:100%;height:100%;display:block"',label:"Momster, your ally"})}</span>${Object.keys(KIDS).map(k=>`<button class="bpal" data-a="toot" aria-label="Toot attack">${palPic(k,46)}</button>`).join("")}<span class="bvs">${left?"⚔️":"🏆"}</span></span>
     <span class="minfo"><small>${left?"This week's villain":"Busted! New villain Monday"}</small><b>${esc(m[1])}</b><span class="mbar"><i style="width:${pct}%"></i></span><span class="mood">💬 ${esc(moodLine())}</span></span>
     <button class="bface ${left?"":"ko"}" data-a="bossTap" aria-label="Poke the villain">${left?m[2]:"😵"}<i>${m[3]}</i><em>${left? "❤️ "+left : "KO!"}</em></button></div>`; }
 const TAUNTS = {
@@ -2135,7 +2173,7 @@ function wizBody(s){
 }
 function wizKids(){
   const momster = `<div class="grp" style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:12px;background:color-mix(in srgb,var(--gold) 10%,var(--card));border:2px solid var(--gold2)">
-    <span style="flex:none">${buddySvg({body:"blob",shape:"round",color:"#F5A623",ears:"none",eyes:"sparkle",mouth:"smile"},{hat:"h_crown"},{noBg:true,attrs:'style="width:72px;height:72px;display:block"'})}</span>
+    <span style="flex:none">${momsterSvg({attrs:'style="width:clamp(72px,8vw,96px);height:clamp(72px,8vw,96px);display:block"'})}</span>
     <span style="font-size:14.5px;line-height:1.35"><b>Hi! I'm the Momster! 💪</b><br><small>Moms and dads: set up your helpers below. Then we'll team up to beat the mess monsters together!</small></span></div>`;
   const rows = wiz.kids.map((c,i)=>`<div class="grp" style="--k:${c.color};margin-bottom:10px"><div class="srow stack">
     <div class="tpgrid"><span class="fpal">${buddySvg(Object.assign({},DEFAULT_LOOK,{color:c.color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}),{},{noBg:true})}</span>
@@ -2290,7 +2328,7 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${buddySvg({body:"blob",shape:"round",color:"#F5A623",ears:"none",eyes:"sparkle",mouth:"smile"},{hat:"h_crown"},{noBg:true,attrs:'style="height:1em;width:1em;vertical-align:-0.12em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="ridechip" data-a="rideQuick" aria-label="Getting to school today">${raceDay() ? RIDES_ICONS[rideToday()]+" "+tm12(raceEnd()) : RIDES_ICONS[rideToday()]}</button></div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="ridechip" data-a="rideQuick" aria-label="Getting to school today">${raceDay() ? RIDES_ICONS[rideToday()]+" "+tm12(raceEnd()) : RIDES_ICONS[rideToday()]}</button></div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
