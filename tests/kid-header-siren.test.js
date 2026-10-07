@@ -239,6 +239,16 @@ async function run(){
       await ev(`document.querySelector('[data-a="home"]').click()`); await sleep(300); await enterKid("k1");
       p = await pill(); if(!p || p.pt !== jar.t) fail(W,H,"pill","pill kept k2's prize after switching back to k1 ('"+(p&&p.pt)+"')"); }
 
+    // The expired-clock warning is removed, but successful morning/clock banners remain.
+    const raceCases = await ev(`(() => {
+      const make = (won, done) => {
+        const race = new Function('raceDay','raceOpen','doneOn','view','weeks','ymd','raceEnd','tm12','atTime','RACE_START','return ('+raceBar.toString()+')');
+        return race(()=>true,()=>false,()=>done,{routine:'am'},{k1:{race:won?{TODAY:true}:{}}},()=> 'TODAY',()=> '07:40',()=> '7:40 am',()=>new Date(),'07:00')('k1');
+      };
+      return {expired:make(false,false), morningDone:make(false,true), beatClock:make(true,false)};
+    })()`);
+    if(!raceCases || raceCases.expired !== '') fail(W,H,'race_banner','expired unfinished morning still shows a banner: '+JSON.stringify(raceCases));
+    if(!raceCases || !raceCases.morningDone.includes('Morning done!') || !raceCases.beatClock.includes('You beat the clock!')) fail(W,H,'race_banner','successful morning/clock wins must remain: '+JSON.stringify(raceCases));
     // ---- geometry ------------------------------------------------------------------------------
     const GEO = `(() => {
       const R = e => { if(!e) return null; const r=e.getBoundingClientRect(); return {l:r.left,r:r.right,t:r.top,b:r.bottom,w:r.width,h:r.height,cx:(r.left+r.right)/2,cy:(r.top+r.bottom)/2}; };
@@ -271,7 +281,7 @@ async function run(){
       if(Math.abs(g.top.h - 130) > .5) fail(W,H,name+"geometry","header height changed from the approved 130px: "+g.top.h);
       const oldAvatarSize = Math.max(44, Math.min(54, .07 * H)); // released header's clamp(44px,7vh,54px)
       if(!g.avatar || Math.abs(g.avatar.w-oldAvatarSize) > .5 || Math.abs(g.avatar.h-oldAvatarSize) > .5) fail(W,H,name+"identity","avatar must match released header's "+oldAvatarSize+"px size: "+JSON.stringify(g.avatar));
-      if(g.nameFont < 20) fail(W,H,name+"identity","name should grow from 18px: "+g.nameFont);
+      if(g.nameFont < (label==="long_prize_long_name" ? 20 : 22)) fail(W,H,name+"identity","name should be enlarged while long names fit: "+g.nameFont);
       const expectedColor = await ev(`(() => { const e=document.createElement('span'); e.style.color=KIDS[view.kid].color; document.body.append(e); const c=getComputedStyle(e).color; e.remove(); return c; })()`);
       if(g.nameColor !== expectedColor) fail(W,H,name+"identity","name color "+g.nameColor+" differs from selected kid color "+expectedColor);
       if(g.pill && g.pill.w > 155) fail(W,H,name+"geometry","weekly-prize pill too wide: "+g.pill.w);

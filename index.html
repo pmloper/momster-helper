@@ -793,7 +793,8 @@ body:has(#layer > .sheet) .botnav{display:none}
 .top .siren{background:#E5484D;border:1.5px solid #FFB3B6;animation:alarmpulse 1.4s ease-in-out infinite}
 .top .who{grid-column:1/-1;grid-row:1;justify-self:center;max-width:calc(100% - 150px);flex:none;font-size:20px;gap:6px;color:#fff;overflow:hidden}
 .top .whoAv{height:clamp(44px,7vh,54px);width:clamp(44px,7vh,54px)}
-.top .who .wn b{max-width:38vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:20px;letter-spacing:-.5px;color:var(--k);text-shadow:0 1px 2px #12152a}
+.top .who .wn b{max-width:38vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:22px;letter-spacing:-.5px;color:var(--k);text-shadow:0 1px 2px #12152a}
+.top .who.longName .wn b{font-size:20px}
 .top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:13px;line-height:1;min-width:0;white-space:nowrap}
 .top .hdBar{grid-area:bar;display:block;width:100%;height:14px;border-radius:7px;background:rgba(255,255,255,.22);overflow:hidden}
 .top .hdBar i{display:block;height:100%;background:var(--gold);border-radius:7px}
@@ -2465,7 +2466,7 @@ function kidView(k){
     const tw=twistFor(k,r,new Date());
     body = `<div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile ${isDone(k,j.id)?"done":""} ${(isWeak(j.id)&&!isDone(k,j.id))||pts(j.id)>1?"hasB":""} ${tw&&tw.job===j.id&&!isDone(k,j.id)?"hasTw":""} ${pts(j.id)>1?"hasX2":""}" data-a="job" data-j="${j.id}">${tw&&tw.job===j.id&&!isDone(k,j.id)?`<span class="twist">🤪 ${TWISTS[tw.n-1]}${isWeak(j.id)?" · 💥x2":""}</span>`:""}${(()=>{ const b=isWeak(j.id)&&!isDone(k,j.id)&&!(tw&&tw.job===j.id)?'<span class="wk">💥x2</span>':""; return b?`<span class="badges">${b}</span>`:""; })()}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div><span class="stars">${"⭐".repeat(Math.min(3,pts(j.id)))}</span></button>`).join("")}</div>`; }
   return `<div class="top bar-card" style="--k:${KIDS[k].color}"><button class="back" data-a="home" aria-label="Back">⬅️</button>
-    <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
+    <button class="who ${KIDS[k].name.length>10?"longName":""}" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
     <span class="hdTools">${sirenOn(k)?'<button class="siren" data-a="missionHub" aria-label="Missions waiting" title="Missions waiting">🚨</button>':""}<button class="spk" data-a="sound" aria-label="Sound & voice">${volIcon()}</button></span>
     ${headerStatus(k)}</div>
   <div class="layout kidLayout" style="--k:${KIDS[k].color};--rc:${view.routine==="bn"?"#12B886":(r.rc||"#FFA41B")}"><div class="main">${eventBar(k)}<div class="tabs">${tabs}${bonusTab}</div>${eggReady(k)?'<button class="prize eggBtn" data-a="egg"><b>🥚</b>Open your egg!</button>':""}${raceBar(k)}${pickStrip(k)}${body}</div></div>`;
@@ -2511,7 +2512,7 @@ function raceBar(k){
   const day=ymd(new Date());
   const leaveT = tm12(raceEnd());
   if((weeks[k].race||{})[day]) return `<div class="race won">🏆 You beat the clock! +1 ⭐ <b>Leave by ${leaveT}</b></div>`;
-  if(!raceOpen()) return doneOn(k,new Date(),"am") ? `<div class="race won">✅ Morning done! <b>Leave by ${leaveT}</b></div>` : `<div class="race">⏰ Clock's done. Finish anyway for your stars! <b>Leave by ${leaveT}</b></div>`;
+  if(!raceOpen()) return doneOn(k,new Date(),"am") ? `<div class="race won">✅ Morning done! <b>Leave by ${leaveT}</b></div>` : "";
   const st=atTime(RACE_START), en=atTime(raceEnd()), now=new Date(), pct=Math.max(0,Math.min(100,(en-now)/(en-st)*100)), mins=Math.ceil((en-now)/60000);
   return `<div class="race">⏰<div class="track"><i style="width:${pct}%"></i></div>${mins} min</div>`;
 }
