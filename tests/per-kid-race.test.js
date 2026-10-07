@@ -90,7 +90,7 @@ async function run(){
     const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin||DEFAULT_PIN")) || "";
     if(!/kidEnds\s*:/.test(snap) || !/raceOff\s*:/.test(snap)) fail(0,0,"firebase_sync","settings snapshot whitelist drops kidEnds/raceOff");
     const m = sw.match(/const CACHE = "([^"]+)"/);
-    if(!m || m[1] !== "momster-helper-v78-per-kid-race") fail(0,0,"sw_cache","SW cache not bumped to v78-per-kid-race: "+(m&&m[1])); }
+    if(!m || m[1] !== "momster-helper-v79-per-kid-race") fail(0,0,"sw_cache","SW cache not bumped to v79-per-kid-race: "+(m&&m[1])); }
 
   for(const [W,H] of VIEWPORTS){
     await send("Emulation.setDeviceMetricsOverride", { width:W, height:H, deviceScaleFactor:2, mobile:true });
@@ -107,12 +107,16 @@ async function run(){
     // ---- Lily/Logan different times, all three modes --------------------------------------------
     for(const [mode, k1, k2, m1, m2] of [["walk","07:30","07:45",10,25],["bus","07:35","07:50",15,30],["drive","07:55","08:05",35,45]]){
       await fresh(SET(DIFF, mode));
+      await ev(`FAMILY.kids[0].name="Lily"; FAMILY.kids[1].name="Logan"; applyKids(); render(); true`);
       eq(W,H,mode+":k1", await ev(`raceEnd("k1")`), k1);
       eq(W,H,mode+":k2", await ev(`raceEnd("k2")`), k2);
       await enterKid("k1"); { const t = await raceText(); if(!t || !new RegExp("\\b"+m1+" min").test(t)) fail(W,H,mode+":k1 clock","expected "+m1+" min, got "+t); }
       await goHome(); await enterKid("k2"); { const t = await raceText(); if(!t || !new RegExp("\\b"+m2+" min").test(t)) fail(W,H,mode+":k2 clock","expected "+m2+" min, got "+t); }
       await goHome(); { const t = await chipText(); const f = v => { const [h,mm]=v.split(":").map(Number); return ((h%12)||12)+":"+String(mm).padStart(2,"0")+" am"; };
         if(!t || !t.includes(f(k1)) || !t.includes(f(k2))) fail(W,H,mode+":chip","chip should show both kid times "+f(k1)+" and "+f(k2)+", got "+t);
+        if(!/Li\s/.test(t) || !/Lo\s/.test(t)) fail(W,H,mode+":chip-names","Lily and Logan need distinct visible labels, got "+t);
+        const two=await ev(`(() => {const h=document.querySelector('.hello h1').getBoundingClientRect(),b=document.querySelector('.ridechip').getBoundingClientRect();return {title:h.width,chipRight:b.right,vw:innerWidth}})()`);
+        if(two.title<60 || two.chipRight>two.vw) fail(W,H,mode+":two-kid header","title and chip must fit: "+JSON.stringify(two));
         eq(W,H,mode+":chip-mode", !!(t && t.includes({walk:"🛴",bus:"🚌",drive:"🚗"}[mode])), true);
         eq(W,H,mode+":ride-unchanged", await ev(`rideToday()`), mode); }
     }
@@ -218,6 +222,15 @@ async function run(){
         eq(W,H,"wizard:toggle off applied", await ev(`settings.raceOff===true`), true);
         eq(W,H,"wizard:toggle off keeps kid times", await ev(`!!(settings.kidEnds&&settings.kidEnds.k2)`), true);
       } }
+
+    // Distinct leave-by times for four kids must not erase the home title or overflow.
+    await fresh(SET({kidEnds:{k1:{walk:"07:30"},k2:{walk:"07:38"},k3:{walk:"07:42"},k4:{walk:"07:48"}}},"walk"));
+    await ev(`FAMILY.kids.push({id:"k3",name:"Alice",color:"#7048E8",av:"⭐"},{id:"k4",name:"Ben",color:"#E5484D",av:"⭐"}); applyKids(); view.kid=null; render(); true`);
+    const four = await ev(`(() => { const h=document.querySelector('.hello h1'), b=document.querySelector('.ridechip'), r=h.getBoundingClientRect(), c=b.getBoundingClientRect();
+      return {titleWidth:r.width,chipRight:c.right,chipText:b.textContent,bodyScroll:document.body.scrollWidth,vw:innerWidth}; })()`);
+    if(four.titleWidth<100 || four.chipRight>four.vw || four.bodyScroll>four.vw+1)
+      fail(W,H,"four-kid home header","title and chip must fit: "+JSON.stringify(four));
+    for(const t of ["7:30","7:38","7:42","7:48"]) if(!four.chipText.includes(t)) fail(W,H,"four-kid times","missing "+t+": "+four.chipText);
   }
 
   try { proc.kill(); } catch(e){}

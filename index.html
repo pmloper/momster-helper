@@ -988,6 +988,8 @@ body.tm{padding-top:40px}
 /* ---- Ride chip ---- */
 .ridechip{font-size:clamp(14px,2.2vh,19px);font-weight:800;padding:6px 12px;min-height:44px;border-radius:999px;
   background:color-mix(in srgb,var(--gold) 18%,var(--card));border:2px solid var(--gold2);white-space:nowrap}
+.hello:has(.ridechip.manyTimes){flex-wrap:wrap}
+.hello .ridechip.manyTimes{flex:1 1 100%;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1.2}
 @media (max-width:600px){.ridechip{font-size:15px;padding:4px 10px}}
 
 /* ---- Per-kid leave-by rows ---- */
@@ -1576,8 +1578,11 @@ const modeTime = m => { const t=[...new Set(FAMILY.kids.map(c=>rideEnds(c.id)[m]
 const kidTimeRows = (kids, vals, attrs) => `<div class="kt">${kids.map((c,i)=>`<div class="ktk" style="--kc:${c.color}"><div class="kth"><b>${esc(c.name||("Kid "+(i+1)))}</b><button class="btn ghost sm" data-a="kidEndsReset" data-k="${c.id}">Use family times</button></div>
   <div class="ktg">${RIDES.map(m=>`<label class="fld"><span>${RIDES_ICONS[m]} ${m[0].toUpperCase()+m.slice(1)}</span><input class="in tm" type="time" ${attrs(c.id,m)} value="${((vals||{})[c.id]||{})[m]||""}"></label>`).join("")}</div></div>`).join("")}</div>
   <small class="note">Leave a kid's time blank to use the family time.</small>`;
+const homeKidLabel = (c, i, kids) => { const name=[...(c.name||("Kid "+(i+1)))]; let n=1;
+  while(n<name.length && kids.some((other,j)=>j!==i && (other.name||"").slice(0,n).toLocaleLowerCase()===name.slice(0,n).join("").toLocaleLowerCase())) n++;
+  const label=name.slice(0,n).join(""); return kids.some((other,j)=>j!==i && (other.name||"").toLocaleLowerCase()===name.join("").toLocaleLowerCase()) ? label+" "+(i+1) : label; };
 const homeChipTime = () => { const ks=FAMILY.kids, t=ks.map(c=>raceEnd(c.id));
-  return new Set(t).size<=1 ? tm12(t[0]) : ks.map((c,i)=>[...c.name][0]+" "+tm12(t[i])).join(" · "); };
+  return new Set(t).size<=1 ? tm12(t[0]) : ks.map((c,i)=>homeKidLabel(c,i,ks)+" "+tm12(t[i])).join(" · "); };
 const atTime = hm => { const [h,m]=hm.split(":").map(Number); const d=new Date(); d.setHours(h,m,0,0); return d; };
 const raceDay = () => { const d=todayDow(); return raceOn() && d>=1 && d<=5; };
 const raceOpen = (k=view.kid) => raceDay() && new Date() < atTime(raceEnd(k));
@@ -2447,7 +2452,7 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>c.name+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip ${raceDay() && FAMILY.kids.length>2 && new Set(FAMILY.kids.map(c=>raceEnd(c.id))).size>1?"manyTimes":""}" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>c.name+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
