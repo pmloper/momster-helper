@@ -2499,7 +2499,7 @@ document.addEventListener("click", e=>{
         else play([KIDS[view.kid].hi, ...(loadLocal("mon_"+WEEK)?[]:(saveLocal("mon_"+WEEK,1),["monsterhi",monster()[4]?null:monster()[0]])), jobsFor(r,todayDow()).length? r.snd : "r_none", (view.routine==="am"&&raceOpen()&&!(weeks[view.kid].race||{})[ymd(new Date())])?"racego":null]); } break;
     case "home": view.kid=null; render(); break;
     case "jokeSheet": saveLocal("jod_"+ymd(new Date()),1); jokeSheet(); render(); { const j=JOKES[jodIndex()]; play(["BJ:"+j[0]]); } break;
-    case "jod": { const j=JOKES[jodIndex()]; jodOpen=true; jokeSheet(); play(["BJ:"+j[1],"boing"]); } break;
+    case "jod": { const j=JOKES[jodIndex()]; jodOpen=true; jokeSheet(); play(["BJ:"+j[0],"boing","BJ:"+j[1]]); } break;
     case "toot": tootAttack(t); break;
     case "poke": sideSilly(t); break;
     case "hq": hqSheet("report"); play(["pop"]); break;
