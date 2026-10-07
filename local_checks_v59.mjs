@@ -1,4 +1,4 @@
-// Local syntax + structure checks for the v59 polish (kept current for v63-tile-mission build).
+// Local syntax + structure checks for the v59 polish (kept current for v64-joke-reset build).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -12,9 +12,9 @@ console.log('lines', lines.length);
 const scriptTagCount = (html.match(/<script\b/g) || []).length;
 console.log('script tag count:', scriptTagCount);
 
-// CACHE check (v63-tile-mission Preview)
+// CACHE check (v64-joke-reset Preview)
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v63-tile-mission') ? 'OK: CACHE v63-tile-mission' : 'ERROR: CACHE not v63-tile-mission');
+console.log(sw.includes('momster-helper-v64-joke-reset') ? 'OK: CACHE v64-joke-reset' : 'ERROR: CACHE not v64-joke-reset');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');
