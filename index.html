@@ -876,15 +876,25 @@ button.bpal{border:0;background:none;padding:0;cursor:pointer}
 .tile.waiting .em,.tile.hasTw .em{font-size:min(28cqh,36cqw)}
 .tile .wait{line-height:1.1}
 .tile .twist{white-space:normal;text-align:left;line-height:1.15;padding:2px 8px;font-size:clamp(15px,10cqw,26px)}.tile.hasX2 .twist{right:48px} .tile.hasTw{padding-top:clamp(22px,13cqw,38px)}
-.tile .tx{width:100%;overflow-wrap:break-word;hyphens:manual}
+.tile .tx{width:100%;overflow-wrap:normal;word-break:normal;hyphens:none}
+/* Kid jobs stack icon, full label and reward stars, including on small phones. */
+.tiles>.tile{container-type:inline-size;overflow:visible;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 8px}
+.tiles>.tile .em{order:1;flex:none;font-size:min(8vh,46cqw)}
+.tiles>.tile .tx{order:2;flex:none;display:block;overflow:visible;-webkit-line-clamp:unset;font-size:clamp(15px,min(3vh,9cqw),25px)}
+.tiles>.tile .stars{order:3;display:block;flex:none;font-size:18px;line-height:1.1;white-space:nowrap}
+.tiles>.tile .badges{position:static;order:4;justify-content:center;flex-wrap:wrap}
+.tiles>.tile .wait{order:5}
+.tiles>.tile.hasB{padding-top:10px}
+.tiles>.tile.hasB .em{font-size:min(7vh,44cqw)}
+.tiles>.tile.waiting .em,.tiles>.tile.hasTw .em{font-size:min(6vh,36cqw)}
+.tiles>.tile.hasTw{padding-top:clamp(22px,13cqw,38px)}
+.tiles>.tile.done::after{content:none}
 @media (max-width:600px),(max-height:520px){
-  .tile.bonus{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;align-content:center;align-items:center;column-gap:10px;row-gap:0;padding:4px 12px!important;text-align:left}
-  .tile.bonus .em{grid-row:1/span 2;font-size:min(70cqh,34px)!important}
-  .tile.bonus .tx{grid-column:2;text-align:left;font-size:clamp(13.5px,34cqh,16px)!important;-webkit-line-clamp:unset;overflow:visible}
-  .tile.bonus .wait{grid-column:2;font-size:13px}
-  .tile.bonus:not(.waiting) .tx{grid-row:1/span 2}
-  .tile.bonus .badges{position:static;grid-column:3;grid-row:1/span 2;justify-content:flex-end}
-  .tile.bonus.done::after{font-size:min(60cqh,32px);left:auto;right:70px}
+  .tiles>.tile.bonus{display:flex!important;text-align:center;padding:10px 8px!important}
+  .tiles>.tile.bonus .em{font-size:min(8vh,46cqw)!important}
+  .tiles>.tile.bonus .tx{text-align:center;font-size:clamp(15px,min(3vh,9cqw),25px)!important}
+  .tiles>.tile.bonus .badges{position:static;order:3;justify-content:center}
+  .tiles>.tile.bonus .wait{font-size:13px}
 }
 .stlsheet{max-width:720px;text-align:center}
 .stlsheet .styles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:6px 0 10px}
@@ -2168,10 +2178,10 @@ function kidView(k){
   else if(list.every(j=>isDone(k,j.id))){ const land = innerWidth > innerHeight && innerWidth > 700, n=list.length, cols = land ? (n<=4?n:(n<=6?3:4)) : (n<=1?1:2);
     body = `<div class="donebar"><span class="db-ic">${r.doneIcon||"🎉"}</span><span class="db-tx"><b>${r.doneMsg||"All done! Great job!"}</b><small>${"⭐".repeat(Math.min(list.length,8))} + 🌟 bonus · ${(()=>{ const day=ymd(new Date()), oth=Object.keys(KIDS).filter(x=>x!==k), wait=oth.filter(x=>!routineDoneDay(x,day,r)); return !oth.length?"":(wait.length? "🤝 When "+wait.map(x=>KIDS[x].name).join(" + ")+" finishes too: COMBO ATTACK!" : "💥 Combo attack landed!"); })()}</small></span>
       <span class="db-btns">${eggReady(k)?`<button class="prize eggBtn" data-a="egg"><b>🥚</b>Egg!</button>`:""}<button class="prize" data-a="joke"><b>🤣</b>Joke</button>${r.id==="bt"?`<button class="prize" data-a="dance"><b>🕺</b>Dance</button>`:""}</span></div>
-    <div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile done" data-a="job" data-j="${j.id}">${pts(j.id)>1?'<span class="x2">⭐⭐</span>':""}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div></button>`).join("")}</div>`; }
+    <div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile done" data-a="job" data-j="${j.id}"><div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div><span class="stars">${"⭐".repeat(Math.min(3,pts(j.id)))}</span></button>`).join("")}</div>`; }
   else { const land = innerWidth > innerHeight && innerWidth > 700, n=list.length, cols = land ? (n<=4?n:(n<=6?3:4)) : (n<=1?1:2);
     const tw=twistFor(k,r,new Date());
-    body = `<div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile ${isDone(k,j.id)?"done":""} ${(isWeak(j.id)&&!isDone(k,j.id))||pts(j.id)>1?"hasB":""} ${tw&&tw.job===j.id&&!isDone(k,j.id)?"hasTw":""} ${pts(j.id)>1?"hasX2":""}" data-a="job" data-j="${j.id}">${tw&&tw.job===j.id&&!isDone(k,j.id)?`<span class="twist">🤪 ${TWISTS[tw.n-1]}${isWeak(j.id)?" · 💥x2":""}</span>`:""}${(()=>{ const b=(isWeak(j.id)&&!isDone(k,j.id)&&!(tw&&tw.job===j.id)?'<span class="wk">💥x2</span>':"")+(pts(j.id)>1?'<span class="x2">⭐⭐</span>':""); return b?`<span class="badges">${b}</span>`:""; })()}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div></button>`).join("")}</div>`; }
+    body = `<div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile ${isDone(k,j.id)?"done":""} ${(isWeak(j.id)&&!isDone(k,j.id))||pts(j.id)>1?"hasB":""} ${tw&&tw.job===j.id&&!isDone(k,j.id)?"hasTw":""} ${pts(j.id)>1?"hasX2":""}" data-a="job" data-j="${j.id}">${tw&&tw.job===j.id&&!isDone(k,j.id)?`<span class="twist">🤪 ${TWISTS[tw.n-1]}${isWeak(j.id)?" · 💥x2":""}</span>`:""}${(()=>{ const b=isWeak(j.id)&&!isDone(k,j.id)&&!(tw&&tw.job===j.id)?'<span class="wk">💥x2</span>':""; return b?`<span class="badges">${b}</span>`:""; })()}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div><span class="stars">${"⭐".repeat(Math.min(3,pts(j.id)))}</span></button>`).join("")}</div>`; }
   return `<div class="top bar-card" style="--k:${KIDS[k].color}"><button class="back" data-a="home" aria-label="Back">⬅️</button>
     <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
     
