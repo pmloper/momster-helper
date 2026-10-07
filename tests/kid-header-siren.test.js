@@ -269,7 +269,8 @@ async function run(){
       if(!g.top){ fail(W,H,name+"geometry","no .top header"); continue; }
       const integrated = await ev(`(() => { const q=s=>document.querySelector(s), r=e=>e&&e.getBoundingClientRect(), top=r(q('.top')), bar=r(q('.top .hdBar')), jar=q('.layout>.jarCard'); return { bar:bar&&{w:bar.width,b:bar.bottom}, top:top&&{w:top.width,b:top.bottom}, jarVisible:!!jar&&getComputedStyle(jar).display!=='none' }; })()`);
       if(Math.abs(g.top.h - 130) > .5) fail(W,H,name+"geometry","header height changed from the approved 130px: "+g.top.h);
-      if(!g.avatar || g.avatar.w < 34 || g.avatar.h < 34) fail(W,H,name+"identity","avatar should grow from 28px without growing the header: "+JSON.stringify(g.avatar));
+      const oldAvatarSize = Math.max(44, Math.min(54, .07 * H)); // released header's clamp(44px,7vh,54px)
+      if(!g.avatar || Math.abs(g.avatar.w-oldAvatarSize) > .5 || Math.abs(g.avatar.h-oldAvatarSize) > .5) fail(W,H,name+"identity","avatar must match released header's "+oldAvatarSize+"px size: "+JSON.stringify(g.avatar));
       if(g.nameFont < 20) fail(W,H,name+"identity","name should grow from 18px: "+g.nameFont);
       const expectedColor = await ev(`(() => { const e=document.createElement('span'); e.style.color=KIDS[view.kid].color; document.body.append(e); const c=getComputedStyle(e).color; e.remove(); return c; })()`);
       if(g.nameColor !== expectedColor) fail(W,H,name+"identity","name color "+g.nameColor+" differs from selected kid color "+expectedColor);
