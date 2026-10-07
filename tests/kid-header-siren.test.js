@@ -215,7 +215,8 @@ async function run(){
       if(!p) fail(W,H,"pill","no .prizePill in the header");
       else {
         if(p.pt !== jar.t) fail(W,H,"pill","pill title '"+p.pt+"' != jar prize '"+jar.t+"'");
-        if(!p.txt.includes(jar.n+"/"+jar.g) || !p.txt.includes((jar.g-jar.n)+" to go")) fail(W,H,"pill","pill progress wrong: "+p.txt);
+        if(!(await ev(`document.querySelector('.top .hdStars').textContent.includes(stars('k1') + ' of ' + goal())`))) fail(W,H,"pill","star count missing from header");
+        if(p.txt.includes(jar.n+"/"+jar.g) || /to go/.test(p.txt)) fail(W,H,"pill","prize pill should show prize only, not progress: "+p.txt);
       }
       if(!(await state()).siren) fail(W,H,"kid_switch","k1 should show the siren");
       await ev(`document.querySelector('[data-a="home"]').click()`); await sleep(300); await enterKid("k2");
@@ -246,7 +247,6 @@ async function run(){
       const hit = e => { if(!e) return false; const r=e.getBoundingClientRect(), el=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return !!el && (el===e || e.contains(el)); };
       return { top:R(top), back:R(q(".top .back")), who:R(q(".top .who")), name:R(q(".top .who .wn b")), siren:R(q(".top .siren")), spk:R(q(".top .spk")),
         pill:R(q(".top .prizePill")), stars:R(q(".top .hdStars")), coin:R(q(".top .hdCoin")),
-        pp:q(".top .prizePill .pp") ? {clipped: textOut(q(".top .prizePill .pp")) || clipped(q(".top .prizePill .pp"))} : {clipped:true},
         nameClipped: (()=>{ const b=q(".top .who .wn b"); return !!b && (b.scrollWidth>b.clientWidth+1 || b.scrollHeight>b.clientHeight+1); })(),
         coinClipped: textOut(q(".top .hdCoin")), pillOverflow: false,
         topOverflow: top ? top.scrollWidth > top.clientWidth + 1 : true, pageOverflowX: document.documentElement.scrollWidth > innerWidth + 1,
@@ -265,7 +265,9 @@ async function run(){
       const g = await ev(GEO); const name = label+" ";
       if(!g.top){ fail(W,H,name+"geometry","no .top header"); continue; }
       const integrated = await ev(`(() => { const q=s=>document.querySelector(s), r=e=>e&&e.getBoundingClientRect(), top=r(q('.top')), bar=r(q('.top .hdBar')), jar=q('.layout>.jarCard'); return { bar:bar&&{w:bar.width,b:bar.bottom}, top:top&&{w:top.width,b:top.bottom}, jarVisible:!!jar&&getComputedStyle(jar).display!=='none' }; })()`);
-      if(g.top.h < 75 || g.top.h > 112) fail(W,H,name+"geometry","integrated header height should fit progress within one 75-112px bar, got "+g.top.h);
+      if(g.top.h < 126 || g.top.h > 135) fail(W,H,name+"geometry","header should be about 50% taller than revised 87px Preview, got "+g.top.h);
+      if(g.pill && g.pill.w > 155) fail(W,H,name+"geometry","weekly-prize pill too wide: "+g.pill.w);
+      if(g.pill && await ev(`/\\d+\\/\\d+|to go/.test(document.querySelector('.top .prizePill').textContent)`)) fail(W,H,name+"geometry","prize pill repeats progress instead of showing only the prize");
       if(integrated.jarVisible) fail(W,H,name+"geometry","old separate progress/jar strip still shown below header");
       if(!integrated.bar || integrated.bar.w < integrated.top.w * .75 || integrated.bar.b > integrated.top.b + .5) fail(W,H,name+"geometry","progress bar not full-width inside top bar: "+JSON.stringify(integrated));
       if(!g.pill || !g.stars || !g.coin || !g.back || !g.spk || !g.who) { fail(W,H,name+"geometry","header pieces missing "+JSON.stringify({pill:!!g.pill,stars:!!g.stars,coin:!!g.coin,back:!!g.back,spk:!!g.spk,who:!!g.who})); continue; }
@@ -273,7 +275,7 @@ async function run(){
       for(const k of ["back","who","spk","pill","stars","coin","siren"]) if(g[k] && !inside(g[k])) fail(W,H,name+"geometry",k+" sticks out of the header "+JSON.stringify(g[k]));
       if(g.topOverflow || g.pageOverflowX) fail(W,H,name+"geometry","horizontal overflow (header="+g.topOverflow+" page="+g.pageOverflowX+")");
       if(g.nameClipped) fail(W,H,name+"geometry","kid name clipped");
-      if(g.pp.clipped || g.coinClipped) fail(W,H,name+"geometry","prize progress / coin text clipped");
+      if(g.coinClipped) fail(W,H,name+"geometry","coin text clipped");
       // Layout: pill directly under name (same centre column), stars lower-left, coins lower-right, speaker upper-right.
       if(!(g.pill.t >= g.who.b - 1)) fail(W,H,name+"layout","pill is not below the name (pill.t="+g.pill.t+" who.b="+g.who.b+")");
       if(Math.abs(g.pill.cx - g.who.cx) > 14) fail(W,H,name+"layout","pill not centred under the name (dx="+Math.round(g.pill.cx-g.who.cx)+")");
