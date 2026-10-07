@@ -777,6 +777,36 @@ body:has(#layer > .sheet) .botnav{display:none}
 .alarm{flex:none;width:100%;display:flex;align-items:center;gap:10px;text-align:left;margin:0 0 10px;padding:8px 14px;border-radius:20px;border:2px solid #E5484D;background:color-mix(in srgb,#E5484D 12%,var(--card));animation:alarmpulse 1.4s ease-in-out infinite}
 .alarm>b{font-size:30px;line-height:1}.alarm span{display:flex;flex-direction:column;min-width:0}.alarm span b{font-family:var(--disp);font-weight:700;color:#C92A2F;font-size:clamp(16px,2.6vh,20px)}.alarm small{font-size:14px;color:var(--soft)}
 .alarm.ok{animation:none;border-color:var(--doneInk);background:var(--done)}.alarm.ok span b{color:var(--doneInk)}
+/* Kid header: compact dark bar. Row 1: back | avatar+name | siren + speaker. Row 2: star
+   progress | weekly-prize pill (under the name) | coins. Fixed row heights keep it no taller
+   than the old single-row bar on phones. */
+.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,auto) minmax(58px,1fr);grid-template-rows:minmax(30px,auto) 18px;grid-template-areas:"back who tools" "stars prize coin";align-items:center;gap:2px 6px;padding:4px 8px;margin-bottom:10px;color:#fff;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--k) 28%,#1d2140),#12152a);border:1px solid color-mix(in srgb,var(--k) 50%,#000)}
+.top .back,.top .spk,.top .siren{position:relative;width:30px;height:30px;padding:0;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+.top .back,.top .spk,.top .siren,.top .prizePill,.top .hdCoin{cursor:pointer}
+.top .back::after,.top .spk::after,.top .siren::after{content:"";position:absolute;inset:-6px -4px -1px -4px}
+.top .back{grid-area:back;justify-self:start;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.3)}
+.top .spk{box-shadow:none;border:1.5px solid rgba(255,255,255,.35)}
+.top .spk svg,.top .spk img{width:18px!important;height:18px!important}
+.top .hdTools{grid-area:tools;justify-self:end;display:flex;align-items:center;gap:8px}
+.top .siren{background:#E5484D;border:1.5px solid #FFB3B6;animation:alarmpulse 1.4s ease-in-out infinite}
+.top .who{grid-area:who;justify-self:center;max-width:100%;flex:none;font-size:18px;gap:6px;color:#fff;overflow:hidden}
+.top .whoAv{height:28px;width:28px}
+.top .who .wn b{max-width:34vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:18px;color:#fff}
+.top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:13px;line-height:1;min-width:0}
+.top .hdBar{display:block;width:34px;height:7px;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden}
+.top .hdBar i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.top .prizePill{grid-area:prize;position:relative;justify-self:center;max-width:100%;min-width:0;height:18px;display:flex;align-items:center;gap:4px;padding:0 8px;border-radius:9px;
+  background:rgba(255,255,255,.12);border:1px solid var(--gold2);color:#fff;font-family:var(--font);font-weight:800;font-size:11px;line-height:1;white-space:nowrap}
+.top .prizePill.earned{background:color-mix(in srgb,var(--gold) 35%,transparent)}
+.top .prizePill b{font-size:12px;flex:none;line-height:1}
+.top .prizePill .pt{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.top .prizePill .pp{flex:none;opacity:.9}
+.top .hdCoin{grid-area:coin;position:relative;justify-self:end;height:18px;min-width:0;padding:0 8px;border-width:1.5px;border-radius:9px;font-size:12px;line-height:1;gap:2px}
+.top .prizePill::after,.top .hdCoin::after,.top .hdStars::after{content:"";position:absolute;inset:-1px -4px -6px -4px}
+#missionHub .mEmoji{font-size:36px}
+#missionHub .missionPop,#missionHub .mCard{gap:6px}
+.missionPop .mGo{margin-top:4px;padding:10px 18px;border-radius:18px;border:0;background:#12B886;color:#fff;font-family:var(--disp);font-weight:700;font-size:17px;cursor:pointer;box-shadow:0 3px 0 #0b8461}
 @keyframes alarmpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.35)}50%{box-shadow:0 0 0 8px rgba(229,72,77,0)}}
 .htitle{font-family:var(--disp);font-weight:600;font-size:clamp(16px,2.6vh,22px);color:var(--k);opacity:.85;line-height:1}
 .styles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:6px 0 10px}
@@ -2031,21 +2061,79 @@ function missionPopup(k){
   }
   speakRead(lines.join(" "));
 }
+// Persist dismissal keys for each currently active kind so the entry popup does not
+// repeat. This only silences the popup nudge; the mission itself stays active.
+function markMissionsSeen(k){
+  if(!k) return;
+  const ev = activeEvent();
+  if(ev && surpriseActive(k)){ saveLocal("mpop_ev_"+ev.day+"_"+ev.id+"_"+k, 1); }
+  if(specialActive(k)){ saveLocal(specialKey(k), 1); }
+}
 function closeMissionPopup(){
   if(!missionPopupOpen) return;
-  const k = view.kid;
-  // Persist dismissal keys for each currently pending kind. After this, the persistent
-  // kid banner and selected-special header card stay gone for the rest of the day; the
-  // .evt / .spm tile in the Bonus grid is the persistent surface.
-  if(k){
-    const ev = activeEvent();
-    if(ev && surpriseActive(k)){ saveLocal("mpop_ev_"+ev.day+"_"+ev.id+"_"+k, 1); }
-    if(specialActive(k)){ saveLocal(specialKey(k), 1); }
-  }
+  // After this, the persistent kid banner and selected-special header card stay gone for
+  // the rest of the day; the .evt / .spm tile in the Bonus grid and the header siren are
+  // the persistent surfaces.
+  markMissionsSeen(view.kid);
   missionPopupOpen = false;
   close();
   render();
 }
+// Header siren: on while at least one surprise/special mission is ACTIVE and UNCOMPLETED
+// for this kid, independent of whether the entry popup was dismissed.
+const sirenOn = (k) => !!k && (surpriseActive(k) || specialActive(k));
+// Sheet behind the siren: every unfinished active mission, including an unchosen special's
+// choices. Completion goes through the existing Bonus handlers (bjob/approveAsk/pkDo), so
+// stars are awarded by the same paths and only once.
+function missionHubHtml(k){
+  const ev = surpriseActive(k) ? activeEvent() : null, hasPk = specialActive(k), today = hasPk ? todayPick(k) : null;
+  let cards = "";
+  if(ev){ const id="ev_"+ev.id, x=extraOf(k,id), waiting=!!(x && !x.ok);
+    cards += `<div class="mCard ev" data-kind="ev">
+      <div class="mEmoji">${esc(ev.e)}</div>
+      <div class="mTitle">🚨 Surprise mission: ${esc(ev.title)}</div>
+      <div class="mBody">${esc(ev.t)}</div>
+      <div class="mStars">⭐ +${ev.pts||3} stars (grown-up checks it)</div>
+      <button class="mGo" data-a="${waiting?"approveAsk":"bjob"}" data-j="${esc(id)}">${waiting?"🔒 Grown-up: check it":"✅ I did it!"}</button>
+    </div>`; }
+  if(hasPk){
+    cards += today
+      ? `<div class="mCard pk" data-kind="pk">
+          <div class="mTitle">🎯 Your special mission: ${esc(today.e)} ${esc(today.t)}</div>
+          <div class="mStars">⭐⭐ when you finish it</div>
+          <button class="mGo" data-a="pkDo" data-j="pk_${esc(today.id)}">✅ I did it!</button>
+        </div>`
+      : `<div class="mCard pk" data-kind="pk">
+          <div class="mTitle">🎯 Pick your special mission</div>
+          <div class="mBody">Choose one for today. ⭐⭐ when you finish it.</div>
+          <div class="mOpts">${pickChoices(k).map(o=>`<button data-a="sirenChoose" data-j="${esc(o.id)}"><span>${esc(o.e)}</span> <span>${esc(o.t)}</span></button>`).join("")}</div>
+        </div>`;
+  }
+  const head = (ev && hasPk) ? "Two missions today! 💪" : ev ? "Surprise mission! 🚨" : "Your special mission 🎯";
+  return `<div class="ov" data-a="closeOv"><div class="sheet" id="missionHub" data-k="${esc(k)}">
+    <div class="missionPop">
+      <div class="mHead">${head}</div>
+      ${cards}
+      <button class="mClose" data-a="closeOvBtn">Close</button>
+    </div>
+  </div></div>`;
+}
+function missionHub(k){
+  if(!sirenOn(k)) return;
+  // The sheet shows the same missions as the entry popup, so opening it counts as seen.
+  markMissionsSeen(k);
+  paintSheet("missionHub", "", missionHubHtml(k));
+  const b = layer.querySelector("#missionHub .mGo, #missionHub .mOpts button, #missionHub .mClose"); if(b) b.focus();
+}
+// Keep an open mission sheet in step with the data (completion, pick, kid change); closes
+// it when nothing is left to do.
+function refreshMissionHub(){
+  const hub = layer.querySelector("#missionHub"); if(!hub) return;
+  const k = view.kid;
+  if(!k || hub.dataset.k!==k || !sirenOn(k)){ layer.innerHTML = ""; return; }
+  paintSheet("missionHub", "", missionHubHtml(k));
+}
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && layer.querySelector("#missionHub")) close(); });
 function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; party(["💥",c[0],"🤝","⭐"]);
   cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️"); play(["punch","fanfare","BJ:Combo attack! "+c[1]+"!"]); }
 let introOpen=false;
@@ -2311,6 +2399,7 @@ const lastCoins={};
 function render(){
   try{ fixCostumes(); }catch(e){ console.warn(e); }
   app.innerHTML = '<div class="screen">' + (view.kid ? kidView(view.kid) : homeView()) + '</div>';
+  refreshMissionHub();
 
   if(!view.kid && !introOpen && !layer.innerHTML && !loadLocal("intro_"+WEEK) && monsterLeft()>0) setTimeout(()=>{ if(!view.kid && !layer.innerHTML && !introOpen) villainIntro(); }, 600);
   else if(!view.kid && !layer.innerHTML && todayDow()===0 && new Date().getHours()>=17 && !loadLocal("report_"+WEEK)) setTimeout(()=>{ if(!view.kid && !layer.innerHTML){ saveLocal("report_"+WEEK,1); hqSheet("report"); play(["fanfare","BJ:Mission report! Look what the Momster Helpers did this week!"]); } }, 900);
@@ -2376,9 +2465,21 @@ function kidView(k){
     body = `<div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile ${isDone(k,j.id)?"done":""} ${(isWeak(j.id)&&!isDone(k,j.id))||pts(j.id)>1?"hasB":""} ${tw&&tw.job===j.id&&!isDone(k,j.id)?"hasTw":""} ${pts(j.id)>1?"hasX2":""}" data-a="job" data-j="${j.id}">${tw&&tw.job===j.id&&!isDone(k,j.id)?`<span class="twist">🤪 ${TWISTS[tw.n-1]}${isWeak(j.id)?" · 💥x2":""}</span>`:""}${(()=>{ const b=isWeak(j.id)&&!isDone(k,j.id)&&!(tw&&tw.job===j.id)?'<span class="wk">💥x2</span>':""; return b?`<span class="badges">${b}</span>`:""; })()}<div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div><span class="stars">${"⭐".repeat(Math.min(3,pts(j.id)))}</span></button>`).join("")}</div>`; }
   return `<div class="top bar-card" style="--k:${KIDS[k].color}"><button class="back" data-a="home" aria-label="Back">⬅️</button>
     <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
-    
-    <button class="spk" data-a="sound" aria-label="Sound & voice">${volIcon()}</button></div>
+    <span class="hdTools">${sirenOn(k)?'<button class="siren" data-a="missionHub" aria-label="Missions waiting" title="Missions waiting">🚨</button>':""}<button class="spk" data-a="sound" aria-label="Sound & voice">${volIcon()}</button></span>
+    ${headerStatus(k)}</div>
   <div class="layout" style="--k:${KIDS[k].color};--rc:${view.routine==="bn"?"#12B886":(r.rc||"#FFA41B")}"><div class="main">${eventBar(k)}<div class="tabs">${tabs}${bonusTab}</div>${raceBar(k)}${pickStrip(k)}${body}</div>${jarCard(k)}</div>`;
+}
+// Compact header status row: star progress (lower left), weekly-prize pill under the name,
+// coin count (lower right). Reads the same jar data as jarCard(); nothing is stored here.
+function headerStatus(k){
+  const n=stars(k), g=goal(), r=rewardOf(k), left=Math.max(0,g-n);
+  const pe = r ? (r.e||"🎁") : (REWARDS.length ? "🎁" : "🗣️");
+  const pt = r ? (r.t||"") : (REWARDS.length ? "Pick a prize" : "Surprise prize");
+  const prog = n>=g ? (weeks[k].rewardGiven ? "prize done!" : "earned! 🎉") : n+"/"+g+" · "+left+" to go";
+  const label = (r ? "Weekly prize: "+pt+", " : "")+n+" of "+g+" stars"+(n>=g ? "" : ", "+left+" more to go")+". Change prize";
+  return `<span class="hdStars" role="img" aria-label="${n} of ${g} stars">⭐<span class="hdBar"><i style="width:${Math.min(100,n/g*100)}%"></i></span></span>
+    <button class="prizePill ${n>=g?"earned":""}" data-a="pickReward" aria-label="${esc(label)}"><b>${pe}</b><span class="pt">${esc(pt)}</span><span class="pp">${prog}</span></button>
+    <button class="coinBtn hdCoin" data-a="buddy" aria-label="${coins(k)} ${coins(k)===1?"coin":"coins"}, open shop">🪙 ${coins(k)}</button>`;
 }
 function pickStrip(k){ const today=todayPick(k); if(!pickList().length) return "";
   // Per Atlas round 2 clarification: the kid view never shows a persistent special-mission
@@ -2753,6 +2854,10 @@ document.addEventListener("click", e=>{
       // currently pending kinds so re-entry doesn't re-pop the surprise either.
       closeMissionPopup(); break; }
     case "missionDismiss": closeMissionPopup(); break;
+    case "missionHub": missionHub(k); break;
+    case "sirenChoose": { const w=weeks[k]; w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k);
+      // Same pick as the chooser; the dismissal key moves to the chosen id so the entry popup stays quiet.
+      saveLocal(specialKey(k), 1); render(); play(["pop","BJ:Ooh, good choice!"]); break; }
     case "pkDo": { const p=todayPick(k); if(!p) break; const w=weeks[k], day=ymd(new Date()); const list=(w.done[day]=w.done[day]||[]);
       if(!list.includes(t.dataset.j)){ const before=stars(k); list.push(t.dataset.j); saveWeek(k);
         speakRead(p.t+". Special mission complete! Two big stars!");
