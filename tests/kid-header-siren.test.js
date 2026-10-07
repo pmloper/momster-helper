@@ -260,7 +260,7 @@ async function run(){
       const hit = e => { if(!e) return false; const r=e.getBoundingClientRect(), el=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return !!el && (el===e || e.contains(el)); };
       return { top:R(top), back:R(q(".top .back")), who:R(q(".top .who")), avatar:R(q(".top .whoAv")), name:R(q(".top .who .wn b")), nameFont:parseFloat(getComputedStyle(q(".top .who .wn b")).fontSize), nameColor:getComputedStyle(q(".top .who .wn b")).color, chosenColor:KIDS[view.kid].color, siren:R(q(".top .siren")), spk:R(q(".top .spk")),
         starFont:parseFloat(getComputedStyle(q(".top .hdStars")).fontSize), coinFont:parseFloat(getComputedStyle(q(".top .hdCoin")).fontSize),
-        pill:R(q(".top .prizePill")), stars:R(q(".top .hdStars")), coin:R(q(".top .hdCoin")),
+        pill:R(q(".top .prizePill")), pillCSSHeight:parseFloat(getComputedStyle(q(".top .prizePill")).height), stars:R(q(".top .hdStars")), coin:R(q(".top .hdCoin")), bar:R(q(".top .hdBar")),
         nameClipped: (()=>{ const b=q(".top .who .wn b"); return !!b && (b.scrollWidth>b.clientWidth+1 || b.scrollHeight>b.clientHeight+1); })(),
         nameOverflowMode:getComputedStyle(q(".top .who .wn b")).textOverflow, nameFullTitle:q(".top .who .wn b").title,
         coinClipped: textOut(q(".top .hdCoin")), pillOverflow: false,
@@ -282,16 +282,18 @@ async function run(){
       const g = await ev(GEO); const name = label+" ";
       if(!g.top){ fail(W,H,name+"geometry","no .top header"); continue; }
       const integrated = await ev(`(() => { const q=s=>document.querySelector(s), r=e=>e&&e.getBoundingClientRect(), top=r(q('.top')), bar=r(q('.top .hdBar')), jar=q('.layout>.jarCard'); return { bar:bar&&{w:bar.width,b:bar.bottom}, top:top&&{w:top.width,b:top.bottom}, jarVisible:!!jar&&getComputedStyle(jar).display!=='none' }; })()`);
-      if(Math.abs(g.top.h - 130) > .5) fail(W,H,name+"geometry","header height changed from the approved 130px: "+g.top.h);
-      if(g.starFont !== 14) fail(W,H,name+"status","star count font should be subtly larger at 14px, got "+g.starFont);
-      if(g.coinFont !== 14 || g.coin.h < 22) fail(W,H,name+"status","coin pill should be subtly larger (14px text / 22px tall), got "+JSON.stringify({font:g.coinFont,box:g.coin}));
-      if(g.stars.r > g.pill.l || g.coin.l < g.pill.r) fail(W,H,name+"status","larger status overlaps prize pill: "+JSON.stringify({stars:g.stars,pill:g.pill,coin:g.coin}));
-      const oldAvatarSize = Math.max(44, Math.min(54, .07 * H)); // released header's clamp(44px,7vh,54px)
-      if(!g.avatar || Math.abs(g.avatar.w-oldAvatarSize) > .5 || Math.abs(g.avatar.h-oldAvatarSize) > .5) fail(W,H,name+"identity","avatar must match released header's "+oldAvatarSize+"px size: "+JSON.stringify(g.avatar));
+      if(Math.abs(g.top.h - 150) > .5) fail(W,H,name+"geometry","header height should be exactly 150px: "+g.top.h);
+      if(g.starFont !== 16) fail(W,H,name+"status","star count and icon should be 16px, got "+g.starFont);
+      if(g.coinFont !== 16 || Math.abs(g.coin.h-32) > .5) fail(W,H,name+"status","coin pill should be 16px text / 32px tall, got "+JSON.stringify({font:g.coinFont,box:g.coin}));
+      if(Math.abs(g.pillCSSHeight-32) > .5) fail(W,H,name+"status","prize pill CSS height should be 32px (earned animation may temporarily scale its rect): "+g.pillCSSHeight);
+      for(const button of ["back","siren","spk"]) if(g[button] && (Math.abs(g[button].w-40) > .5 || Math.abs(g[button].h-40) > .5)) fail(W,H,name+"status",button+" should be 40x40: "+JSON.stringify(g[button]));
+      if(!g.avatar || g.avatar.w < 50 || g.avatar.w > 62.5 || Math.abs(g.avatar.w-g.avatar.h) > .5) fail(W,H,name+"identity","avatar should be 50–62px square: "+JSON.stringify(g.avatar));
       if(g.nameFont < (label==="long_prize_long_name" || label==="max_length_name" ? 20 : 22)) fail(W,H,name+"identity","name should be enlarged while long names fit: "+g.nameFont);
       const expectedColor = await ev(`(() => { const e=document.createElement('span'); e.style.color=KIDS[view.kid].color; document.body.append(e); const c=getComputedStyle(e).color; e.remove(); return c; })()`);
       if(g.nameColor !== expectedColor) fail(W,H,name+"identity","name color "+g.nameColor+" differs from selected kid color "+expectedColor);
       if(g.pill && g.pill.w > 155) fail(W,H,name+"geometry","weekly-prize pill too wide: "+g.pill.w);
+      const overlaps = (a,b) => a && b && a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
+      if(overlaps(g.stars,g.pill) || overlaps(g.coin,g.pill) || overlaps(g.stars,g.coin) || overlaps(g.coin,g.bar) || overlaps(g.stars,g.bar)) fail(W,H,name+"status","status items overlap: "+JSON.stringify({stars:g.stars,pill:g.pill,coin:g.coin,bar:g.bar}));
       if(g.pill && await ev(`/\\d+\\/\\d+|to go/.test(document.querySelector('.top .prizePill').textContent)`)) fail(W,H,name+"geometry","prize pill repeats progress instead of showing only the prize");
       if(integrated.jarVisible) fail(W,H,name+"geometry","old separate progress/jar strip still shown below header");
       if(!integrated.bar || integrated.bar.w < integrated.top.w * .75 || integrated.bar.b > integrated.top.b + .5) fail(W,H,name+"geometry","progress bar not full-width inside top bar: "+JSON.stringify(integrated));
@@ -299,7 +301,8 @@ async function run(){
       const inside = o => o.l >= g.top.l - 0.5 && o.r <= g.top.r + 0.5 && o.t >= g.top.t - 0.5 && o.b <= g.top.b + 0.5;
       for(const k of ["back","who","spk","pill","stars","coin","siren"]) if(g[k] && !inside(g[k])) fail(W,H,name+"geometry",k+" sticks out of the header "+JSON.stringify(g[k]));
       if(g.topOverflow || g.pageOverflowX) fail(W,H,name+"geometry","horizontal overflow (header="+g.topOverflow+" page="+g.pageOverflowX+")");
-      if(g.nameClipped && !(label==="max_length_name" && g.nameOverflowMode==="ellipsis" && g.nameFullTitle==="MaximilianJunior")) fail(W,H,name+"geometry","kid name clipped without readable ellipsis and full title");
+      const allowedLongName = (label==="max_length_name" && g.nameFullTitle==="MaximilianJunior") || (label==="long_prize_long_name" && g.nameFullTitle==="Bartholomew");
+      if(g.nameClipped && !(allowedLongName && g.nameOverflowMode==="ellipsis")) fail(W,H,name+"geometry","kid name clipped without readable ellipsis and full title");
       if(label==="max_length_name" && g.nameOverflowMode!=="ellipsis") fail(W,H,name+"geometry","long name lacks ellipsis fallback");
       if(g.coinClipped) fail(W,H,name+"geometry","coin text clipped");
       // Layout: pill directly under name (same centre column), stars lower-left, coins lower-right, speaker upper-right.
@@ -310,7 +313,7 @@ async function run(){
       if(!(g.back.cy < g.pill.cy && g.back.cx < g.top.cx)) fail(W,H,name+"layout","back not upper left");
       if(!(g.spk.cy < g.pill.cy && g.spk.cx > g.top.cx && g.spk.r <= g.top.r)) fail(W,H,name+"layout","speaker not upper right");
       if(g.siren){ if(!(g.siren.r <= g.spk.l + 0.5 && Math.abs(g.siren.cy - g.spk.cy) < 2)) fail(W,H,name+"layout","siren not in the slot left of the speaker");
-        if(g.siren.l < g.who.r) fail(W,H,name+"layout","siren overlaps the name"); }
+        if(g.siren.l < g.who.r) fail(W,H,name+"layout","siren overlaps the name: "+JSON.stringify({who:g.who,siren:g.siren})); }
       else if(label.startsWith("siren")) fail(W,H,name+"geometry","expected a siren");
       if(label==="no_siren_default" && g.siren) fail(W,H,name+"geometry","siren present with no mission");
       if(g.tabTops.length !== 1 || g.tabsOverflow || g.tabsTextClipped) fail(W,H,name+"geometry","tabs wrapped/overflow/clipped: rows="+g.tabTops.length+" overflow="+g.tabsOverflow+" textClipped="+g.tabsTextClipped);

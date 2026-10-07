@@ -778,34 +778,34 @@ body:has(#layer > .sheet) .botnav{display:none}
 .alarm>b{font-size:30px;line-height:1}.alarm span{display:flex;flex-direction:column;min-width:0}.alarm span b{font-family:var(--disp);font-weight:700;color:#C92A2F;font-size:clamp(16px,2.6vh,20px)}.alarm small{font-size:14px;color:var(--soft)}
 .alarm.ok{animation:none;border-color:var(--doneInk);background:var(--done)}.alarm.ok span b{color:var(--doneInk)}
 /* The former separate jar/progress strip is integrated into this single kid header.
-   Row 1 holds identity and controls; row 2 holds reward/status; row 3 is the full progress bar. */
+   Identity, prize, status, then a full-width progress bar have their own rows. */
 .kidLayout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 .kidLayout>.main{grid-row:1}
-.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,150px) minmax(58px,1fr);grid-template-rows:54px 34px 14px;grid-template-areas:"back who tools" "stars prize coin" "bar bar bar";align-items:center;gap:4px 6px;padding:9px 8px;margin-bottom:10px;color:#fff;
+.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,150px) minmax(58px,1fr);grid-template-rows:62px 32px 32px 14px;grid-template-areas:"back who tools" "prize prize prize" "stars . coin" "bar bar bar";align-items:center;gap:0 6px;padding:4px 8px;margin-bottom:10px;color:#fff;
   background:linear-gradient(180deg,color-mix(in srgb,var(--k) 28%,#1d2140),#12152a);border:1px solid color-mix(in srgb,var(--k) 50%,#000)}
-.top .back,.top .spk,.top .siren{position:relative;width:36px;height:36px;padding:0;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+.top .back,.top .spk,.top .siren{position:relative;width:40px;height:40px;padding:0;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
 .top .back,.top .spk,.top .siren,.top .prizePill,.top .hdCoin{cursor:pointer}
 .top .back::after,.top .spk::after,.top .siren::after{content:"";position:absolute;inset:-6px -4px -1px -4px}
 .top .back{grid-area:back;justify-self:start;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.3)}
 .top .spk{box-shadow:none;border:1.5px solid rgba(255,255,255,.35)}
-.top .spk svg,.top .spk img{width:18px!important;height:18px!important}
+.top .spk svg,.top .spk img{width:20px!important;height:20px!important}
 .top .hdTools{grid-area:tools;justify-self:end;display:flex;align-items:center;gap:8px}
 .top .siren{background:#E5484D;border:1.5px solid #FFB3B6;animation:alarmpulse 1.4s ease-in-out infinite}
-.top .who{grid-column:1/-1;grid-row:1;justify-self:center;max-width:calc(100% - 150px);flex:none;font-size:20px;gap:6px;color:#fff;overflow:hidden}
-.top .whoAv{height:clamp(44px,7vh,54px);width:clamp(44px,7vh,54px)}
+.top .who{grid-column:1/-1;grid-row:1;justify-self:center;max-width:calc(100% - 150px);flex:none;font-size:20px;gap:6px;color:#fff;overflow:hidden;translate:0 -2px}
+.top .whoAv{height:clamp(50px,8vh,62px);width:clamp(50px,8vh,62px)}
 .top .who .wn b{max-width:38vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:22px;letter-spacing:-.5px;color:var(--k);text-shadow:0 1px 2px #12152a}
-.top .who.longName{max-width:calc(100% - 160px)}
+.top .who.longName{max-width:calc(100% - 176px)}
 .top .who.longName .wn b{font-size:20px;text-overflow:ellipsis;white-space:nowrap}
-.top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:14px;line-height:1;min-width:0;white-space:nowrap}
+.top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:16px;line-height:1;min-width:0;white-space:nowrap}
 .top .hdBar{grid-area:bar;display:block;width:100%;height:14px;border-radius:7px;background:rgba(255,255,255,.22);overflow:hidden}
 .top .hdBar i{display:block;height:100%;background:var(--gold);border-radius:7px}
-.top .prizePill{grid-area:prize;position:relative;justify-self:center;max-width:136px;min-width:0;height:28px;display:flex;align-items:center;gap:4px;padding:0 8px;border-radius:14px;
+.top .prizePill{grid-area:prize;position:relative;justify-self:center;max-width:136px;min-width:0;height:32px;display:flex;align-items:center;gap:4px;padding:0 8px;border-radius:16px;
   background:rgba(255,255,255,.12);border:1px solid var(--gold2);color:#fff;font-family:var(--font);font-weight:800;font-size:13px;line-height:1;white-space:nowrap}
 .top .prizePill.earned{background:color-mix(in srgb,var(--gold) 35%,transparent)}
 .top .prizePill b{font-size:12px;flex:none;line-height:1}
 .top .prizePill .pt{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .top .prizePill .pp{flex:none;opacity:.9}
-.top .hdCoin{grid-area:coin;position:relative;justify-self:end;height:22px;min-width:0;padding:0 8px;border-width:1.5px;border-radius:11px;font-size:14px;line-height:1;gap:2px}
+.top .hdCoin{grid-area:coin;position:relative;justify-self:end;height:32px;min-width:0;padding:0 8px;border-width:1.5px;border-radius:16px;font-size:16px;line-height:1;gap:2px}
 .top .prizePill::after,.top .hdCoin::after,.top .hdStars::after{content:"";position:absolute;inset:-1px -4px -6px -4px}
 #missionHub .mEmoji{font-size:36px}
 #missionHub .missionPop,#missionHub .mCard{gap:6px}
