@@ -1,4 +1,4 @@
-// Local syntax + structure checks for the v59 polish
+// Local syntax + structure checks for the v59 polish (kept current for v62-mission build).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -12,9 +12,9 @@ console.log('lines', lines.length);
 const scriptTagCount = (html.match(/<script\b/g) || []).length;
 console.log('script tag count:', scriptTagCount);
 
-// CACHE check
+// CACHE check (v62-mission Preview)
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v59') ? 'OK: CACHE v59' : 'ERROR: CACHE not v59');
+console.log(sw.includes('momster-helper-v62-mission') ? 'OK: CACHE v62-mission' : 'ERROR: CACHE not v62-mission');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');

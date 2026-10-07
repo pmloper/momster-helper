@@ -751,6 +751,28 @@ body:has(#layer > .sheet) .botnav{display:none}
 .mood{font-size:13px;font-style:italic;color:var(--soft);line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .tile .wk{position:absolute;left:6px;top:6px;background:#1E2A47;color:#fff;border:2px solid #FFD84D;border-radius:10px;padding:1px 8px;font-size:clamp(12px,2vh,16px);font-weight:900;line-height:1.4;text-shadow:none;box-shadow:0 2px 5px rgba(0,0,0,.3)}
 .tile.evt{border-color:#E5484D;box-shadow:0 5px 0 #E5484D,var(--shadow)}
+.tile.spm{border-color:#7048E8;box-shadow:0 5px 0 #7048E8,var(--shadow)}
+.tile.spmPick{border-color:#7048E8;border-style:dashed;box-shadow:0 5px 0 #7048E8,var(--shadow);background:color-mix(in srgb,#7048E8 8%,var(--card))}
+/* Distinct Bonus-tab badges per active mission type. Two separate elements (red surprise
+   and purple special) so the kid and parent can tell which mission is waiting at a
+   glance. Replaces the old single generic .bonusStar; the legacy class is kept for
+   back-compat with the dismiss marker check. */
+.bonusStar{position:absolute;top:-4px;right:-4px;font-size:18px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));animation:alarmpulse 1.4s ease-in-out infinite}
+.bonusStarEv{position:absolute;top:-6px;left:-6px;font-size:18px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));animation:alarmpulse 1.4s ease-in-out infinite;color:#E5484D}
+.bonusStarPk{position:absolute;top:-6px;right:-6px;font-size:18px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));animation:alarmpulse 1.4s ease-in-out infinite;color:#7048E8}
+.missionPop{display:flex;flex-direction:column;gap:10px;text-align:center;align-items:center;max-width:440px;width:100%}
+.missionPop .mHead{font-family:var(--disp);font-weight:700;font-size:clamp(20px,3.4vh,26px);color:var(--ink);line-height:1.15}
+.missionPop .mCard{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--card);border:3px solid var(--line);border-radius:22px;padding:14px;box-shadow:var(--shadow)}
+.missionPop .mCard.ev{border-color:#E5484D;background:color-mix(in srgb,#E5484D 10%,var(--card))}
+.missionPop .mCard.pk{border-color:#7048E8;background:color-mix(in srgb,#7048E8 10%,var(--card))}
+.missionPop .mEmoji{font-size:64px;line-height:1}
+.missionPop .mTitle{font-family:var(--disp);font-weight:700;font-size:clamp(18px,3vh,22px);line-height:1.15}
+.missionPop .mBody{font-size:clamp(14px,2.2vh,17px);color:var(--soft);line-height:1.3}
+.missionPop .mStars{font-size:15px;font-weight:800}
+.missionPop .mOpts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:6px}
+.missionPop .mOpts button{min-width:96px;padding:8px 12px;border-radius:18px;border:3px solid var(--line);background:var(--card);font-family:var(--disp);font-weight:700;font-size:15px}
+.missionPop .mOpts button.on{border-color:var(--k,#FFA41B);background:var(--card);box-shadow:0 2px 0 var(--k,#FFA41B)}
+.missionPop .mClose{margin-top:6px;padding:10px 18px;border-radius:18px;border:0;background:var(--k,#12B886);color:#fff;font-family:var(--disp);font-weight:700;font-size:17px;cursor:pointer;box-shadow:0 3px 0 color-mix(in srgb,var(--k,#12B886) 65%,#000)}
 .alarm{flex:none;width:100%;display:flex;align-items:center;gap:10px;text-align:left;margin:0 0 10px;padding:8px 14px;border-radius:20px;border:2px solid #E5484D;background:color-mix(in srgb,#E5484D 12%,var(--card));animation:alarmpulse 1.4s ease-in-out infinite}
 .alarm>b{font-size:30px;line-height:1}.alarm span{display:flex;flex-direction:column;min-width:0}.alarm span b{font-family:var(--disp);font-weight:700;color:#C92A2F;font-size:clamp(16px,2.6vh,20px)}.alarm small{font-size:14px;color:var(--soft)}
 .alarm.ok{animation:none;border-color:var(--doneInk);background:var(--done)}.alarm.ok span b{color:var(--doneInk)}
@@ -1861,9 +1883,121 @@ const activeEvent = () => settings.event && settings.event.day===ymd(new Date())
 const eventJob = () => { const ev=activeEvent(); return ev ? {id:"ev_"+ev.id, e:ev.e, t:ev.t, pts:ev.pts||3, ev:true} : null; };
 const kidBonusJobs = () => (eventJob()?[eventJob()]:[]).concat(bonusJobs());
 const regExtra = k => todayExtra(k).filter(x=>!String(x.id).startsWith("ev_"));
-function eventBar(k){ const ev=activeEvent(); if(!ev) return ""; const x=k?extraOf(k,"ev_"+ev.id):null;
-  if(k) return `<button class="alarm ${x&&x.ok?"ok":""}" data-a="evGo"><b>${x&&x.ok?"✅":"🚨"}</b><span><b>${esc(ev.title)}</b><small>${x? (x.ok?"Mission complete!":"⏳ Ask a grown-up to check it") : esc(ev.t)+" · +"+(ev.pts||3)+" ⭐"}</small></span></button>`;
-  return `<div class="alarm"><b>🚨</b><span><b>${esc(ev.title)}</b><small>Surprise mission: ${esc(ev.t)} · +${ev.pts||3} ⭐ each</small></span></div>`; }
+// Special-mission job for the Bonus grid. Returns one of:
+//   - { kind:"chooser" }   when the special is active and no pick exists today
+//   - { kind:"pick", id:"pk_<id>", e,t,pts,sp:true } when a pick exists and is not done
+//   - null                 when no special is active or the kid already finished it
+// The chooser is a clearly-marked CTA tile in the Bonus grid that opens a small
+// chooser sheet (no auto-dismissal of an unrelated surprise).
+const pickJob = (k) => { if(!k || !pickList().length) return null; const p=todayPick(k);
+  const day=ymd(new Date()), list=((weeks[k].done||{})[day]||[]);
+  // If today's pick is already done, no tile.
+  if(p && list.includes("pk_"+p.id)) return null;
+  // If today's pick exists (planned or chosen), render the .spm tile that runs pkDo.
+  if(p) return { id:"pk_"+p.id, e:p.e, t:p.t, pts:2, sp:true };
+  // Otherwise the special is active and unselected — render a chooser CTA tile.
+  return { id:"pk_unselected", e:"🎯", t:"Pick today's special mission", pts:2, spPick:true }; };
+const kidBonusJobsWithPick = () => { const list=(eventJob()?[eventJob()]:[]).concat(bonusJobs());
+  const k=view.kid; if(k){ const sp=pickJob(k); if(sp){ if(!list.find(x=>x.id===sp.id)) list.push(sp); } }
+  return list; };
+const regExtraClean = k => todayExtra(k).filter(x=>!String(x.id).startsWith("ev_") && !String(x.id).startsWith("pk_"));
+// --- Active marker state (per kid, per day) ---
+// Surprise is "active" while the daily event exists AND the kid has not approved/completed
+// it yet. On the home view (k falsy), event is active if any kid hasn't completed it yet.
+const surpriseActive = (k) => { const ev=activeEvent(); if(!ev) return false;
+  if(k) return !extraOf(k,"ev_"+ev.id) || !extraOf(k,"ev_"+ev.id).ok;
+  return !Object.keys(KIDS).every(kid => { const x=extraOf(kid,"ev_"+ev.id); return x && x.ok; });
+};
+// Special is "active" whenever the daily special is not yet completed for this kid, even
+// if already picked. Per-kid only (k truthy); returns false otherwise.
+const specialActive = (k) => { if(!k || !pickList().length) return false; const p=todayPick(k);
+  const day=ymd(new Date()), list=((weeks[k].done||{})[day]||[]);
+  // Active if either no pick yet (unselected) or pick not done.
+  if(!p) return true;
+  return !list.includes("pk_"+p.id); };
+// Dismissal keys are keyed by (day, mission identity, kid) so the popup does not repeat
+// and the persistent kid banner stays gone for the rest of the day. Mission identity is
+// either "unselected" (no pick yet) or the chosen special's id. If a grown-up changes
+// today's special mid-day, the new mission id is un-dismissed and a fresh popup is
+// eligible.
+const specialKey = (k) => { const p=todayPick(k); return "mpop_pk_"+ymd(new Date())+"_"+(p ? p.id : "unselected")+"_"+k; };
+const surpriseDismissedToday = (k) => { const ev=activeEvent(); if(!ev) return false;
+  return k && !!loadLocal("mpop_ev_"+ev.day+"_"+ev.id+"_"+k); };
+const specialDismissedToday = (k) => k && !!loadLocal(specialKey(k));
+// Pending = active AND not yet dismissed today. Surprise is per kid; special is per kid.
+const surprisePending = (k) => k && surpriseActive(k) && !surpriseDismissedToday(k);
+const specialPending = (k) => k && specialActive(k) && !specialDismissedToday(k);
+function eventBar(k){ const ev=activeEvent(); if(!ev) return "";
+  // Per Paul (Momster intake): "Surprise missions need to live in a pop-up box when
+  // you first enter the site; their banners just take up too much vertical headspace."
+  // The persistent alarm banner is removed from BOTH home and kid views. The popup is
+  // the entry-point nudge and the .evt tile in the Bonus grid is the persistent surface.
+  // Grown-up status is available in Settings → Surprise mission.
+  return "";
+}
+// Combined dismissible popup for surprise + special missions. Exactly one sheet when
+// either or both are pending for this kid; respects non-reader speech; no new autoplay
+// beyond the existing speakRead call; dismissal is keyed by (day, mission identity, kid)
+// so it doesn't repeat on every re-entry to kid view, and the persistent kid banner +
+// selected-special header card stay gone for the rest of the day.
+let missionPopupOpen = false;
+function missionPopup(k){
+  const hasEv = surprisePending(k), hasPk = specialPending(k);
+  if(!hasEv && !hasPk) return;
+  const ev = activeEvent();
+  const today = todayPick(k);
+  const evCard = hasEv ? `<div class="mCard ev" data-kind="ev">
+      <div class="mEmoji">${esc(ev.e)}</div>
+      <div class="mTitle">🚨 Surprise mission: ${esc(ev.title)}</div>
+      <div class="mBody">${esc(ev.t)}</div>
+      <div class="mStars">⭐ +${ev.pts||3} stars (grown-up checks it)</div>
+    </div>` : "";
+  const pkCard = hasPk ? (() => {
+    const opts = pickChoices(k);
+    const head = today
+      ? `<div class="mTitle">🎯 Your special mission: ${esc(today.e)} ${esc(today.t)}</div>`
+      : `<div class="mTitle">🎯 Pick your special mission</div>`;
+    const body = today
+      ? `<div class="mStars">⭐⭐ when you finish it</div>`
+      : `<div class="mBody">Choose one for today. ⭐⭐ when you finish it.</div>
+         <div class="mOpts">${opts.map(o=>`<button data-a="missionChoose" data-j="${esc(o.id)}"><span>${esc(o.e)}</span> <span>${esc(o.t)}</span></button>`).join("")}</div>`;
+    return `<div class="mCard pk" data-kind="pk">${head}${body}</div>`;
+  })() : "";
+  const headText = (hasEv && hasPk) ? "Two missions today! 💪"
+                  : hasEv ? "Surprise mission! 🚨"
+                  : "Your special mission 🎯";
+  layer.innerHTML = `<div class="ov" data-a="missionDismiss"><div class="sheet" id="missionPop" data-k="${esc(k)}">
+    <div class="missionPop">
+      <div class="mHead">${headText}</div>
+      ${evCard}${pkCard}
+      <button class="mClose" data-a="missionDismiss">Got it!</button>
+    </div>
+  </div></div>`;
+  missionPopupOpen = true;
+  // Non-reader speech respects the existing speakRead contract; nothing else speaks.
+  const lines = [];
+  if(hasEv) lines.push("Surprise mission! "+ev.title+". "+ev.t+".");
+  if(hasPk){
+    if(today) lines.push("Your special mission: "+today.t+".");
+    else lines.push("Pick your special mission for today.");
+  }
+  speakRead(lines.join(" "));
+}
+function closeMissionPopup(){
+  if(!missionPopupOpen) return;
+  const k = view.kid;
+  // Persist dismissal keys for each currently pending kind. After this, the persistent
+  // kid banner and selected-special header card stay gone for the rest of the day; the
+  // .evt / .spm tile in the Bonus grid is the persistent surface.
+  if(k){
+    const ev = activeEvent();
+    if(ev && surpriseActive(k)){ saveLocal("mpop_ev_"+ev.day+"_"+ev.id+"_"+k, 1); }
+    if(specialActive(k)){ saveLocal(specialKey(k), 1); }
+  }
+  missionPopupOpen = false;
+  close();
+  render();
+}
 function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; party(["💥",c[0],"🤝","⭐"]);
   cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️"); play(["punch","fanfare","BJ:Combo attack! "+c[1]+"!"]); }
 let introOpen=false;
@@ -2133,7 +2267,14 @@ function render(){
   if(!view.kid && !introOpen && !layer.innerHTML && !loadLocal("intro_"+WEEK) && monsterLeft()>0) setTimeout(()=>{ if(!view.kid && !layer.innerHTML && !introOpen) villainIntro(); }, 600);
   else if(!view.kid && !layer.innerHTML && todayDow()===0 && new Date().getHours()>=17 && !loadLocal("report_"+WEEK)) setTimeout(()=>{ if(!view.kid && !layer.innerHTML){ saveLocal("report_"+WEEK,1); hqSheet("report"); play(["fanfare","BJ:Mission report! Look what the Momster Helpers did this week!"]); } }, 900);
   if(!view.kid) checkRank();
-  const k=view.kid; if(!k) return; const c=coins(k), was=lastCoins[k]; lastCoins[k]=c;
+  const k=view.kid; if(!k) return;
+  // Mission popup dispatch: show one combined dismissible popup on entering kid view
+  // when surprise or special is pending. Fires only when no other sheet is open and the
+  // popup wasn't already dismissed for today.
+  if(!layer.innerHTML && !missionPopupOpen && (surprisePending(k) || specialPending(k))){
+    setTimeout(()=>{ if(view.kid===k && !layer.innerHTML && !missionPopupOpen) missionPopup(k); }, 250);
+  }
+  const c=coins(k), was=lastCoins[k]; lastCoins[k]=c;
   if(was!=null && c>was){ const btn=document.querySelector(".coinBtn"); if(btn){ btn.classList.add("coinPop");
     const f=document.createElement("span"); f.className="coinFly"; f.textContent="+"+(c-was)+" 🪙"; btn.appendChild(f); } }
 }
@@ -2158,12 +2299,25 @@ function kidView(k){
   const tabs = ROUTINES.map(x=>{ const js=jobsFor(x,dow), left=js.filter(j=>!isDone(k,j.id)).length;
     const cls = x.id===view.routine?"on":(js.length? "" :"off");
     return `<button class="tab ${cls}" style="--rc:${x.rc}" data-a="routine" data-r="${x.id}"><b>${js.length&&!left?"✅":x.icon}</b><span><em class="lg">${x.name}</em><em class="sm">${x.short||x.name}</em><small>${js.length? (left? left+" left":"done!"+(chips[x.id]&&chips[x.id].n>=3&&chips[x.id].last===ymd(new Date())?" · "+chips[x.id].n+" in a row":"")): "not today"}</small></span></button>`; }).join("");
-  const used=regExtra(k).length;
-  const bonusTab = `<button class="tab ${view.routine==="bn"?"on":""}" style="--rc:#12B886" data-a="routine" data-r="bn"><b>💪</b><span>Bonus<small>${used>=BONUS_MAX?"all used":(BONUS_MAX-used)+" left"}</small></span></button>`;
+  const used=regExtraClean(k).length;
+  // Distinct Bonus-tab badges per active type. Two separate marker elements so the kid
+  // (and parent) can tell which mission(s) are waiting at a glance. A surprise waiting
+  // puts a red 🚨 corner; a special waiting puts a purple 🎯 corner. Both visible when
+  // both are active.
+  const showEv = surpriseActive(k), showPk = specialActive(k);
+  const bonusBadges = (showEv ? '<span class="bonusStarEv" aria-label="Surprise mission waiting">🚨</span>' : "")
+                    + (showPk ? '<span class="bonusStarPk" aria-label="Special mission waiting">🎯</span>' : "");
+  const bonusTab = `<button class="tab ${view.routine==="bn"?"on":""}" style="--rc:#12B886" data-a="routine" data-r="bn"><b>💪${bonusBadges}</b><span>Bonus<small>${used>=BONUS_MAX?"all used":(BONUS_MAX-used)+" left"}</small></span></button>`;
   let body;
-  if(view.routine==="bn"){ const bj=kidBonusJobs(), land=innerWidth>innerHeight&&innerWidth>700, cols=land?(innerHeight<=520?2:4):2;
-    body = `<div class="tiles" style="--cols:${cols}">${bj.map(j=>{ const x=extraOf(k,j.id), st=x?(x.ok?"done":"waiting"):(used>=BONUS_MAX&&!j.ev?"off":"");
-      return `<button class="tile bonus hasB ${st} ${j.ev?"evt":""}" data-a="bjob" data-j="${j.id}"><span class="badges">${isWeak(j.id)&&!x?'<span class="wk">💥x2</span>':""}<span class="x2">${"⭐".repeat(Math.min(3,j.pts||2))}</span></span><div class="em">${esc(j.e)}</div><div class="tx">${esc(j.t)}</div>${st==="waiting"?'<div class="wait">⏳ Ask a grown-up</div>':""}</button>`; }).join("")}</div>`; }
+  if(view.routine==="bn"){ const bj=kidBonusJobsWithPick(), land=innerWidth>innerHeight&&innerWidth>700, cols=land?(innerHeight<=520?2:4):2;
+    body = `<div class="tiles" style="--cols:${cols}">${bj.map(j=>{ const x=extraOf(k,j.id), st=x?(x.ok?"done":"waiting"):(used>=BONUS_MAX&&!j.ev&&!j.sp&&!j.spPick?"off":"");
+      const isEvent=!!j.ev, isPick=!!j.sp, isPickChooser=!!j.spPick;
+      // Tile action: chooser opens a small special-only sheet, .spm routes via pkDo
+      // (existing reward path), surprise tile routes via bjob (tapBonus / bnYes).
+      const act = isPickChooser ? "pkPickOpen" : isPick ? "pkDo" : "bjob";
+      const cls = `tile bonus hasB ${st} ${isEvent?"evt":""} ${isPick?"spm":""} ${isPickChooser?"spmPick":""}`;
+      const label = isPickChooser ? `<div class="wait">⏳ Pick one</div>` : (st==="waiting"?'<div class="wait">⏳ Ask a grown-up</div>':"");
+      return `<button class="${cls}" data-a="${act}" data-j="${j.id}"><span class="badges">${isWeak(j.id)&&!x?'<span class="wk">💥x2</span>':""}<span class="x2">${"⭐".repeat(Math.min(3,j.pts||2))}</span></span><div class="em">${esc(j.e)}</div><div class="tx">${esc(j.t)}</div>${label}</button>`; }).join("")}</div>`; }
   else if(!list.length) body = `<div class="fullmsg rest"><div class="big">😎</div>No ${r.name.toLowerCase()} jobs today!</div>`;
   else if(list.every(j=>isDone(k,j.id))){ const land = innerWidth > innerHeight && innerWidth > 700, n=list.length, cols = land ? (n<=4?n:(n<=6?3:4)) : (n<=1?1:2);
     body = `<div class="donebar"><span class="db-ic">${r.doneIcon||"🎉"}</span><span class="db-tx"><b>${r.doneMsg||"All done! Great job!"}</b><small>${"⭐".repeat(Math.min(list.length,8))} + 🌟 bonus · ${(()=>{ const day=ymd(new Date()), oth=Object.keys(KIDS).filter(x=>x!==k), wait=oth.filter(x=>!routineDoneDay(x,day,r)); return !oth.length?"":(wait.length? "🤝 When "+wait.map(x=>KIDS[x].name).join(" + ")+" finishes too: COMBO ATTACK!" : "💥 Combo attack landed!"); })()}</small></span>
@@ -2179,13 +2333,28 @@ function kidView(k){
   <div class="layout" style="--k:${KIDS[k].color};--rc:${view.routine==="bn"?"#12B886":(r.rc||"#FFA41B")}"><div class="main">${eventBar(k)}<div class="tabs">${tabs}${bonusTab}</div>${raceBar(k)}${pickStrip(k)}${body}</div>${jarCard(k)}</div>`;
 }
 function pickStrip(k){ const today=todayPick(k); if(!pickList().length) return "";
-  const day=ymd(new Date());
-  const done = today && ((weeks[k].done||{})[day]||[]).includes("pk_"+today.id);
-  if(done) return `<div class="pickcard done">🎯 Special mission complete: <b>${esc(today.e)} ${esc(today.t)}</b> ⭐⭐ Nice!</div>`;
-  if(today) return `<div class="pickcard chosen"><span class="pk-lab">🎯 ${plannedPick()===today?"Today's special mission from your grown-up:":"Today's special mission (your pick!):"}</span><button class="pickrow" data-a="pkDo" data-j="pk_${esc(today.id)}"><span class="em">${esc(today.e)}</span><span class="tx">${esc(today.t)}</span><span class="st">⭐⭐</span></button></div>`;
+  // Per Atlas round 2 clarification: the kid view never shows a persistent special-mission
+  // header card. The chooser lives in the Bonus grid (`.spmPick` tile), the picked mission
+  // lives as the `.spm` tile, and the popup is the entry-point nudge. Returning "" here
+  // also avoids the "permanent header" trap the user flagged.
+  return "";
+}
+// Small chooser sheet for the special mission, opened from the Bonus-grid `.spmPick`
+// tile. Does NOT auto-dismiss an unrelated surprise popup — if the combined popup is
+// open, this sheet sits on top of it via the existing layer.
+function openSpecialChooser(k){
   const opts = pickChoices(k);
-  if(!opts.length) return "";
-  return `<div class="pickcard"><span class="pk-lab">🎯 Your special mission today — pick one:</span><div class="pkopts">${opts.map(o=>`<button class="pkopt" data-a="pkChoose" data-j="${esc(o.id)}"><span class="em">${esc(o.e)}</span><span class="tx">${esc(o.t)}</span></button>`).join("")}</div></div>`;
+  if(!opts.length) return;
+  layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet" id="pkChooser" data-k="${esc(k)}">
+    <div class="missionPop">
+      <div class="mHead">🎯 Pick your special mission</div>
+      <div class="mCard pk">
+        <div class="mBody">Choose one for today. ⭐⭐ when you finish it.</div>
+        <div class="mOpts">${opts.map(o=>`<button data-a="pkChooseChooser" data-j="${esc(o.id)}"><span>${esc(o.e)}</span> <span>${esc(o.t)}</span></button>`).join("")}</div>
+      </div>
+      <button class="mClose" data-a="closeOv">Cancel</button>
+    </div>
+  </div></div>`;
 }
 function raceBar(k){
   if(view.routine!=="am" || !raceDay()) return "";
@@ -2522,6 +2691,19 @@ document.addEventListener("click", e=>{
     case "bjob": if(lpFired){ lpFired=false; break; } tapBonus(k, t.dataset.j); break;
     case "job": if(lpFired){ lpFired=false; break; } tapJob(k, t.dataset.j); break;
     case "pkChoose": { const w=weeks[k]; const po=pickList().find(x=>x.id===t.dataset.j); w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k); render(); play(["pop","BJ:Ooh, good choice!"]); if(po) speakRead("You picked: "+po.t+". Your special mission!"); break; }
+    case "pkChooseChooser": { const w=weeks[k]; w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k);
+      // Dismissal key must be saved for the NEW selected mission id BEFORE render, so
+      // the popup does not immediately re-fire with the new id (which would be a fresh
+      // "un-dismissed" key from the changed-by-parent case). close() drops the chooser
+      // sheet; render() rebuilds with the .spm tile.
+      saveLocal(specialKey(k), 1);
+      close(); render(); play(["pop","BJ:Ooh, good choice!"]); break; }
+    case "pkPickOpen": { openSpecialChooser(k); break; }
+    case "missionChoose": { const w=weeks[k]; w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k);
+      // Pick was made via the popup; closeMissionPopup persists dismissal keys for all
+      // currently pending kinds so re-entry doesn't re-pop the surprise either.
+      closeMissionPopup(); break; }
+    case "missionDismiss": closeMissionPopup(); break;
     case "pkDo": { const p=todayPick(k); if(!p) break; const w=weeks[k], day=ymd(new Date()); const list=(w.done[day]=w.done[day]||[]);
       if(!list.includes(t.dataset.j)){ const before=stars(k); list.push(t.dataset.j); saveWeek(k);
         speakRead(p.t+". Special mission complete! Two big stars!");
