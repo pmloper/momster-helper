@@ -305,6 +305,7 @@ async function run(){
       if(g.nameClipped && !(allowedLongName && g.nameOverflowMode==="ellipsis")) fail(W,H,name+"geometry","kid name clipped without readable ellipsis and full title");
       if(label==="max_length_name" && g.nameOverflowMode!=="ellipsis") fail(W,H,name+"geometry","long name lacks ellipsis fallback");
       if(g.coinClipped) fail(W,H,name+"geometry","coin text clipped");
+      if(Math.abs(g.pill.cy-g.coin.cy) > 1 || g.pill.cy <= g.top.t+84 || g.coin.cy >= g.top.t+110) fail(W,H,name+"layout","prize and coin pills should meet on one line, with prize moved down and coin moved up: "+JSON.stringify({prize:g.pill.cy,coin:g.coin.cy,top:g.top.t}));
       // Layout: pill directly under name (same centre column), stars lower-left, coins lower-right, speaker upper-right.
       if(!(g.pill.t >= g.who.b - 1)) fail(W,H,name+"layout","pill is not below the name (pill.t="+g.pill.t+" who.b="+g.who.b+")");
       if(Math.abs(g.pill.cx - g.who.cx) > 14) fail(W,H,name+"layout","pill not centred under the name (dx="+Math.round(g.pill.cx-g.who.cx)+")");

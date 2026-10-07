@@ -778,10 +778,10 @@ body:has(#layer > .sheet) .botnav{display:none}
 .alarm>b{font-size:30px;line-height:1}.alarm span{display:flex;flex-direction:column;min-width:0}.alarm span b{font-family:var(--disp);font-weight:700;color:#C92A2F;font-size:clamp(16px,2.6vh,20px)}.alarm small{font-size:14px;color:var(--soft)}
 .alarm.ok{animation:none;border-color:var(--doneInk);background:var(--done)}.alarm.ok span b{color:var(--doneInk)}
 /* The former separate jar/progress strip is integrated into this single kid header.
-   Identity, prize, status, then a full-width progress bar have their own rows. */
+   Identity, stars, aligned prize/coin pills, then a full-width progress bar have their own rows. */
 .kidLayout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
 .kidLayout>.main{grid-row:1}
-.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,150px) minmax(58px,1fr);grid-template-rows:62px 32px 32px 14px;grid-template-areas:"back who tools" "prize prize prize" "stars . coin" "bar bar bar";align-items:center;gap:0 6px;padding:4px 8px;margin-bottom:10px;color:#fff;
+.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,150px) minmax(58px,1fr);grid-template-rows:62px 16px 4px 32px 12px 14px;grid-template-areas:"back who tools" "stars . ." ". . ." ". prize coin" ". . ." "bar bar bar";align-items:center;gap:0 6px;padding:4px 8px;margin-bottom:10px;color:#fff;
   background:linear-gradient(180deg,color-mix(in srgb,var(--k) 28%,#1d2140),#12152a);border:1px solid color-mix(in srgb,var(--k) 50%,#000)}
 .top .back,.top .spk,.top .siren{position:relative;width:40px;height:40px;padding:0;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
 .top .back,.top .spk,.top .siren,.top .prizePill,.top .hdCoin{cursor:pointer}
