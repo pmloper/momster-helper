@@ -2218,7 +2218,7 @@ function jarCard(k){
   const aim = r ? ((r.e||"🎁")+" "+(r.t||"")) : "🎁 Surprise prize";
 return `<div class="jarCard" style="--k:${KIDS[k].color}"><h2>${n>=g? "You did it! 🎉" : aim}</h2>
     <div class="left">${status}</div>${jar}${eggReady(k)?`<button class="prize eggBtn" data-a="egg"><b>🥚</b>Open your egg!</button>`:""}<button class="prize shopBtn" data-a="buddy" style="background:transparent;border:2px dashed var(--gold2)"><b>🪙</b>${coins(k)} ${coins(k)===1?"coin":"coins"} to spend · shop</button>
-    <div class="mini"><div>⭐ ${n} of ${g}</div><div class="bar" style="max-width:none"><i style="width:${Math.min(100,n/g*100)}%"></i></div></div>${prize}${r && !weeks[k].reward2 ? `<button class="chip" data-a="addPrize2" title="Pick an optional 2nd prize">Add a 2nd prize 🎁</button>` : ""}</div>`;
+    <div class="mini"><div>⭐ ${n} of ${g}</div><div class="bar" style="max-width:none"><i style="width:${Math.min(100,n/g*100)}%"></i></div></div>${prize}</div>`;
 }
 
 /* ---------- Overlays ---------- */
@@ -2238,11 +2238,10 @@ function readDraft(){ document.querySelectorAll(".in").forEach(el=>{ const j=dra
 function toast(msg){ const c=document.createElement("div"); c.className="cheer"; c.style.fontSize="22px"; c.textContent=msg; document.body.appendChild(c); setTimeout(()=>c.remove(),3500); }
 function rewardSheet(k){
   const p1 = weeks[k].reward ? (REWARDS.find(x=>x.id===weeks[k].reward)||{}) : null;
-  const p2 = weeks[k].reward2 ? (REWARDS.find(x=>x.id===weeks[k].reward2)||{}) : null;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
     <div class="ghead"><h2>${av(k)} Pick your prize!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap a prize to choose it, then tap Yes to confirm.</p>
     <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id||weeks[k].reward2===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div>
-    <p class="hint" style="text-align:center;margin-top:8px">${p1? "Prize 1: "+(p1.t||"")+" · "+(p2?"Prize 2: "+p2.t:"Pick a 2nd prize (optional)") : "Pick your first prize!"}</p></div></div>`;
+    <p class="hint" style="text-align:center;margin-top:8px">${p1? "Prize: "+(p1.t||"") : "Pick your prize!"}</p></div></div>`;
 }
 function voiceSheet(k){
   const cur=curVoice(k), tts=ttsPresets();
