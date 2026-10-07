@@ -989,6 +989,14 @@ body.tm{padding-top:40px}
 .ridechip{font-size:clamp(14px,2.2vh,19px);font-weight:800;padding:6px 12px;min-height:44px;border-radius:999px;
   background:color-mix(in srgb,var(--gold) 18%,var(--card));border:2px solid var(--gold2);white-space:nowrap}
 @media (max-width:600px){.ridechip{font-size:15px;padding:4px 10px}}
+
+/* ---- Per-kid leave-by rows ---- */
+.kt{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.ktk{border-left:4px solid var(--kc);padding:2px 0 2px 8px}
+.kth{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.ktg{display:flex;flex-direction:column;gap:6px}
+.ktg .fld{flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
+.ktg .fld .in.tm{width:150px;flex:none}
 </style>
 </head>
 <body>
@@ -1490,7 +1498,7 @@ function subscribe(){
     saveLocal("buddy_"+k,buddies[k]); render(); if(document.getElementById("buddySheet")) buddySheet(k===view.kid?k:view.kid); } }, e=>console.warn(e))));
   unsubs.push(db.doc("teams/"+WEEK).onSnapshot(s=>{ team = s.exists ? {given:!!s.data().given} : {given:false}; render(); }, e=>console.warn(e)));
   unsubs.push(db.doc("settings/main").onSnapshot(s=>{
-    if(s.exists){ const d=s.data(); settings = {pin:d.pin||DEFAULT_PIN, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true}; saveLocal("settings",settings); render(); }
+    if(s.exists){ const d=s.data(); settings = {pin:d.pin||DEFAULT_PIN, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true}; saveLocal("settings",settings); render(); }
   }, e=>console.warn(e)));
   subscribeVoices();
 }
@@ -1540,9 +1548,9 @@ const RIDES = ["walk","bus","drive"];
 const RIDES_ICONS = {walk:"🛴", bus:"🚌", drive:"🚗"};
 let pendingRide=false;
 function rideSheet(){
-  const ends=rideEnds(), cur=rideToday();
+  const ends=famEnds(), cur=rideToday();
   const row=(v,ic,label)=>`<button class="srow link" data-a="ridePick" data-v="${v}" style="${cur===v?"background:color-mix(in srgb,var(--gold) 14%,var(--card))":""}">
-    <span class="sl"><b>${ic} ${label}</b><small>leave ${tm12(ends[v])}</small></span><span class="chev">${cur===v?"✓":""}</span></button>`;
+    <span class="sl"><b>${ic} ${label}</b><small>leave ${modeTime(v)}</small></span><span class="chev">${cur===v?"✓":""}</span></button>`;
   layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:480px">
     <div class="ghead"><h2>🚸 Getting to school</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div>
     <p class="hint">Picks which leave-by clock the Morning Race uses today. Times live in Grown-ups settings.</p>
@@ -1556,11 +1564,23 @@ function rideSheet(){
 }
 const rideToday = () => settings.rideDate === ymd(new Date()) ? (RIDES.includes(settings.rideMode) ? settings.rideMode : "walk") : "walk";
 const driving = () => rideToday() !== "walk";
-const rideEnds = () => ({ walk: settings.walkEnd || settings.raceEnd || "07:40", bus: settings.busEnd || "07:45", drive: settings.driveEnd || "07:50" });
-const raceEnd = () => rideEnds()[rideToday()];
+const HM = /^\d\d:\d\d$/;
+const raceOn = () => !settings.raceOff;   // absent = ON, so installs from before the toggle keep their race
+const famEnds = () => ({ walk: settings.walkEnd || settings.raceEnd || "07:40", bus: settings.busEnd || "07:45", drive: settings.driveEnd || "07:50" });
+// Kid override first (valid HH:MM only), family default second. No kid = family defaults.
+const rideEnds = k => { const f=famEnds(), mine=(settings.kidEnds||{})[k]||{}; RIDES.forEach(m=>{ if(HM.test(mine[m]||"")) f[m]=mine[m]; }); return f; };
+const raceEnd = (k=view.kid) => rideEnds(k)[rideToday()];
+// "7:40 am" when every kid leaves together for this mode, otherwise "varies by kid".
+const modeTime = m => { const t=[...new Set(FAMILY.kids.map(c=>rideEnds(c.id)[m]))]; return t.length===1 ? tm12(t[0]) : "varies by kid"; };
+// Per-kid leave-by inputs (blank = family time); attrs(kidId, mode) supplies the id/data attributes.
+const kidTimeRows = (kids, vals, attrs) => `<div class="kt">${kids.map((c,i)=>`<div class="ktk" style="--kc:${c.color}"><div class="kth"><b>${esc(c.name||("Kid "+(i+1)))}</b><button class="btn ghost sm" data-a="kidEndsReset" data-k="${c.id}">Use family times</button></div>
+  <div class="ktg">${RIDES.map(m=>`<label class="fld"><span>${RIDES_ICONS[m]} ${m[0].toUpperCase()+m.slice(1)}</span><input class="in tm" type="time" ${attrs(c.id,m)} value="${((vals||{})[c.id]||{})[m]||""}"></label>`).join("")}</div></div>`).join("")}</div>
+  <small class="note">Leave a kid's time blank to use the family time.</small>`;
+const homeChipTime = () => { const ks=FAMILY.kids, t=ks.map(c=>raceEnd(c.id));
+  return new Set(t).size<=1 ? tm12(t[0]) : ks.map((c,i)=>[...c.name][0]+" "+tm12(t[i])).join(" · "); };
 const atTime = hm => { const [h,m]=hm.split(":").map(Number); const d=new Date(); d.setHours(h,m,0,0); return d; };
-const raceDay = () => { const d=todayDow(); return d>=1 && d<=5; };
-const raceOpen = () => raceDay() && new Date() < atTime(raceEnd());
+const raceDay = () => { const d=todayDow(); return raceOn() && d>=1 && d<=5; };
+const raceOpen = (k=view.kid) => raceDay() && new Date() < atTime(raceEnd(k));
 const teamPrize = () => settings.teamPrize || {e:"🍕", t:"Pizza + fort night"};
 function doneOn(k, date, rid){ const ds=ymd(date), wk=weekStart(date), w = wk===WEEK ? weeks[k] : (wk===prevWeekKey() ? prevWeeks[k] : null);
   if(!w) return false; const a=(w.done||{})[ds]||[], js=jobsFor(ROUTINES.find(r=>r.id===rid), date.getDay(), k); return js.length>0 && js.every(j=>a.includes(j.id)); }
@@ -2217,6 +2237,7 @@ function wizStart(){
     jobs: { am: starterIds("am"), pm: starterIds("pm"), bt: starterIds("bt"), hp: starterIds("hp") },
     prizeMode: "pick", voice: true, vol: 1,
     walkEnd: settings.walkEnd || settings.raceEnd || "07:40", busEnd: settings.busEnd || "07:45", driveEnd: settings.driveEnd || "07:50", rideMode: (settings.rideMode||"walk"),
+    raceOn: raceOn(), kidEnds: JSON.parse(JSON.stringify(settings.kidEnds||{})),
     mission: null, pin: "", who: {} };
   wizSheet();
 }
@@ -2312,7 +2333,9 @@ function wizReading(){
 }
 function wizTimes(){
   const modes = [["walk","🛴","Walk"],["bus","🚌","Bus"],["drive","🚗","Drive"]];
-  return `<p class="hint" style="margin-top:0">The Morning Race: kids try to finish morning jobs before the clock runs out. Set your real leave-by times.</p>
+  const toggle = `<div class="grp"><div class="srow"><span class="sl"><b>🏁 Morning Race</b><small>${wiz.raceOn?"On: kids race the clock to leave on time":"Off: no race clock or banners (handy for summer break)"}</small></span><button class="tgl ${wiz.raceOn?"on":""}" data-a="wizRace" aria-pressed="${wiz.raceOn}"><i></i></button></div></div>`;
+  if(!wiz.raceOn) return toggle+`<p class="note">You can turn the race back on any time in Grown-ups settings. Your leave-by times are kept.</p>`;
+  return toggle+`<p class="hint" style="margin-top:0">The Morning Race: kids try to finish morning jobs before the clock runs out. Set your real leave-by times.</p>
     <div class="grp"><div class="srow stack">
       <span class="sl"><b>🚸 How do the kids get to school?</b><small>Picks which clock the race uses today</small></span>
       <div class="seg full" style="width:100%">
@@ -2322,7 +2345,7 @@ function wizTimes(){
       <label class="fld"><span>🛴 Walk days: leave by</span><input class="in tm" type="time" id="wizWalkEnd" value="${wiz.walkEnd}"></label>
       <label class="fld"><span>🚌 Bus days: leave by</span><input class="in tm" type="time" id="wizBusEnd" value="${wiz.busEnd}"></label>
       <label class="fld"><span>🚗 Drive days: leave by</span><input class="in tm" type="time" id="wizDriveEnd" value="${wiz.driveEnd}"></label>
-    </div></div></div>
+    </div>${kidTimeRows(wiz.kids, wiz.kidEnds, (k,m)=>`data-wke="${k}|${m}"`)}</div></div>
     <p class="note">The race is optional — if the clock finishes, kids still get stars for finishing jobs.</p>`;
 }
 function wizMission(){
@@ -2346,6 +2369,8 @@ function wizReadInputs(){
   if(we && /^\d\d:\d\d$/.test(we.value)) wiz.walkEnd=we.value;
   if(be && /^\d\d:\d\d$/.test(be.value)) wiz.busEnd=be.value;
   if(de && /^\d\d:\d\d$/.test(de.value)) wiz.driveEnd=de.value;
+  layer.querySelectorAll("[data-wke]").forEach(el=>{ const [k,m]=el.dataset.wke.split("|"), o=(wiz.kidEnds[k]=wiz.kidEnds[k]||{});
+    if(HM.test(el.value)) o[m]=el.value; else delete o[m]; if(!Object.keys(o).length) delete wiz.kidEnds[k]; });
 }
 function wizApply(){
   // kids
@@ -2369,6 +2394,8 @@ function wizApply(){
   // times
   settings.walkEnd=wiz.walkEnd; settings.busEnd=wiz.busEnd; settings.driveEnd=wiz.driveEnd;
   settings.raceEnd=wiz.walkEnd;
+  { const ke={}; kids.forEach(c=>{ if(wiz.kidEnds[c.id]) ke[c.id]=wiz.kidEnds[c.id]; }); settings.kidEnds=Object.keys(ke).length?ke:null; }
+  settings.raceOff=!wiz.raceOn;
   settings.rideMode=wiz.rideMode; settings.rideDate=ymd(new Date());
   // mission
   if(wiz.mission && wiz.mission!=="none"){ const ev=EVENTS.find(x=>x[0]===wiz.mission);
@@ -2420,7 +2447,7 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="ridechip" data-a="rideQuick" aria-label="Getting to school today">${raceDay() ? RIDES_ICONS[rideToday()]+" "+tm12(raceEnd()) : RIDES_ICONS[rideToday()]}</button></div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>c.name+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
@@ -2511,10 +2538,10 @@ function openSpecialChooser(k){
 function raceBar(k){
   if(view.routine!=="am" || !raceDay()) return "";
   const day=ymd(new Date());
-  const leaveT = tm12(raceEnd());
+  const leaveT = tm12(raceEnd(k));
   if((weeks[k].race||{})[day]) return `<div class="race won">🏆 You beat the clock! +1 ⭐ <b>Leave by ${leaveT}</b></div>`;
-  if(!raceOpen()) return doneOn(k,new Date(),"am") ? `<div class="race won">✅ Morning done! <b>Leave by ${leaveT}</b></div>` : "";
-  const st=atTime(RACE_START), en=atTime(raceEnd()), now=new Date(), pct=Math.max(0,Math.min(100,(en-now)/(en-st)*100)), mins=Math.ceil((en-now)/60000);
+  if(!raceOpen(k)) return doneOn(k,new Date(),"am") ? `<div class="race won">✅ Morning done! <b>Leave by ${leaveT}</b></div>` : "";
+  const st=atTime(RACE_START), en=atTime(raceEnd(k)), now=new Date(), pct=Math.max(0,Math.min(100,(en-now)/(en-st)*100)), mins=Math.ceil((en-now)/60000);
   return `<div class="race">⏰<div class="track"><i style="width:${pct}%"></i></div>${mins} min</div>`;
 }
 setInterval(()=>{ if(view.kid && view.routine==="am" && raceDay() && !layer.innerHTML) render(); }, 20000);
@@ -2664,8 +2691,8 @@ function panel(){
 
     <div class="grp-t">Today</div>
     <div class="grp">
-      <div class="srow stack"><span class="sl">Getting to school today<small>Picks which leave-by time the race uses</small></span>
-        <span class="seg full"><button class="${rideToday()==="walk"?"on":""}" data-a="ride" data-v="walk">🛴 Walk<small>leave ${tm12(rideEnds().walk)}</small></button><button class="${rideToday()==="bus"?"on":""}" data-a="ride" data-v="bus">🚌 Bus<small>leave ${tm12(rideEnds().bus)}</small></button><button class="${rideToday()==="drive"?"on":""}" data-a="ride" data-v="drive">🚗 Drive<small>leave ${tm12(rideEnds().drive)}</small></button></span></div>
+      ${raceOn()?`<div class="srow stack"><span class="sl">Getting to school today<small>Picks which leave-by time the race uses</small></span>
+        <span class="seg full"><button class="${rideToday()==="walk"?"on":""}" data-a="ride" data-v="walk">🛴 Walk<small>leave ${modeTime("walk")}</small></button><button class="${rideToday()==="bus"?"on":""}" data-a="ride" data-v="bus">🚌 Bus<small>leave ${modeTime("bus")}</small></button><button class="${rideToday()==="drive"?"on":""}" data-a="ride" data-v="drive">🚗 Drive<small>leave ${modeTime("drive")}</small></button></span></div>`:""}
       <div class="srow"><span class="sl">Team prize<small>${esc(teamPrize().e)} ${esc(teamPrize().t)}</small></span><label class="tl">Given ${sw(team.given,"teamGiven")}</label></div>
       <div class="srow stack"><span class="sl">🚨 Surprise mission<small>${activeEvent()? "Live now: "+esc(activeEvent().title)+" (ends tonight)" : "Sound the alarm! Kids see it right away. +3 ⭐ each, you check it."}</small></span>
         <div class="evgrid">${EVENTS.map(e=>`<button class="btn sm ${activeEvent()&&activeEvent().id===e[0]?"primary":"ghost"}" data-a="sendEvent" data-id="${e[0]}">${e[1]} ${esc(e[2])}</button>`).join("")}${activeEvent()?`<button class="btn sm" data-a="endEvent">✖ Cancel mission</button>`:""}</div></div>
@@ -2677,12 +2704,14 @@ function panel(){
       <button class="srow link" data-a="famOpen"><span class="sl">👨‍👩‍👧 Family setup<small>Add a kid · edit kids, jobs and prizes</small></span><span class="chev">›</span></button>
       <div class="srow"><span class="sl">Weekly star goal<small>${possibleThisWeek()} possible${(()=>{ const p=possibleThisWeek(), rec=Math.max(5,Math.round(p*0.8/5)*5); return g===rec?" · ✓ just right":" · Recommended: "+rec; })()}</small></span>
         <span class="seg"><button data-a="goal" data-d="-5">−</button><b class="segv">${g}</b><button data-a="goal" data-d="5">+</button></span></div>
-      <div class="srow stack"><span class="sl">Leave-by times<small>When the morning race ends</small></span>
+      <div class="srow"><span class="sl">🏁 Morning Race<small>${raceOn()?"On: kids race the clock to leave on time":"Off: no race clock or banners. Your times are kept."}</small></span>${sw(raceOn(),"raceToggle")}</div>
+      <div class="srow stack"><span class="sl">Leave-by times<small>Family times, plus an optional time for each kid</small></span>
         <div class="fgrid">
           <label class="fld"><span>🛴 Walk days</span><input class="in tm" type="time" id="raceEnd" value="${settings.walkEnd||settings.raceEnd||"07:40"}"></label>
           <label class="fld"><span>🚌 Bus days</span><input class="in tm" type="time" id="busEnd" value="${settings.busEnd||"07:45"}"></label>
           <label class="fld"><span>🚗 Drive days</span><input class="in tm" type="time" id="driveEnd" value="${settings.driveEnd||"07:50"}"></label>
         </div>
+        ${kidTimeRows(FAMILY.kids, settings.kidEnds, (k,m)=>`id="ke_${k}_${m}"`)}
         <div class="sact"><small class="saved" id="raceNote"></small><button class="btn sm primary" data-a="saveRace">Save times</button></div></div>
       <div class="srow stack"><span class="sl">Team prize<small>What they win when everyone fills their jar</small></span>
         <div class="tpgrid"><label class="fld"><span>Icon</span><input class="in em" id="tpE" value="${esc(teamPrize().e)}" maxlength="8"></label>
@@ -2817,7 +2846,7 @@ document.addEventListener("click", e=>{
       { const ev=activeEvent(); if(ev && !loadLocal("evsaid_"+ev.day+"_"+ev.id+"_"+t.dataset.k)){ saveLocal("evsaid_"+ev.day+"_"+ev.id+"_"+t.dataset.k,1); setTimeout(()=>{ party(["🚨",ev.e,"💪"]); play(["BJ:Emergency! "+ev.title+" "+ev.t+"!"]); }, 2500); } }
       { const r=ROUTINES.find(x=>x.id===view.routine);
         if(!weeks[view.kid].reward && REWARDS.length){ play([KIDS[view.kid].hi,"pickprize"]); rewardSheet(view.kid); }
-        else play([KIDS[view.kid].hi, ...(loadLocal("mon_"+WEEK)?[]:(saveLocal("mon_"+WEEK,1),["monsterhi",monster()[4]?null:monster()[0]])), jobsFor(r,todayDow()).length? r.snd : "r_none", (view.routine==="am"&&raceOpen()&&!(weeks[view.kid].race||{})[ymd(new Date())])?"racego":null]); } break;
+        else play([KIDS[view.kid].hi, ...(loadLocal("mon_"+WEEK)?[]:(saveLocal("mon_"+WEEK,1),["monsterhi",monster()[4]?null:monster()[0]])), jobsFor(r,todayDow()).length? r.snd : "r_none", (view.routine==="am"&&raceOpen(view.kid)&&!(weeks[view.kid].race||{})[ymd(new Date())])?"racego":null]); } break;
     case "home": view.kid=null; render(); break;
     case "jokeSheet": jodOpen=false; saveLocal("jod_"+ymd(new Date()),1); jokeSheet(); render(); { const j=JOKES[jodIndex()]; play(["BJ:"+j[0]]); } break;
     case "jodAnswer": { const j=JOKES[jodIndex()]; jodOpen=true; jokeSheet(); render(); play(["boing","BJ:"+j[1]]); } break;
@@ -2946,7 +2975,12 @@ document.addEventListener("click", e=>{
     case "saveRace": { const v=document.getElementById("raceEnd").value, vb=document.getElementById("busEnd"), v2=document.getElementById("driveEnd").value;
       if(/^\d\d:\d\d$/.test(v)) { settings.walkEnd=v; settings.raceEnd=v; }
       if(vb && /^\d\d:\d\d$/.test(vb.value)) settings.busEnd=vb.value;
-      if(/^\d\d:\d\d$/.test(v2)) settings.driveEnd=v2; saveSettings(); panel(); render(); const n=document.getElementById("raceNote"); if(n) n.textContent="✓ Saved"; } break;
+      if(/^\d\d:\d\d$/.test(v2)) settings.driveEnd=v2;
+      { const ke={}; FAMILY.kids.forEach(c=>{ const o={}; RIDES.forEach(m=>{ const el=document.getElementById("ke_"+c.id+"_"+m); if(el && HM.test(el.value)) o[m]=el.value; }); if(Object.keys(o).length) ke[c.id]=o; }); settings.kidEnds=Object.keys(ke).length?ke:null; }
+      saveSettings(); panel(); render(); const n=document.getElementById("raceNote"); if(n) n.textContent="✓ Saved"; } break;
+    case "raceToggle": settings.raceOff = raceOn(); saveSettings(); panel(); render(); break;
+    case "kidEndsReset": { if(layer.querySelector("#wizSheet") && wiz){ wizReadInputs(); delete wiz.kidEnds[t.dataset.k]; wizSheet(); break; }
+      const ke=Object.assign({},settings.kidEnds||{}); delete ke[t.dataset.k]; settings.kidEnds=Object.keys(ke).length?ke:null; saveSettings(); panel(); render(); } break;
     case "ride": case "drive": { const v=t.dataset.v==="1"?"drive":(t.dataset.v||"walk"); settings.rideMode=v; settings.rideDate=ymd(new Date()); saveSettings(); panel(); render(); } break;
     case "saveTeam": { const e2=document.getElementById("tpE").value.trim()||"🎉", t2=document.getElementById("tpT").value.trim(); if(t2){ settings.teamPrize={e:e2,t:t2}; saveSettings(); panel(); render(); const n=document.getElementById("teamNote"); if(n) n.textContent="✓ Saved"; } } break;
     case "teamGiven": team={given:!team.given}; if(db) writeDoc("teams/"+WEEK, {given:team.given}); panel(); render(); break;
@@ -3019,7 +3053,7 @@ function tapJob(k, id){ settleCoins(k);
     const parts=[job.t]; if(tw&&tw.job===id) parts.push("Silly twist: "+TWISTS[tw.n-1]); if(isWeak(id)) parts.push("That one hurts the "+(monster()[1]||"monster")+" DOUBLE!");
     if(readsAll()) speakRead(parts.join(". ")); else if(!hasClip){ speakRead(parts.join(". "), null, true); sr("Job: "+parts.join(". ")); } }
   let raceWon=false;
-  if(r.id==="am" && raceOpen() && jobsFor(r,todayDow(),k).every(j=>list.includes(j.id)) && !(w.race||{})[day]){ w.race=w.race||{}; w.race[day]=true; raceWon=true; }
+  if(r.id==="am" && raceOpen(k) && jobsFor(r,todayDow(),k).every(j=>list.includes(j.id)) && !(w.race||{})[day]){ w.race=w.race||{}; w.race[day]=true; raceWon=true; }
   saveWeek(k);
   const left=jobsFor(r,todayDow()).filter(j=>!isDone(k,j.id)).length, after=stars(k), g=goal();
   if(before<g && after>=g && otherFull){ render(); party(["⭐","🎉",teamPrize().e,"🤝"]); cheer(teamPrize().e,"TEAM WIN! "+teamPrize().t); play(["fanfare","jarfull","teamwin"]); }
@@ -3170,7 +3204,8 @@ document.addEventListener("click", e=>{
   if(a==="wizPrizeMode"){ if(t.dataset.v!==wiz.prizeMode) wiz.prizes=null; wiz.prizeMode=t.dataset.v; wizSheet(); return; }
   if(a==="wizRead"){ wiz.voice = t.dataset.v==="readers" ? true : false; wizSheet(); return; }
   if(a==="wizVol"){ wiz.vol=Number(t.dataset.v); wizSheet(); if(wiz.vol>0) play(["ding"]); return; }
-  if(a==="wizRide"){ wiz.rideMode=t.dataset.v; wizSheet(); return; }
+  if(a==="wizRace"){ wizReadInputs(); wiz.raceOn=!wiz.raceOn; wizSheet(); return; }
+  if(a==="wizRide"){ wizReadInputs(); wiz.rideMode=t.dataset.v; wizSheet(); return; }
   if(a==="wizMission"){ wiz.mission=t.dataset.id; wizSheet(); return; }
   if(a==="wizPin"){ { const n=t.dataset.n; if(n==="\u232B") wiz.pin=wiz.pin.slice(0,-1); else if(wiz.pin.length<4) wiz.pin+=n;
       const d=layer.querySelector("#wizDots"); if(d) d.textContent="\u25CF".repeat(wiz.pin.length);

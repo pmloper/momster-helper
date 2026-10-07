@@ -1,4 +1,4 @@
-// Local syntax + structure checks for the v59 polish (kept current for v77-tablet-missions build).
+// Local syntax + structure checks for the v59 polish (kept current for v78-per-kid-race build).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -12,9 +12,9 @@ console.log('lines', lines.length);
 const scriptTagCount = (html.match(/<script\b/g) || []).length;
 console.log('script tag count:', scriptTagCount);
 
-// CACHE check (v77-tablet-missions Preview)
+// CACHE check (v78-per-kid-race Preview)
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v77-tablet-missions') ? 'OK: CACHE v77-tablet-missions' : 'ERROR: CACHE not v77-tablet-missions');
+console.log(sw.includes('momster-helper-v78-per-kid-race') ? 'OK: CACHE v78-per-kid-race' : 'ERROR: CACHE not v78-per-kid-race');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');
