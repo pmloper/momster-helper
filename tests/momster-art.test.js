@@ -32,7 +32,7 @@ const strip = html.slice(html.indexOf("function monsterStrip"), html.indexOf("co
 check(/data-a="bossTap"/.test(strip) && /data-a="toot"/.test(strip) && /class="mbar"/.test(strip), "boss strip keeps villain button, kid buttons, health bar");
 check(strip.includes('${left?m[2]:"😵"}'), "villain face (m[2]) still drawn by monsterStrip");
 check(html.includes('<div class="i-face">${m[2]}'), "villain intro face untouched");
-check(fs.readFileSync(path.join(root, "sw.js"), "utf8").includes("momster-helper-v72-kid-header"), "SW cache bumped");
+check(fs.readFileSync(path.join(root, "sw.js"), "utf8").includes("momster-helper-v73-kid-header"), "SW cache bumped");
 
 // ---- browser checks ----
 const CHROME = process.env.CHROME || ["C:/Program Files/Google/Chrome/Application/chrome.exe",

@@ -259,6 +259,7 @@ async function run(){
       const textOut = e => { if(!e) return true; const g=document.createRange(); g.selectNodeContents(e); const t=g.getBoundingClientRect(), r=e.getBoundingClientRect(); return t.left < r.left - 0.5 || t.right > r.right + 0.5; };
       const hit = e => { if(!e) return false; const r=e.getBoundingClientRect(), el=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2); return !!el && (el===e || e.contains(el)); };
       return { top:R(top), back:R(q(".top .back")), who:R(q(".top .who")), avatar:R(q(".top .whoAv")), name:R(q(".top .who .wn b")), nameFont:parseFloat(getComputedStyle(q(".top .who .wn b")).fontSize), nameColor:getComputedStyle(q(".top .who .wn b")).color, chosenColor:KIDS[view.kid].color, siren:R(q(".top .siren")), spk:R(q(".top .spk")),
+        starFont:parseFloat(getComputedStyle(q(".top .hdStars")).fontSize), coinFont:parseFloat(getComputedStyle(q(".top .hdCoin")).fontSize),
         pill:R(q(".top .prizePill")), stars:R(q(".top .hdStars")), coin:R(q(".top .hdCoin")),
         nameClipped: (()=>{ const b=q(".top .who .wn b"); return !!b && (b.scrollWidth>b.clientWidth+1 || b.scrollHeight>b.clientHeight+1); })(),
         nameOverflowMode:getComputedStyle(q(".top .who .wn b")).textOverflow, nameFullTitle:q(".top .who .wn b").title,
@@ -274,6 +275,7 @@ async function run(){
       ["no_siren_default", NO_SURPRISE + SPECIAL_DONE("k1")],
       ["long_prize_long_name", SURPRISE + SPECIAL_NONE("k1") + `FAMILY.kids[0].name="Bartholomew"; KIDS.k1.name="Bartholomew"; weeks.k1.reward="date"; weeks.k1.bonus=47; saveWeek("k1");`],
       ["max_length_name", SURPRISE + SPECIAL_NONE("k1") + `FAMILY.kids[0].name="MaximilianJunior"; KIDS.k1.name="MaximilianJunior"; weeks.k1.reward="date"; saveWeek("k1");`],
+      ["full_stars", SURPRISE + SPECIAL_NONE("k1") + `weeks.k1.bonus=100; weeks.k1.reward="date"; saveWeek("k1");`],
     ];
     for(const [label, setup] of geoCases){
       await fresh(setup); await enterKid(); await dismissPopup();
@@ -281,6 +283,9 @@ async function run(){
       if(!g.top){ fail(W,H,name+"geometry","no .top header"); continue; }
       const integrated = await ev(`(() => { const q=s=>document.querySelector(s), r=e=>e&&e.getBoundingClientRect(), top=r(q('.top')), bar=r(q('.top .hdBar')), jar=q('.layout>.jarCard'); return { bar:bar&&{w:bar.width,b:bar.bottom}, top:top&&{w:top.width,b:top.bottom}, jarVisible:!!jar&&getComputedStyle(jar).display!=='none' }; })()`);
       if(Math.abs(g.top.h - 130) > .5) fail(W,H,name+"geometry","header height changed from the approved 130px: "+g.top.h);
+      if(g.starFont !== 14) fail(W,H,name+"status","star count font should be subtly larger at 14px, got "+g.starFont);
+      if(g.coinFont !== 14 || g.coin.h < 22) fail(W,H,name+"status","coin pill should be subtly larger (14px text / 22px tall), got "+JSON.stringify({font:g.coinFont,box:g.coin}));
+      if(g.stars.r > g.pill.l || g.coin.l < g.pill.r) fail(W,H,name+"status","larger status overlaps prize pill: "+JSON.stringify({stars:g.stars,pill:g.pill,coin:g.coin}));
       const oldAvatarSize = Math.max(44, Math.min(54, .07 * H)); // released header's clamp(44px,7vh,54px)
       if(!g.avatar || Math.abs(g.avatar.w-oldAvatarSize) > .5 || Math.abs(g.avatar.h-oldAvatarSize) > .5) fail(W,H,name+"identity","avatar must match released header's "+oldAvatarSize+"px size: "+JSON.stringify(g.avatar));
       if(g.nameFont < (label==="long_prize_long_name" || label==="max_length_name" ? 20 : 22)) fail(W,H,name+"identity","name should be enlarged while long names fit: "+g.nameFont);
