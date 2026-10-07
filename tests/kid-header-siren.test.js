@@ -261,6 +261,7 @@ async function run(){
       return { top:R(top), back:R(q(".top .back")), who:R(q(".top .who")), avatar:R(q(".top .whoAv")), name:R(q(".top .who .wn b")), nameFont:parseFloat(getComputedStyle(q(".top .who .wn b")).fontSize), nameColor:getComputedStyle(q(".top .who .wn b")).color, chosenColor:KIDS[view.kid].color, siren:R(q(".top .siren")), spk:R(q(".top .spk")),
         pill:R(q(".top .prizePill")), stars:R(q(".top .hdStars")), coin:R(q(".top .hdCoin")),
         nameClipped: (()=>{ const b=q(".top .who .wn b"); return !!b && (b.scrollWidth>b.clientWidth+1 || b.scrollHeight>b.clientHeight+1); })(),
+        nameOverflowMode:getComputedStyle(q(".top .who .wn b")).textOverflow, nameFullTitle:q(".top .who .wn b").title,
         coinClipped: textOut(q(".top .hdCoin")), pillOverflow: false,
         topOverflow: top ? top.scrollWidth > top.clientWidth + 1 : true, pageOverflowX: document.documentElement.scrollWidth > innerWidth + 1,
         tabTops: [...new Set(tabs.map(t=>Math.round(t.getBoundingClientRect().top)))], tabsN: tabs.length,
@@ -272,6 +273,7 @@ async function run(){
       ["siren_default", SURPRISE + SPECIAL_NONE("k1")],
       ["no_siren_default", NO_SURPRISE + SPECIAL_DONE("k1")],
       ["long_prize_long_name", SURPRISE + SPECIAL_NONE("k1") + `FAMILY.kids[0].name="Bartholomew"; KIDS.k1.name="Bartholomew"; weeks.k1.reward="date"; weeks.k1.bonus=47; saveWeek("k1");`],
+      ["max_length_name", SURPRISE + SPECIAL_NONE("k1") + `FAMILY.kids[0].name="MaximilianJunior"; KIDS.k1.name="MaximilianJunior"; weeks.k1.reward="date"; saveWeek("k1");`],
     ];
     for(const [label, setup] of geoCases){
       await fresh(setup); await enterKid(); await dismissPopup();
@@ -281,7 +283,7 @@ async function run(){
       if(Math.abs(g.top.h - 130) > .5) fail(W,H,name+"geometry","header height changed from the approved 130px: "+g.top.h);
       const oldAvatarSize = Math.max(44, Math.min(54, .07 * H)); // released header's clamp(44px,7vh,54px)
       if(!g.avatar || Math.abs(g.avatar.w-oldAvatarSize) > .5 || Math.abs(g.avatar.h-oldAvatarSize) > .5) fail(W,H,name+"identity","avatar must match released header's "+oldAvatarSize+"px size: "+JSON.stringify(g.avatar));
-      if(g.nameFont < (label==="long_prize_long_name" ? 20 : 22)) fail(W,H,name+"identity","name should be enlarged while long names fit: "+g.nameFont);
+      if(g.nameFont < (label==="long_prize_long_name" || label==="max_length_name" ? 20 : 22)) fail(W,H,name+"identity","name should be enlarged while long names fit: "+g.nameFont);
       const expectedColor = await ev(`(() => { const e=document.createElement('span'); e.style.color=KIDS[view.kid].color; document.body.append(e); const c=getComputedStyle(e).color; e.remove(); return c; })()`);
       if(g.nameColor !== expectedColor) fail(W,H,name+"identity","name color "+g.nameColor+" differs from selected kid color "+expectedColor);
       if(g.pill && g.pill.w > 155) fail(W,H,name+"geometry","weekly-prize pill too wide: "+g.pill.w);
@@ -292,7 +294,8 @@ async function run(){
       const inside = o => o.l >= g.top.l - 0.5 && o.r <= g.top.r + 0.5 && o.t >= g.top.t - 0.5 && o.b <= g.top.b + 0.5;
       for(const k of ["back","who","spk","pill","stars","coin","siren"]) if(g[k] && !inside(g[k])) fail(W,H,name+"geometry",k+" sticks out of the header "+JSON.stringify(g[k]));
       if(g.topOverflow || g.pageOverflowX) fail(W,H,name+"geometry","horizontal overflow (header="+g.topOverflow+" page="+g.pageOverflowX+")");
-      if(g.nameClipped) fail(W,H,name+"geometry","kid name clipped");
+      if(g.nameClipped && !(label==="max_length_name" && g.nameOverflowMode==="ellipsis" && g.nameFullTitle==="MaximilianJunior")) fail(W,H,name+"geometry","kid name clipped without readable ellipsis and full title");
+      if(label==="max_length_name" && g.nameOverflowMode!=="ellipsis") fail(W,H,name+"geometry","long name lacks ellipsis fallback");
       if(g.coinClipped) fail(W,H,name+"geometry","coin text clipped");
       // Layout: pill directly under name (same centre column), stars lower-left, coins lower-right, speaker upper-right.
       if(!(g.pill.t >= g.who.b - 1)) fail(W,H,name+"layout","pill is not below the name (pill.t="+g.pill.t+" who.b="+g.who.b+")");

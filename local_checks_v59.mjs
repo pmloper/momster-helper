@@ -1,4 +1,4 @@
-// Local syntax + structure checks for the v59 polish (kept current for v71-kid-header build).
+// Local syntax + structure checks for the v59 polish (kept current for v72-kid-header build).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -12,9 +12,9 @@ console.log('lines', lines.length);
 const scriptTagCount = (html.match(/<script\b/g) || []).length;
 console.log('script tag count:', scriptTagCount);
 
-// CACHE check (v71-kid-header Preview)
+// CACHE check (v72-kid-header Preview)
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v71-kid-header') ? 'OK: CACHE v71-kid-header' : 'ERROR: CACHE not v71-kid-header');
+console.log(sw.includes('momster-helper-v72-kid-header') ? 'OK: CACHE v72-kid-header' : 'ERROR: CACHE not v72-kid-header');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');
