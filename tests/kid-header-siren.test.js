@@ -305,10 +305,10 @@ async function run(){
       if(g.nameClipped && !(allowedLongName && g.nameOverflowMode==="ellipsis")) fail(W,H,name+"geometry","kid name clipped without readable ellipsis and full title");
       if(label==="max_length_name" && g.nameOverflowMode!=="ellipsis") fail(W,H,name+"geometry","long name lacks ellipsis fallback");
       if(g.coinClipped) fail(W,H,name+"geometry","coin text clipped");
-      if(Math.abs(g.pill.cy-g.coin.cy) > 1 || g.pill.cy <= g.top.t+84 || g.coin.cy >= g.top.t+110) fail(W,H,name+"layout","prize and coin pills should meet on one line, with prize moved down and coin moved up: "+JSON.stringify({prize:g.pill.cy,coin:g.coin.cy,top:g.top.t}));
+      if(Math.abs(g.pill.cy-g.coin.cy) > 1 || Math.abs(g.pill.cy-g.stars.cy) > 1) fail(W,H,name+"layout","stars, prize and coin should visually share one horizontal line: "+JSON.stringify({stars:g.stars.cy,prize:g.pill.cy,coin:g.coin.cy}));
       // Layout: pill directly under name (same centre column), stars lower-left, coins lower-right, speaker upper-right.
       if(!(g.pill.t >= g.who.b - 1)) fail(W,H,name+"layout","pill is not below the name (pill.t="+g.pill.t+" who.b="+g.who.b+")");
-      if(Math.abs(g.pill.cx - g.who.cx) > 14) fail(W,H,name+"layout","pill not centred under the name (dx="+Math.round(g.pill.cx-g.who.cx)+")");
+      if(Math.abs(g.pill.cx - g.who.cx) > 20) fail(W,H,name+"layout","pill too far from the name center while sharing the status row (dx="+Math.round(g.pill.cx-g.who.cx)+")");
       if(!(g.stars.cy > g.back.cy && g.stars.l < g.pill.l && g.stars.cx < g.top.cx)) fail(W,H,name+"layout","stars not at lower left");
       if(!(g.coin.cy > g.spk.cy && g.coin.l > g.pill.r - 1 && g.coin.cx > g.top.cx)) fail(W,H,name+"layout","coins not at lower right");
       if(!(g.back.cy < g.pill.cy && g.back.cx < g.top.cx)) fail(W,H,name+"layout","back not upper left");
