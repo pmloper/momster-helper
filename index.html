@@ -1755,10 +1755,10 @@ const jodIndex = () => Math.floor(new Date(ymd(new Date())+"T12:00:00").getTime(
 let jodOpen=false;
 function jokeSheet(){ const j=JOKES[jodIndex()];
   layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:520px;text-align:center"><div style="font-size:64px;line-height:1">🤣</div><h2>Dad joke of the day</h2>
-    <p class="jq">${esc(j[0])}</p>${jodOpen?`<p class="ja">${esc(j[1])}</p><button class="btn ghost" data-a="jod">🔁 Tell it again</button>`:`<button class="btn primary" data-a="jod" style="font-size:20px;padding:12px 24px">Tell me! 🥁</button>`}
+    <p class="jq">${esc(j[0])}</p>${jodOpen?`<p class="ja">${esc(j[1])}</p><button class="btn ghost" data-a="jodReplay">🔁 Tell it again</button>`:`<button class="btn primary" data-a="jodAnswer" style="font-size:20px;padding:12px 24px">Tell me! 🥁</button>`}
     <button class="cancel" data-a="closeOvBtn" style="margin-top:10px">Close</button></div></div>`; }
 function jokeCard(){ const j=JOKES[jodIndex()];
-  return `<button class="jod" data-a="jod"><b>🤣</b><span><small>Dad joke of the day</small><em>${esc(j[0])}</em>${jodOpen?`<strong>${esc(j[1])}</strong>`:`<i>Tap for the answer!</i>`}</span></button>`; }
+  return `<button class="jod" data-a="jokeSheet"><b>🤣</b><span><small>Dad joke of the day</small><em>${esc(j[0])}</em>${jodOpen?`<strong>${esc(j[1])}</strong>`:`<i>Tap to hear the joke!</i>`}</span></button>`; }
 const VJOKES = {m_sock:["What do you call a sock with a hole? HOLY sock! Hee hee!","I'm not a thief, I'm a sock-cerer!"],
   m_crumb:["Why won't I share my cookies? I'm a little CRUMBY! Har har!","I'm not messy, I'm saving snacks for later!"],
   m_troll:["What's a troll's favorite bedtime? NEVER! Grumble grumble!","Why do I love tiaras? They make me look TROLL-tastic!"],
@@ -2401,7 +2401,7 @@ return `<div class="jarCard" style="--k:${KIDS[k].color}"><h2>${n>=g? "You did i
 }
 
 /* ---------- Overlays ---------- */
-function close(){ layer.innerHTML=""; }
+function close(){ const wasJoke=!!layer.querySelector('.jq'); layer.innerHTML=""; if(wasJoke){ jodOpen=false; render(); } }
 let draft=null;
 function bonusEditor(){
   layer.innerHTML = `<div class="ov"><div class="sheet"><h2>✏️ Bonus jobs</h2><p>Picture (any emoji), job, and how many stars.</p>
@@ -2677,8 +2677,9 @@ document.addEventListener("click", e=>{
         if(!weeks[view.kid].reward && REWARDS.length){ play([KIDS[view.kid].hi,"pickprize"]); rewardSheet(view.kid); }
         else play([KIDS[view.kid].hi, ...(loadLocal("mon_"+WEEK)?[]:(saveLocal("mon_"+WEEK,1),["monsterhi",monster()[4]?null:monster()[0]])), jobsFor(r,todayDow()).length? r.snd : "r_none", (view.routine==="am"&&raceOpen()&&!(weeks[view.kid].race||{})[ymd(new Date())])?"racego":null]); } break;
     case "home": view.kid=null; render(); break;
-    case "jokeSheet": saveLocal("jod_"+ymd(new Date()),1); jokeSheet(); render(); { const j=JOKES[jodIndex()]; play(["BJ:"+j[0]]); } break;
-    case "jod": { const j=JOKES[jodIndex()]; jodOpen=true; jokeSheet(); play(["BJ:"+j[1],"boing"]); } break;
+    case "jokeSheet": jodOpen=false; saveLocal("jod_"+ymd(new Date()),1); jokeSheet(); render(); { const j=JOKES[jodIndex()]; play(["BJ:"+j[0]]); } break;
+    case "jodAnswer": { const j=JOKES[jodIndex()]; jodOpen=true; jokeSheet(); render(); play(["boing","BJ:"+j[1]]); } break;
+    case "jodReplay": { const j=JOKES[jodIndex()]; play(["BJ:"+j[0],"boing","BJ:"+j[1]]); } break;
     case "toot": tootAttack(t); break;
     case "poke": sideSilly(t); break;
     case "hq": hqSheet("report"); play(["pop"]); break;
