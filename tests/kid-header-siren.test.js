@@ -264,7 +264,10 @@ async function run(){
       await fresh(setup); await enterKid(); await dismissPopup();
       const g = await ev(GEO); const name = label+" ";
       if(!g.top){ fail(W,H,name+"geometry","no .top header"); continue; }
-      if(g.top.h > BASELINE_TOP_H[W] + 0.5) fail(W,H,name+"geometry","header grew: "+g.top.h+"px vs main "+BASELINE_TOP_H[W]+"px");
+      const integrated = await ev(`(() => { const q=s=>document.querySelector(s), r=e=>e&&e.getBoundingClientRect(), top=r(q('.top')), bar=r(q('.top .hdBar')), jar=q('.layout>.jarCard'); return { bar:bar&&{w:bar.width,b:bar.bottom}, top:top&&{w:top.width,b:top.bottom}, jarVisible:!!jar&&getComputedStyle(jar).display!=='none' }; })()`);
+      if(g.top.h < 75 || g.top.h > 112) fail(W,H,name+"geometry","integrated header height should fit progress within one 75-112px bar, got "+g.top.h);
+      if(integrated.jarVisible) fail(W,H,name+"geometry","old separate progress/jar strip still shown below header");
+      if(!integrated.bar || integrated.bar.w < integrated.top.w * .75 || integrated.bar.b > integrated.top.b + .5) fail(W,H,name+"geometry","progress bar not full-width inside top bar: "+JSON.stringify(integrated));
       if(!g.pill || !g.stars || !g.coin || !g.back || !g.spk || !g.who) { fail(W,H,name+"geometry","header pieces missing "+JSON.stringify({pill:!!g.pill,stars:!!g.stars,coin:!!g.coin,back:!!g.back,spk:!!g.spk,who:!!g.who})); continue; }
       const inside = o => o.l >= g.top.l - 0.5 && o.r <= g.top.r + 0.5 && o.t >= g.top.t - 0.5 && o.b <= g.top.b + 0.5;
       for(const k of ["back","who","spk","pill","stars","coin","siren"]) if(g[k] && !inside(g[k])) fail(W,H,name+"geometry",k+" sticks out of the header "+JSON.stringify(g[k]));

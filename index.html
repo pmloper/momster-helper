@@ -777,10 +777,11 @@ body:has(#layer > .sheet) .botnav{display:none}
 .alarm{flex:none;width:100%;display:flex;align-items:center;gap:10px;text-align:left;margin:0 0 10px;padding:8px 14px;border-radius:20px;border:2px solid #E5484D;background:color-mix(in srgb,#E5484D 12%,var(--card));animation:alarmpulse 1.4s ease-in-out infinite}
 .alarm>b{font-size:30px;line-height:1}.alarm span{display:flex;flex-direction:column;min-width:0}.alarm span b{font-family:var(--disp);font-weight:700;color:#C92A2F;font-size:clamp(16px,2.6vh,20px)}.alarm small{font-size:14px;color:var(--soft)}
 .alarm.ok{animation:none;border-color:var(--doneInk);background:var(--done)}.alarm.ok span b{color:var(--doneInk)}
-/* Kid header: compact dark bar. Row 1: back | avatar+name | siren + speaker. Row 2: star
-   progress | weekly-prize pill (under the name) | coins. Fixed row heights keep it no taller
-   than the old single-row bar on phones. */
-.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,auto) minmax(58px,1fr);grid-template-rows:minmax(30px,auto) 18px;grid-template-areas:"back who tools" "stars prize coin";align-items:center;gap:2px 6px;padding:4px 8px;margin-bottom:10px;color:#fff;
+/* The former separate jar/progress strip is integrated into this single kid header.
+   Row 1 holds identity and controls; row 2 holds reward/status; row 3 is the full progress bar. */
+.kidLayout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+.kidLayout>.main{grid-row:1}
+.top.bar-card{display:grid;grid-template-columns:minmax(58px,1fr) minmax(0,auto) minmax(58px,1fr);grid-template-rows:36px 22px 9px;grid-template-areas:"back who tools" "stars prize coin" "bar bar bar";align-items:center;gap:3px 6px;padding:6px 8px;margin-bottom:10px;color:#fff;
   background:linear-gradient(180deg,color-mix(in srgb,var(--k) 28%,#1d2140),#12152a);border:1px solid color-mix(in srgb,var(--k) 50%,#000)}
 .top .back,.top .spk,.top .siren{position:relative;width:30px;height:30px;padding:0;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
 .top .back,.top .spk,.top .siren,.top .prizePill,.top .hdCoin{cursor:pointer}
@@ -793,9 +794,9 @@ body:has(#layer > .sheet) .botnav{display:none}
 .top .who{grid-area:who;justify-self:center;max-width:100%;flex:none;font-size:18px;gap:6px;color:#fff;overflow:hidden}
 .top .whoAv{height:28px;width:28px}
 .top .who .wn b{max-width:34vw;-webkit-line-clamp:1;padding-bottom:0;line-height:1.1;font-size:18px;color:#fff}
-.top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:13px;line-height:1;min-width:0}
-.top .hdBar{display:block;width:34px;height:7px;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden}
-.top .hdBar i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.top .hdStars{grid-area:stars;position:relative;justify-self:start;display:flex;align-items:center;gap:3px;font-size:13px;line-height:1;min-width:0;white-space:nowrap}
+.top .hdBar{grid-area:bar;display:block;width:100%;height:9px;border-radius:5px;background:rgba(255,255,255,.22);overflow:hidden}
+.top .hdBar i{display:block;height:100%;background:var(--gold);border-radius:5px}
 .top .prizePill{grid-area:prize;position:relative;justify-self:center;max-width:100%;min-width:0;height:18px;display:flex;align-items:center;gap:4px;padding:0 8px;border-radius:9px;
   background:rgba(255,255,255,.12);border:1px solid var(--gold2);color:#fff;font-family:var(--font);font-weight:800;font-size:11px;line-height:1;white-space:nowrap}
 .top .prizePill.earned{background:color-mix(in srgb,var(--gold) 35%,transparent)}
@@ -2467,7 +2468,7 @@ function kidView(k){
     <button class="who" data-a="styleSheet" aria-label="Hero style"><span class="whoAv">${avC(k)}</span>${flame(k)}<span class="wn"><small>${styleOf(k)?styleOf(k)[1]+" "+styleOf(k)[2]:"Style me"}</small><b>${esc(KIDS[k].name)}</b></span></button>
     <span class="hdTools">${sirenOn(k)?'<button class="siren" data-a="missionHub" aria-label="Missions waiting" title="Missions waiting">🚨</button>':""}<button class="spk" data-a="sound" aria-label="Sound & voice">${volIcon()}</button></span>
     ${headerStatus(k)}</div>
-  <div class="layout" style="--k:${KIDS[k].color};--rc:${view.routine==="bn"?"#12B886":(r.rc||"#FFA41B")}"><div class="main">${eventBar(k)}<div class="tabs">${tabs}${bonusTab}</div>${raceBar(k)}${pickStrip(k)}${body}</div>${jarCard(k)}</div>`;
+  <div class="layout kidLayout" style="--k:${KIDS[k].color};--rc:${view.routine==="bn"?"#12B886":(r.rc||"#FFA41B")}"><div class="main">${eventBar(k)}<div class="tabs">${tabs}${bonusTab}</div>${eggReady(k)?'<button class="prize eggBtn" data-a="egg"><b>🥚</b>Open your egg!</button>':""}${raceBar(k)}${pickStrip(k)}${body}</div></div>`;
 }
 // Compact header status row: star progress (lower left), weekly-prize pill under the name,
 // coin count (lower right). Reads the same jar data as jarCard(); nothing is stored here.
@@ -2477,9 +2478,10 @@ function headerStatus(k){
   const pt = r ? (r.t||"") : (REWARDS.length ? "Pick a prize" : "Surprise prize");
   const prog = n>=g ? (weeks[k].rewardGiven ? "prize done!" : "earned! 🎉") : n+"/"+g+" · "+left+" to go";
   const label = (r ? "Weekly prize: "+pt+", " : "")+n+" of "+g+" stars"+(n>=g ? "" : ", "+left+" more to go")+". Change prize";
-  return `<span class="hdStars" role="img" aria-label="${n} of ${g} stars">⭐<span class="hdBar"><i style="width:${Math.min(100,n/g*100)}%"></i></span></span>
+  return `<span class="hdStars" role="img" aria-label="${n} of ${g} stars">⭐ ${n} of ${g}</span>
     <button class="prizePill ${n>=g?"earned":""}" data-a="pickReward" aria-label="${esc(label)}"><b>${pe}</b><span class="pt">${esc(pt)}</span><span class="pp">${prog}</span></button>
-    <button class="coinBtn hdCoin" data-a="buddy" aria-label="${coins(k)} ${coins(k)===1?"coin":"coins"}, open shop">🪙 ${coins(k)}</button>`;
+    <button class="coinBtn hdCoin" data-a="buddy" aria-label="${coins(k)} ${coins(k)===1?"coin":"coins"}, open shop">🪙 ${coins(k)}</button>
+    <span class="hdBar" role="progressbar" aria-label="Weekly star progress" aria-valuemin="0" aria-valuemax="${g}" aria-valuenow="${n}"><i style="width:${Math.min(100,n/g*100)}%"></i></span>`;
 }
 function pickStrip(k){ const today=todayPick(k); if(!pickList().length) return "";
   // Per Atlas round 2 clarification: the kid view never shows a persistent special-mission
