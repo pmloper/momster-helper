@@ -189,6 +189,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       })()`);
       if (!setup.tabs) throw new Error(`${vp.label} ${kind}: kid view never rendered tabs (got ${JSON.stringify(setup)})`);
       await sleep(450);
+      // Dismiss the new entry mission sheet before swiping underlying jobs.
+      const pop = await ev(`(()=>{ const b=document.querySelector('#missionPop .mClose'); if(b){b.click();return true;} return false; })()`);
+      if (pop) await sleep(300);
 
       const initial = await ev(geomExpr);
       if (vp.touch) {
@@ -268,7 +271,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       const final = await ev(geomExpr);
       const limit = final.nav ? final.nav.top : vp.h;
 
-      if (scrolled <= 0) {
+      if (scrolled <= 0 && initial.last && initial.last.bottom > Math.min(limit, vp.h) + 1) {
         throw new Error(
           `${vp.label} ${kind}: outer scroller never moved ` +
           `(initial top=${initial.mainScrollTop}, final top=${final.mainScrollTop}, ` +
