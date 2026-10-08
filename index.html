@@ -319,6 +319,8 @@ details summary{font-size:20px;font-weight:800;cursor:pointer;margin:6px 0}
 .wiz-btns .btn{min-height:44px;padding:8px 16px;font-size:16px}
 .wiz-footbtns{display:flex;gap:8px;margin-top:14px;padding-top:10px;border-top:2px solid var(--line)}
 .wiz-footbtns .btn{flex:1;min-height:48px;font-size:18px}
+.wiz-footbtns.pinfoot{justify-content:center}
+.wiz-footbtns.pinfoot .btn{flex:0 0 auto;min-width:160px}
 @media (max-width:560px){ .wiz-title{flex-basis:100%!important} .wiz-head{row-gap:6px} .wiz-btns{justify-content:flex-end!important;flex-basis:100%!important;flex:none} }
 .bigbtn{width:100%;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;text-align:left;border:3px solid var(--gold2);border-radius:22px;padding:10px 16px;margin:6px 0 12px;background:color-mix(in srgb,var(--gold) 18%,var(--card))}
 .bigbtn span{grid-row:span 2;font-size:40px}.bigbtn b{font-size:22px}.bigbtn small{font-size:15px;color:var(--soft);font-weight:700}
@@ -2359,7 +2361,7 @@ function wizSheet(){
     <div class="wizfoot"><button class="btn ghost" data-a="tmEnter">🧪 Test Mode</button><small>Try everything without saving</small></div>
     <div style="height:8px;border-radius:4px;background:var(--line);margin:0 0 14px"><div style="height:8px;border-radius:4px;width:${pct}%;background:linear-gradient(90deg,#FFD866,#FFB800)"></div></div>
     <div id="wizBody">${wizBody(s)}</div>
-    <div class="wiz-footbtns">${back||""}<button class="btn primary" data-a="wizNext" style="flex:1;min-height:48px;font-size:18px">${WIZ_STEPS[wiz.step]==="pin"?"Save PIN and start 💪":(wiz.step===WIZ_STEPS.length-1?"Start the fun 💪":"Next ›")}</button></div>
+    <div class="wiz-footbtns${WIZ_STEPS[wiz.step]==="pin"?" pinfoot":""}">${back||""}${WIZ_STEPS[wiz.step]==="pin"?"":`<button class="btn primary" data-a="wizNext" style="flex:1;min-height:48px;font-size:18px">${wiz.step===WIZ_STEPS.length-1?"Start the fun 💪":"Next ›"}</button>`}</div>
   </div></div>`;
   const prev = layer.querySelector("#wizSheet"), stepChanged = !prev || prev.dataset.key !== "wiz_"+s;
   paintSheet("wizSheet", "wiz_"+s, html);
@@ -2448,12 +2450,16 @@ function wizMission(){
     <button class="srow link" data-a="wizMission" data-id="none" style="${wiz.mission==="none"?"background:color-mix(in srgb,var(--gold) 14%,var(--card))":""}">
       <span class="sl"><b>\u23ED\uFE0F Skip for now</b><small>You can fire one off anytime in Grown-ups</small></span><span class="chev">${wiz.mission==="none"?"✓":""}</span></button></div>`;
 }
+function wizAdvance(){ if(!wiz) return; wizReadInputs();
+  if(wiz.step===0){ const named=wiz.kids.filter(c=>(c.name||"").trim()); if(!named.length){ toast("Add at least one kid's name"); return; } }
+  if(wiz.step===WIZ_STEPS.length-1){ wizFinish(); return; }
+  wiz.step++; wizSheet();
+  if(wiz && WIZ_STEPS[wiz.step]==="pin"){ wiz.pin=""; const d=layer.querySelector("#wizDots"); if(d) d.textContent=""; } }
 function wizPin(){
   return `<p class="hint" style="margin-top:0">Pick a PIN your kids won't guess (not 1234). It guards grown-up settings.</p>
     <div class="sheet" style="max-width:340px;margin:0 auto;background:var(--card);text-align:center;padding:12px">
       <div class="dots" id="wizDots"></div>
       <div class="pin">${[1,2,3,4,5,6,7,8,9,"",0,"\u232B"].map(n=>n===""?"<span></span>":`<button data-a="wizPin" data-n="${n}">${n}</button>`).join("")}</div>
-    <button class="btn primary" data-a="wizPinGo" style="margin-top:8px;min-width:180px;min-height:44px"></button>
     </div>`;
 }
 function wizReadInputs(){
@@ -3279,12 +3285,7 @@ window.MB_DEBUG = {TWISTS, MONSTERS, TAUNTS, VJOKES, JOKES, N_LINES, MOODS, KO_L
 document.addEventListener("click", e=>{
   const t=e.target.closest("[data-a]"); if(!t) return; const a=t.dataset.a, i=+t.dataset.i;
   if(a==="wizBack"){ if(wiz && wiz.step>0){ wizReadInputs(); wiz.step--; wizSheet(); } return; }
-  if(a==="wizNext"){ if(!wiz) return; wizReadInputs();
-    if(wiz.step===0){ const named=wiz.kids.filter(c=>(c.name||"").trim()); if(!named.length){ toast("Add at least one kid's name"); return; } }
-    if(wiz.step===WIZ_STEPS.length-1){ wizFinish(); return; }
-    wiz.step++; wizSheet();
-    if(wiz && WIZ_STEPS[wiz.step]==="pin"){ wiz.pin=""; const d=layer.querySelector("#wizDots"); if(d) d.textContent=""; }
-    return; }
+  if(a==="wizNext"){ wizAdvance(); return; }
   if(a==="wizAddKid"){ wizReadInputs(); { const used=wiz.kids.map(c=>c.color); wiz.kids.push({id:"k"+Date.now().toString(36), name:"", av:["🐱","🐶","🦊","🐼","🦁","🐸"][wiz.kids.length%6], color:KID_COLORS.find(c=>!used.includes(c))||KID_COLORS[0]}); } wizSheet(); return; }
   if(a==="wizDelKid"){ wizReadInputs(); wiz.kids.splice(i,1); wizSheet(); return; }
   if(a==="wizColor"){ wizReadInputs(); wiz.kids[i].color=t.dataset.c; wizSheet(); return; }
@@ -3303,8 +3304,7 @@ document.addEventListener("click", e=>{
   if(a==="wizMission"){ wiz.mission=t.dataset.id; wizSheet(); return; }
   if(a==="wizPin"){ { const n=t.dataset.n; if(n==="\u232B") wiz.pin=wiz.pin.slice(0,-1); else if(wiz.pin.length<4) wiz.pin+=n;
       const d=layer.querySelector("#wizDots"); if(d) d.textContent="\u25CF".repeat(wiz.pin.length);
-      if(wiz.pin.length===4){ setTimeout(()=>{ const nb=layer.querySelector('[data-a="wizNext"]'); if(nb) nb.click(); },150); } } return; }
-  if(a==="wizPinGo"){ const nb=layer.querySelector('[data-a="wizNext"]'); if(nb) nb.click(); return; }
+      if(wiz.pin.length===4){ setTimeout(()=>{ if(wiz && WIZ_STEPS[wiz.step]==="pin" && wiz.pin.length===4) wizAdvance(); },150); } } return; }
   if(a==="tmEnter"){ tmEnter(); return; }
   if(a==="tmExit"){ tmExit(); return; }
 });
