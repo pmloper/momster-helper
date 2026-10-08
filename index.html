@@ -2414,7 +2414,7 @@ function wizPrizes(){
 function wizReading(){
   const seg=(on,v,ic,t,sub,extra)=>`<button class="srow link" data-a="wizRead" data-v="${v}" style="width:100%;${extra||""}">
     <span class="sl"><b>${ic} ${t}</b><small>${sub}</small></span><span class="chev">${on?"✓":""}</span></button>`;
-  return `<p class="hint" style="margin-top:0">Can your kids read yet? Either way, the app reads every job out loud.</p>
+  return `<p class="hint" style="margin-top:0">Can your kids read yet? If not, the app will read everything on screen out loud.</p>
     <div class="grp">${seg(wiz.voice===true,"readers","📖 My kids can read", "(Words on screen + voice)","").replace("data-v=\"readers\"","data-a=\"wizRead\" data-v=\"readers\"")}</div>
   <div class="grp">
     ${seg(wiz.voice===false, "nonreaders", "👂", "Not yet (Everything read out loud)", "")}
