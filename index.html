@@ -953,11 +953,10 @@ body.tm{padding-top:40px}
 .wizfoot small{color:var(--soft);font-weight:700;font-size:13px}
 
 /* ---- Ride chip ---- */
-.ridechip{font-size:clamp(14px,2.2vh,19px);font-weight:800;padding:6px 12px;min-height:44px;border-radius:999px;
-  background:color-mix(in srgb,var(--gold) 18%,var(--card));border:2px solid var(--gold2);white-space:nowrap}
-.hello:has(.ridechip.manyTimes){flex-wrap:wrap}
-.hello .ridechip.manyTimes{flex:1 1 100%;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center;line-height:1.2}
-@media (max-width:600px){.ridechip{font-size:15px;padding:4px 10px}}
+.kidBtn{position:relative}
+.kidTime{position:absolute;top:10px;right:12px;z-index:3;font-size:clamp(14px,2.4vh,19px);font-weight:800;line-height:1.2;padding:4px 12px;min-height:34px;display:inline-flex;align-items:center;border-radius:999px;
+  background:color-mix(in srgb,var(--gold) 18%,var(--card));border:2px solid var(--gold2);white-space:nowrap;cursor:pointer}
+@media (max-width:600px){.kidTime{font-size:15px;padding:3px 10px;top:8px;right:10px}}
 
 /* ---- Per-kid leave-by rows ---- */
 .kt{display:flex;flex-direction:column;gap:8px;margin-top:10px}
@@ -1681,11 +1680,6 @@ const modeTime = m => { const t=[...new Set(FAMILY.kids.map(c=>rideEnds(c.id)[m]
 const kidTimeRows = (kids, vals, attrs) => `<div class="kt">${kids.map((c,i)=>`<div class="ktk" style="--kc:${c.color}"><div class="kth"><b>${esc(c.name||("Kid "+(i+1)))}</b><button class="btn ghost sm" data-a="kidEndsReset" data-k="${c.id}">Use family times</button></div>
   <div class="ktg">${RIDES.map(m=>`<label class="fld"><span>${RIDES_ICONS[m]} ${m[0].toUpperCase()+m.slice(1)}</span><input class="in tm" type="time" ${attrs(c.id,m)} value="${((vals||{})[c.id]||{})[m]||""}"></label>`).join("")}</div></div>`).join("")}</div>
   <small class="note">Leave a kid's time blank to use the family time.</small>`;
-const homeKidLabel = (c, i, kids) => { const name=[...(c.name||("Kid "+(i+1)))]; let n=1;
-  while(n<name.length && kids.some((other,j)=>j!==i && (other.name||"").slice(0,n).toLocaleLowerCase()===name.slice(0,n).join("").toLocaleLowerCase())) n++;
-  const label=name.slice(0,n).join(""); return kids.some((other,j)=>j!==i && (other.name||"").toLocaleLowerCase()===name.join("").toLocaleLowerCase()) ? label+" "+(i+1) : label; };
-const homeChipTime = () => { const ks=FAMILY.kids, t=ks.map(c=>raceEnd(c.id));
-  return new Set(t).size<=1 ? tm12(t[0]) : ks.map((c,i)=>homeKidLabel(c,i,ks)+" "+tm12(t[i])).join(" · "); };
 const atTime = hm => { const [h,m]=hm.split(":").map(Number); const d=new Date(); d.setHours(h,m,0,0); return d; };
 const raceDay = () => { const d=todayDow(); return raceOn() && d>=1 && d<=5; };
 const raceOpen = (k=view.kid) => raceDay() && new Date() < atTime(raceEnd(k));
@@ -1847,6 +1841,7 @@ function bossTap(el){ const m=monster(), left=monsterLeft()>0, lines=left?(TAUNT
   for(let i=0;i<5;i++){ const c=document.createElement("span"); c.className="crumb"; c.textContent=m[3]; c.style.setProperty("--dx",(Math.random()*120-60)+"px"); c.style.setProperty("--dy",(-30-Math.random()*50)+"px"); c.style.animationDelay=(i*40)+"ms"; el.appendChild(c); setTimeout(()=>c.remove(),1100); }
   play(["boing","BJ:"+line]); }
 document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="bossTap"]'); if(t) bossTap(t); });
+document.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".kidTime")){ e.preventDefault(); e.target.click(); } });
 function checkMonster(){ if(monsterLeft()>0) return false; let won=false;
   Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; b.monsters=b.monsters||[]; if(!b.monsters.includes(WEEK)){ b.monsters=b.monsters.concat(WEEK); b.bonusCoins=(b.bonusCoins||0)+5; saveBuddy(k); won=true; } });
   if(won){ const m=monster(); setTimeout(()=>{ party(["💥",m[2],m[3],"🪙","🎉"]); cheer("💥","Busted! You beat "+m[1]+"! +5 🪙"); play(["punch","fanfare","monsterwin"]); }, 900); setTimeout(()=>{ if(!layer.innerHTML) victoryDance(); }, 3600); checkRank(); }
@@ -2562,10 +2557,11 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:hidden"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip ${raceDay() && FAMILY.kids.length>2 && new Set(FAMILY.kids.map(c=>raceEnd(c.id))).size>1?"manyTimes":""}" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>esc(c.name)+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:hidden"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1></div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
+      ${raceDay()?`<span class="kidTime" role="button" tabindex="0" data-a="rideQuick" aria-label="${esc(KIDS[k].name)} leaves at ${tm12(raceEnd(k))}. Tap to change how getting to school today.">${RIDES_ICONS[rideToday()]} ${tm12(raceEnd(k))}</span>`:""}
       <div class="av">${avC(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${esc(KIDS[k].name)}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
       <div class="bar big slim"><i style="width:${Math.min(100,n/g*100)}%"></i></div>
       <div class="kchips"><span>🪙 ${coins(k)}</span>${r?`<span>${r.e} prize${weeks[k].reward2?" +"+((REWARDS.find(x=>x.id===weeks[k].reward2)||{}).e||""):""}</span>`:`<span>🎁 pick a prize</span>`}${eggReady(k)?`<span class="hot">🥚 egg!</span>`:""}</div></button>`; }).join("")}</div>
