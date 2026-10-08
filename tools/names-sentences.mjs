@@ -10,6 +10,7 @@ const STYLES = { hero: 'Super', princess: 'Princess', knight: 'Knight', ninja: '
 const TEMPLATES = {
   hi: n => `Hi ${n}!`,
   justme: n => `Back to just ${n}!`,
+  blame: n => `I blame ${n}!`,
   ...Object.fromEntries(Object.entries(STYLES).map(([id, title]) => [`ready_${id}`, n => `${title} ${n}, ready to help Momster!`])),
 };
 

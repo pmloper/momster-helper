@@ -985,10 +985,14 @@ let FAMILY_SET = !!FAMILY; if(!FAMILY) FAMILY = JSON.parse(JSON.stringify(DEFAUL
 /* Sentences that include a kid's name are one generated clip per name: audio/names/<template>/<slug>.mp3.
    A name with no clip falls back to the device voice reading the whole sentence. */
 const nameSlug = n => String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+// Key for any written line: slug of its start plus a short hash of the full text, so the app and the generator agree.
+function textKey(text){ const t=String(text).replace(/\s+/g," ").trim(); let h=2166136261; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619)>>>0; }
+  return "t_"+nameSlug(t).slice(0,40).replace(/-+$/,"")+"_"+h.toString(16).padStart(8,"0"); }
 const nameKey = (t, n) => "N:"+t+":"+n;
 function nameLineText(t, n){
   if(t==="hi") return "Hi "+n+"!";
   if(t==="justme") return "Back to just "+n+"!";
+  if(t==="blame") return "I blame "+n+"!";
   if(t.startsWith("ready_")){ const st=STYLES.find(x=>x[0]===t.slice(6)); return (st?st[2]+" ":"")+n+", ready to help Momster!"; }
   return n; }
 const KIDS = {}; FAMILY.kids.forEach(c=>{ KIDS[c.id]={name:c.name, color:c.color, av:c.av||"⭐", hi:nameKey("hi",c.name)}; });
@@ -1073,30 +1077,9 @@ function toUrl(b64){ try{ const bin=atob(b64), arr=new Uint8Array(bin.length); f
   return URL.createObjectURL(new Blob([arr],{type:"audio/mpeg"})); }catch(e){ return "data:audio/mpeg;base64,"+b64; } }
 function getUrl(set,k){ const c=CLIPS[set]; if(!c||!c[k]) return null; URLS[set]=URLS[set]||{}; return URLS[set][k] || (URLS[set][k]=toUrl(c[k])); }
 const CHARS = [["squeaky","🐿️","Squeaky"],["fairy","🧚","Sparkle Fairy"],["dino","🦖","Dino"],["bear","🐻","Big Bear"],["robo","🤖","Robo"],["ghost","👻","Silly Ghost"]];
-const NOVELTY = {Bubbles:"🫧",Bells:"🔔",Boing:"🏀",Jester:"🃏",Superstar:"🌟",Trinoids:"👽",Whisper:"🤫",Wobble:"🍮",Zarvox:"🛸","Good News":"🎵",Cellos:"🎻",Bahh:"🐑",Junior:"👦",Ralph:"🧔",Albert:"👴",Fred:"🎩",Kathy:"👩"};
-const ACCENTS = [["en-GB","🇬🇧","British friend"],["en-AU","🇦🇺","Aussie friend"],["en-IE","🇮🇪","Irish friend"],["en-ZA","🇿🇦","South African friend"],["en-IN","🇮🇳","Indian friend"]];
 function enVoices(){ try{ return speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); }catch(e){ return []; } }
-const FLAGS = {"en-us":"🇺🇸","en-gb":"🇬🇧","en-au":"🇦🇺","en-in":"🇮🇳","en-ie":"🇮🇪","en-za":"🇿🇦","en-ca":"🇨🇦","en-nz":"🇳🇿","en-sc":"🏴","en-ng":"🇳🇬"};
-function cleanName(n){ return n.replace(/Microsoft|Google|Apple|Online|\(Natural\)|\(Enhanced\)|\(Premium\)|Desktop|-.*$/gi,"").replace(/\(.*?\)/g,"").replace(/\s+/g," ").trim() || "Voice"; }
-let _presetCache=null, _presetKey="";
-function ttsPresets(){ const vs=enVoices(); if(!vs.length) return []; const base=pickVoice(); if(!base) return [];
-  const key=vs.map(v=>v.name).join("|"); if(_presetCache && key===_presetKey) return _presetCache;
-  const b=base.name, out=[
-    ["tts:friendly","🙂","Friendly",b,1.05,.95],["tts:tiny","🐭","Tiny Mouse",b,1.9,1.1],["tts:chipmunk","🐿️","Chipmunk",b,2,1.35],
-    ["tts:princess","👸","Princess",b,1.6,.95],["tts:hero","💪","Hero",b,.8,1.05],["tts:wizard","🧙","Wizard",b,.6,.8],
-    ["tts:giant","🦣","Giant",b,.35,.8],["tts:ghost","👻","Spooky",b,.5,.7],["tts:speedy","⚡","Speedy",b,1.2,1.6],
-    ["tts:sleepy","😴","Sleepy",b,.85,.65],["tts:turtle","🐢","Turtle",b,1,.55]];
-  const seen=new Set([b]);
-  Object.entries(NOVELTY).forEach(([nm,e])=>{ const v=vs.find(v=>v.name.split(" (")[0]===nm||v.name.startsWith(nm+" ")); if(v&&!seen.has(v.name)){ seen.add(v.name); out.push(["tts:"+nm,e,nm,v.name,1,1]); } });
-  let extra=0;
-  vs.forEach(v=>{ if(seen.has(v.name) || extra>=20) return; seen.add(v.name); extra++;
-    const flag=FLAGS[v.lang.replace("_","-").toLowerCase()]||"🗣️";
-    out.push(["tts:v:"+v.name, flag, cleanName(v.name), v.name, 1.05, .95]); });
-  _presetKey=key; _presetCache=out; return out; }
-const findTts = id => ttsPresets().find(p=>p[0]===id);
-const rawChoice = kid => ((settings.kidVoice||{})[kid||view.kid||FIRST_KID]) || "tts:friendly";
-function curVoice(kid){ kid=kid||view.kid||FIRST_KID; const v=rawChoice(kid);
-  if(v.startsWith("tts:")) return findTts(v) ? v : "squeaky"; return CHARS.some(c=>c[0]===v) ? v : "squeaky"; }
+const rawChoice = kid => ((settings.kidVoice||{})[kid||view.kid||FIRST_KID]) || DEFAULT_VOICE_DIR;
+function curVoice(kid){ kid=kid||view.kid||FIRST_KID; const v=rawChoice(kid); return CHARS.some(c=>c[0]===v) ? v : DEFAULT_VOICE_DIR; }
 /* Spoken lines are lazy-loaded files: audio/<voice>/<key>.mp3, listed in audio/manifest.json (see audio/README.md).
    Only the short sound effects are embedded in this page. */
 const AUDIO_DIR = "audio/", DEFAULT_VOICE_DIR = "momster";
@@ -1117,34 +1100,25 @@ function pickVoice(){ try{ const vs=speechSynthesis.getVoices(); if(!vs.length) 
   const pref=[/Samantha/i,/Ava/i,/Allison/i,/Siri/i,/Google US English/i,/Jenny/i,/Aria/i,/Zira/i];
   for(const re of pref){ const v=vs.find(v=>re.test(v.name)&&/^en/i.test(v.lang)); if(v) return v; }
   return vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null; }catch(e){ return null; } }
-function speakText(text, done, preset){
-  try{ const u=new SpeechSynthesisUtterance(text);
-    const v = preset ? speechSynthesis.getVoices().find(x=>x.name===preset[3]) : (ttsVoice||pickVoice());
-    if(v){ u.voice=v; u.lang=v.lang; } u.volume=Math.min(1,voiceLvl*1.15); u.pitch=preset?preset[4]:1.05; u.rate=preset?preset[5]:1.0;
+// The device voice is only ever used to read a kid's name that has no generated clip yet.
+function speakName(text, done){
+  try{ const u=new SpeechSynthesisUtterance(text), v=ttsVoice||pickVoice();
+    if(v){ u.voice=v; u.lang=v.lang; } u.volume=Math.min(1,voiceLvl*1.15); u.pitch=1.05; u.rate=1;
     let fin=false; const f=()=>{ if(!fin){ fin=true; done(); } };
     u.onend=f; u.onerror=f; setTimeout(f, 1200+text.length*120);
     speechSynthesis.speak(u); }catch(e){ done(); } }
-let voiceWaits=0;
-const MOMSTER_LINES = {momster_cheer:"Nice hit! Keep going!", momster_almost:"Almost had him!", momster_win:"You did it, sweetie!"};
 const MOMSTER_CLIPS = (()=>{ try{ return JSON.parse(localStorage.getItem("momster_voice")||"{}"); }catch(e){ return {}; } })(); // recorded mom voice lives here when added
 function nextClip(){
-  // Device voices load a moment after the page opens. Wait briefly for them instead of falling back to the robot voice.
-  if(queue.length && window.speechSynthesis && rawChoice().startsWith("tts:") && !enVoices().length && voiceWaits<15){
-    voiceWaits++; try{ speechSynthesis.getVoices(); }catch(e){} return setTimeout(nextClip,100); }
-  voiceWaits=0;
   const k=queue.shift(); if(!k) return;
+  // Kid-name sentence: generated clip, else the device voice reads the whole sentence.
   if(k.startsWith("N:")){ const i=k.indexOf(":",2), t=k.slice(2,i), n=k.slice(i+1), f=nameFile(t,n);
     if(f) return playUrl(f,k);
-    return enVoices().length ? speakText(nameLineText(t,n), nextClip, findTts(curVoice())||null) : nextClip(); }
-  if(k.startsWith("BJ:")){ return enVoices().length ? speakText(k.slice(3), nextClip, findTts(curVoice())||null) : nextClip(); }
-  if(k.startsWith("momster_")){ const u=MOMSTER_CLIPS[k]; if(u) return playUrl(u); const txt=MOMSTER_LINES[k]; const cv=curVoice(); if(txt && cv && cv.startsWith("tts:")) return speakText(txt, nextClip, findTts(cv)); if(txt && enVoices().length) return speakText(txt, nextClip, findTts(curVoice())||null); return nextClip(); }
+    return enVoices().length ? speakName(nameLineText(t,n), nextClip) : nextClip(); }
+  // Any other written line plays its generated clip, or nothing if the clip does not exist yet.
+  if(k.startsWith("BJ:")){ const f=voiceFile(textKey(k.slice(3))); return f ? playUrl(f,k) : nextClip(); }
+  if(k.startsWith("momster_")){ const u=MOMSTER_CLIPS[k]||voiceFile(k); return u ? playUrl(u) : nextClip(); }
   if(VOICE[k]) return playUrl(VOICE[k],k);
-  { const f=!SFX.has(k) && voiceFile(k); if(f) return playUrl(f,k); }
-  const cv=curVoice();
-  if(!SFX.has(k) && cv.startsWith("tts:")){ const pr=findTts(cv), txt = k==="intro" ? "Hi! I'm "+pr[2]+"! Pick me!" : PHRASE_TEXT[k]; if(txt) return speakText(txt, nextClip, pr); }
   const u=clipUrl(k); if(u) return playUrl(u,k);
-  // No generated file for this line yet: read it with the device voice so the app is never silent for non-readers.
-  const txt=!SFX.has(k) && PHRASE_TEXT[k]; if(txt && enVoices().length) return speakText(txt, nextClip, findTts(curVoice())||null);
   nextClip(); }
 const QUIET_KEYS = new Set(["ding","pop","coin","sparkle","magic"]); // chimes at ~55% so they don't blast
 function playUrl(u,k){ player.src=u; player.volume=QUIET_KEYS.has(k)? soundLevel*0.55 : soundLevel; const p=player.play();
@@ -1599,16 +1573,12 @@ function party(emojis){ const p=document.createElement("div"); p.className="part
   document.body.appendChild(p); setTimeout(()=>p.remove(),3200); }
 function sr(text){ try{ const el=document.getElementById("sr"); if(el){ el.textContent=""; setTimeout(()=>{el.textContent=text;},30); } }catch(e){} }
 function cheer(big,text){ const c=document.createElement("div"); c.className="cheer"; c.innerHTML='<div class="big"></div><div></div>';
-  c.firstChild.textContent=big; c.lastChild.textContent=text; document.body.appendChild(c); setTimeout(()=>c.remove(),2400);
-  speakRead(text); }
+  c.firstChild.textContent=big; c.lastChild.textContent=text; document.body.appendChild(c); setTimeout(()=>c.remove(),2400); }
 // Non-readers mode: read UI text out loud.
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
-function speakRead(text, preset, force){ if(!text || (!force && !readsAll()) || !window.speechSynthesis) return;
-  try{ if(ttsOk) speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(String(text));
-    const pr = preset||findTts(curVoice())||null; const v = pr ? speechSynthesis.getVoices().find(x=>x.name===pr[3]) : ttsVoice;
-    if(v){ u.voice=v; u.lang=v.lang; } u.volume=voiceLvl; u.pitch=pr?pr[4]:1.15; u.rate=pr?pr[5]:.95;
-    speechSynthesis.speak(u); }catch(e){} }
+// Non-reader mode: play the generated clip for each written line (silent if a clip does not exist yet).
+function sayRead(lines){ if(!readsAll()) return; const keys=(lines||[]).filter(Boolean).map(t=>"BJ:"+t); if(keys.length) play(keys); }
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- Fun layer: eggs, monster, stickers, dance, silly twists, seasons ---------- */
@@ -1876,7 +1846,7 @@ function tootAttack(el){ const boss=document.querySelector(".boss .bface"); if(!
     .concat(others.length?["I blame "+others[Math.floor(Math.random()*others.length)]+"!"]:[])
     .concat(["The dog did it! I saw him!","That one smelled like JUSTICE!"]);
   setTimeout(()=>{ const old=boss.querySelector(".taunt"); if(old) old.remove(); const line=L[Math.floor(Math.random()*L.length)]; const t=document.createElement("span"); t.className="taunt"; t.textContent="🤢 "+line;
-    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); setTimeout(()=>t.remove(),2600); }, 700); }
+    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); { const bl=/^I blame (.+)!$/.exec(line); play([bl?nameKey("blame",bl[1]):"BJ:"+line]); } setTimeout(()=>t.remove(),2600); }, 700); }
 function sideSilly(el){ const r=Math.floor(Math.random()*6); el.classList.remove("silly"); void el.offsetWidth; el.classList.add("silly");
   const puff=(e)=>{ const p=document.createElement("span"); p.className="spuff"; p.textContent=e; el.appendChild(p); setTimeout(()=>p.remove(),1100); };
   if(r===0){ puff("💨"); if(tootsOn()) toot(); play(["BJ:Oops! Excuse me!"]); }
@@ -2036,7 +2006,7 @@ function eventBar(k){ const ev=activeEvent(); if(!ev) return "";
 }
 // Combined dismissible popup for surprise + special missions. Exactly one sheet when
 // either or both are pending for this kid; respects non-reader speech; no new autoplay
-// beyond the existing speakRead call; dismissal is keyed by (day, mission identity, kid)
+// beyond the existing sayRead call; dismissal is keyed by (day, mission identity, kid)
 // so it doesn't repeat on every re-entry to kid view, and the persistent kid banner +
 // selected-special header card stay gone for the rest of the day.
 let missionPopupOpen = false;
@@ -2073,14 +2043,14 @@ function missionPopup(k){
     </div>
   </div></div>`;
   missionPopupOpen = true;
-  // Non-reader speech respects the existing speakRead contract; nothing else speaks.
+  // Non-reader speech plays generated clips via sayRead; nothing else speaks.
   const lines = [];
   if(hasEv) lines.push("Surprise mission! "+ev.title+". "+ev.t+".");
   if(hasPk){
     if(today) lines.push("Your special mission: "+today.t+".");
     else lines.push("Pick your special mission for today.");
   }
-  speakRead(lines.join(" "));
+  sayRead(lines);
 }
 // Persist dismissal keys for each currently active kind so the entry popup does not
 // repeat. This only silences the popup nudge; the mission itself stays active.
@@ -2157,13 +2127,14 @@ function refreshMissionHub(){
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && layer.querySelector("#missionHub")) close(); });
 function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; party(["💥",c[0],"🤝","⭐"]);
   cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️"); play(["punch","fanfare","BJ:Combo attack! "+c[1]+"!"]); }
+const villainIntroText = m => "Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+(m[6]||"")+" jobs: double damage!";
 let introOpen=false;
 function villainIntro(){ const m=monster(); introOpen=true;
   layer.innerHTML=`<div class="ov"><div class="sheet intro"><div class="i-alert">🚨 URGENT MESSAGE 🚨</div><p>A villain has invaded the house!</p>
     <div class="i-face">${m[2]}<i>${m[3]}</i></div><h2>${esc(m[1])}</h2><p>${esc(m[7]||"")}</p>
     <div class="i-facts"><span>❤️ ${monsterHP()} health</span><span>💥 Weak to ${esc(m[6]||"")}: double damage!</span>${KID_IDS.length>1?`<span>🤝 Finish the same routine together for a COMBO ATTACK!</span>`:""}</div>
     <button class="btn primary" data-a="introGo" style="font-size:22px;padding:12px 26px">Let's help Momster! 💪</button></div></div>`;
-  speakRead("Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+(m[6]||"")+" jobs: double damage!"); }
+  sayRead([villainIntroText(m)]); }
 
 
 /* ---------- Test Mode: play without saving ---------- */
@@ -2589,22 +2560,17 @@ function rewardSheet(k){
     <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id||weeks[k].reward2===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div>
     <p class="hint" style="text-align:center;margin-top:8px">${p1? "Prize: "+(p1.t||"") : "Pick your prize!"}</p></div></div>`;
 }
+const VOICE_CHOICES = () => [[DEFAULT_VOICE_DIR,"💪","Momster"]].concat(CHARS);
 function voiceSheet(k){
-  const cur=curVoice(k), tts=ttsPresets();
+  const cur=curVoice(k);
   const btn=([id,e,n])=>`<button class="rw ${cur===id?"on":""}" data-a="vc" data-v="${id}"><b>${e}</b>${esc(n)}</button>`;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
     <div class="ghead"><h2>${av(k)} Pick your helper voice!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap a voice to hear it, then tap Yes to pick it.</p>
-    ${tts.length? `<p>Fun voices</p><div class="rewards">${tts.filter(p=>!p[0].startsWith("tts:v:")).map(btn).join("")}</div>
-      ${tts.some(p=>p[0].startsWith("tts:v:"))? `<p style="margin-top:12px">More real voices</p><div class="rewards">${tts.filter(p=>p[0].startsWith("tts:v:")).map(btn).join("")}</div>`:""}
-      <p style="margin-top:12px">Robot characters</p>` : ""}
-    <div class="rewards">${CHARS.map(btn).join("")}</div></div></div>`;
+    <div class="rewards">${VOICE_CHOICES().map(btn).join("")}</div></div></div>`;
 }
 function combinedSoundSheet(k){
-  const cur=curVoice(k), tts=ttsPresets();
+  const cur=curVoice(k);
   const vbtn=([id,e,n])=>`<button class="rw ${cur===id?"on":""}" data-a="vc" data-v="${id}"><b>${e}</b>${esc(n)}</button>`;
-  const ttsNon=tts.filter(p=>!p[0].startsWith("tts:v:"));
-  const ttsReal=tts.filter(p=>p[0].startsWith("tts:v:"));
-  const hasVoices=tts.length>0 || CHARS.length>0;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet" id="csmSheet" style="max-width:420px">
     <div class="ghead"><h2>🔊 Sound & voice</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div>
     <p>Adjust how loud things are, then pick a voice for ${esc(KIDS[k].name)}.</p>
@@ -2612,13 +2578,10 @@ function combinedSoundSheet(k){
     <div class="row" style="justify-content:center;margin:8px 0">${[[0,"🔇","Off"],[0.4,"🔉","Quiet"],[1,"🔊","Loud"]].map(([v,e,n])=>`<button class="rw ${voiceLvl===v?"on":""}" style="min-width:96px" data-a="vlvl" data-v="${v}"><b>${e}</b>${n}</button>`).join("")}</div>
     <div class="grp-t">🎵 Sound effects &amp; music</div>
     <div class="row" style="justify-content:center;margin:8px 0">${[[0,"🔇","Off"],[0.4,"🔉","Quiet"],[1,"🔊","Loud"]].map(([v,e,n])=>`<button class="rw ${soundLevel===v?"on":""}" style="min-width:96px" data-a="vol" data-v="${v}"><b>${e}</b>${n}</button>`).join("")}</div>
-    ${hasVoices? `<div class="grp-t">🎭 Voice for ${esc(KIDS[k].name)}</div>
+    <div class="grp-t">🎭 Voice for ${esc(KIDS[k].name)}</div>
     <p style="margin:4px 0 6px">Tap a voice to hear it, then tap Yes to pick it.</p>
-    ${tts.length? `<p style="margin:6px 0 2px">Fun voices</p><div class="rewards">${ttsNon.map(vbtn).join("")}</div>
-      ${ttsReal.length? `<p style="margin-top:12px">More real voices</p><div class="rewards">${ttsReal.map(vbtn).join("")}</div>`:""}
-      <p style="margin-top:12px">Robot characters</p>` : ""}
-    <div class="rewards">${CHARS.map(vbtn).join("")}</div>
-    <div id="vcConfirm" style="display:none;margin:12px 0 4px"></div>`:""}
+    <div class="rewards">${VOICE_CHOICES().map(vbtn).join("")}</div>
+    <div id="vcConfirm" style="display:none;margin:12px 0 4px"></div>
   </div></div>`;
 }
 let bTab="build", bArm=null, bPart="body";
@@ -2870,7 +2833,7 @@ document.addEventListener("click", e=>{
       play(left.length? ["yourjobs", ...left.map(j=>j.snd)] : ["alldone"]); } break;
     case "bjob": if(lpFired){ lpFired=false; break; } tapBonus(k, t.dataset.j); break;
     case "job": if(lpFired){ lpFired=false; break; } tapJob(k, t.dataset.j); break;
-    case "pkChoose": { const w=weeks[k]; const po=pickList().find(x=>x.id===t.dataset.j); w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k); render(); play(["pop","BJ:Ooh, good choice!"]); if(po) speakRead("You picked: "+po.t+". Your special mission!"); break; }
+    case "pkChoose": { const w=weeks[k]; const po=pickList().find(x=>x.id===t.dataset.j); w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k); render(); play(["pop","BJ:Ooh, good choice!"].concat(po&&readsAll()?["BJ:"+po.t+"."]:[])); break; }
     case "pkChooseChooser": { const w=weeks[k]; w.pick={day:ymd(new Date()), id:t.dataset.j}; saveWeek(k);
       // Dismissal key must be saved for the NEW selected mission id BEFORE render, so
       // the popup does not immediately re-fire with the new id (which would be a fresh
@@ -2890,9 +2853,8 @@ document.addEventListener("click", e=>{
       saveLocal(specialKey(k), 1); render(); play(["pop","BJ:Ooh, good choice!"]); break; }
     case "pkDo": { const p=todayPick(k); if(!p) break; const w=weeks[k], day=ymd(new Date()); const list=(w.done[day]=w.done[day]||[]);
       if(!list.includes(t.dataset.j)){ const before=stars(k); list.push(t.dataset.j); saveWeek(k);
-        speakRead(p.t+". Special mission complete! Two big stars!");
         const after=stars(k); render(); party(["🎯","⭐","⭐"]); cheer("🎯","Special mission complete! +2 ⭐");
-        play(["ding","fanfare","BJ:Special mission complete! Two big stars!"]); setTimeout(()=>dmgPop(2*DMG_MULT),700); }
+        play(["ding","fanfare"].concat(readsAll()?["BJ:"+p.t+"."]:[],["BJ:Special mission complete! Two big stars!"])); setTimeout(()=>dmgPop(2*DMG_MULT),700); }
       break; }
     case "pickReward": { const cur=rewardOf(k);
       if(!cur){ if(!REWARDS.length){ play(["BJ:Your prize is a surprise! Fill your jar to find out!"]); break; } rewardSheet(k); play(["pickprize"]); break; }
@@ -3049,7 +3011,7 @@ function tapJob(k, id){ settleCoins(k);
   if(job && voiceLvl>0){ const tw=twistFor(k,r,new Date());
     const hasClip = job.snd && !!voiceFile(job.snd);
     const parts=[job.t]; if(tw&&tw.job===id) parts.push("Silly twist: "+TWISTS[tw.n-1]); if(isWeak(id)) parts.push("That one hurts the "+(monster()[1]||"monster")+" DOUBLE!");
-    if(readsAll()) speakRead(parts.join(". ")); else if(!hasClip){ speakRead(parts.join(". "), null, true); sr("Job: "+parts.join(". ")); } }
+    if(!hasClip) sr("Job: "+parts.join(". ")); }
   let raceWon=false;
   if(r.id==="am" && raceOpen(k) && jobsFor(r,todayDow(),k).every(j=>list.includes(j.id)) && !(w.race||{})[day]){ w.race=w.race||{}; w.race[day]=true; raceWon=true; }
   saveWeek(k);
