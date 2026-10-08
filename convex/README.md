@@ -43,3 +43,16 @@ Files: `auth.ts` (providers + first-sign-in family linking), `authEmail.ts` (cod
 - `npm run typecheck` : needs `convex/_generated/`, which `npx convex dev` creates (it is gitignored).
 
 Not done yet: nothing in `index.html` calls any of this, and none of it has run against a real Convex deployment.
+
+## Sync (first release)
+
+The app syncs through a generic per-family document store (`docs.ts`, table `docs`) using the same paths its old sync code
+used: `family/main`, `settings/main`, `weeks/<weekStart>_<kidId>`, `buddies/<kidId>`, `teams/<weekStart>`, `voices/<key>`.
+`cloud-db.js` wraps these functions in a Firestore-style `db.doc(path).set/get/onSnapshot` shim, so `writeDoc` and
+`subscribe()` in `index.html` work unchanged. The typed tables in `schema.ts` (weeks, buddies, ...) are the later, stricter model.
+
+- Signed out, the app works exactly as before on this device only. Signing in is optional (Grown-ups, then "Sync across devices").
+- First sign-in on a device that already has a set-up family and an empty cloud copy uploads that family. If the cloud
+  copy already exists, the device takes it (a backup of the old local data is kept in `momster_backup_before_sync`).
+- Known limits: last write wins per document; the grown-ups PIN is synced inside `settings/main` as plain text (visible to
+  signed-in family members only); recorded voice clips are synced but are legacy.

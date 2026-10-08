@@ -3,7 +3,7 @@
 import { ConvexClient, anyApi } from "./vendor/convex.js";
 import { createCloud } from "./cloud-core.js";
 
-const CONVEX_URL = "";
+const CONVEX_URL = "https://honorable-kiwi-400.convex.cloud";
 
 window.MomsterCloud = createCloud({ ConvexClient, anyApi, url: CONVEX_URL, storage: window.localStorage });
 window.dispatchEvent(new Event("momster-cloud-ready"));

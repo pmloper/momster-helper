@@ -130,6 +130,16 @@ export default defineSchema({
     value: v.any(),
   }).index("by_family_key", ["familyId", "key"]),
 
+  // Generic document store used by the app's existing sync layer (paths like "weeks/2026-10-05_k1", "buddies/k1",
+  // "settings/main", "family/main", "teams/2026-10-05", "voices/<key>"). The typed tables above are the later,
+  // stricter model; this keeps the first release small and lets the app's data shapes evolve without migrations.
+  docs: defineTable({
+    familyId: v.id("families"),
+    path: v.string(),
+    data: v.any(),
+    updatedAt: v.number(),
+  }).index("by_family_path", ["familyId", "path"]),
+
   // Generated clips for text a family wrote (custom jobs, prizes, missions).
   // `key` is textKey(text) from index.html, so the app finds the clip by the same name as the shipped ones.
   voiceClips: defineTable({

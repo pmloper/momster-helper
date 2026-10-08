@@ -66,4 +66,11 @@ await check('signOut clears tokens and notifies listeners', async () => {
   await c.verifyCode('a@b.co', '123456'); c.client.cb(true); await c.signOut();
   assert.equal(st.getItem('momster_auth_jwt'), null); assert.deepEqual(seen, [true, false]); assert.ok(calls.some(x => x[0] === 'signOut'));
 });
+await check('parallel token requests share one refresh', async () => {
+  const st = mem(); st.setItem('momster_auth_refresh', 'r1');
+  const { ConvexClient, calls } = fake(async () => { await new Promise(r => setTimeout(r, 20)); return { tokens: { token: jwt((T + 3600_000) / 1000), refreshToken: 'r2' } }; });
+  const c = createCloud({ ConvexClient, anyApi, url: 'https://x.convex.cloud', storage: st, now: () => T });
+  await Promise.all([c.client.fetchToken({}), c.client.fetchToken({ forceRefreshToken: true }), c.resume()]);
+  assert.equal(calls.filter(x => x[0] === 'signIn').length, 1);
+});
 console.log(fails ? `${fails} FAILURE(S)` : 'ALL PASS'); process.exit(fails ? 1 : 0);

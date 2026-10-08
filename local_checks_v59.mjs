@@ -1,4 +1,4 @@
-// Local syntax + structure checks for the v59 polish (kept current for v80-audio-files build).
+// Local syntax + structure checks for the v59 polish (kept current for v81-cloud-sync build).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -12,9 +12,9 @@ console.log('lines', lines.length);
 const scriptTagCount = (html.match(/<script\b/g) || []).length;
 console.log('script tag count:', scriptTagCount);
 
-// CACHE check (v80-audio-files Preview)
+// CACHE check (v81-cloud-sync Preview)
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v80-audio-files') ? 'OK: CACHE v80-audio-files' : 'ERROR: CACHE not v80-audio-files');
+console.log(sw.includes('momster-helper-v81-cloud-sync') ? 'OK: CACHE v81-cloud-sync' : 'ERROR: CACHE not v81-cloud-sync');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');

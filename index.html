@@ -1479,9 +1479,11 @@ function subscribe(){
   Object.keys(KIDS).forEach(k=>unsubs.push(db.doc("buddies/"+k).onSnapshot(s=>{ if(s.exists){ const d=s.data();
     buddies[k]=Object.assign(BLANK_BUDDY(), JSON.parse(JSON.stringify(d)), {look:Object.assign({},DEFAULT_LOOK,d.look||{}), owned:Array.isArray(d.owned)?d.owned.slice():["balloon"], wear:Object.assign({},d.wear||{})});
     saveLocal("buddy_"+k,buddies[k]); render(); if(document.getElementById("buddySheet")) buddySheet(k===view.kid?k:view.kid); } }, e=>console.warn(e))));
+  unsubs.push(db.doc("family/main").onSnapshot(s=>{ if(testMode || !s.exists) return; const d=s.data();
+    if(canon(d)!==canon(FAMILY_SET?FAMILY:null)) cloudAdoptFamily(d); }, e=>console.warn(e)));
   unsubs.push(db.doc("teams/"+WEEK).onSnapshot(s=>{ team = s.exists ? {given:!!s.data().given} : {given:false}; render(); }, e=>console.warn(e)));
   unsubs.push(db.doc("settings/main").onSnapshot(s=>{
-    if(s.exists){ const d=s.data(); settings = {pin:d.pin||DEFAULT_PIN, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true}; saveLocal("settings",settings); render(); }
+    if(s.exists){ const d=s.data(); settings = {pin:d.pin||DEFAULT_PIN, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true, setupDone:!!d.setupDone}; saveLocal("settings",settings); render(); }
   }, e=>console.warn(e)));
   subscribeVoices();
 }
@@ -1496,7 +1498,72 @@ function subscribeVoices(){ if(!db) return;
     qs.docs.forEach(d=>{ seen.add(d.id); const r=d.data(); const cur=loadLocal("v_"+d.id);
       if(!cur || cur.b64!==r.b64 || !VOICE[d.id]){ setVoice(d.id,r); Store.set("starjobs_v_"+d.id, {mime:r.mime,b64:r.b64}); } });
     if(document.getElementById("recList")) recSheet(); }, e=>console.warn(e))); }
-if(window.claude && window.claude.use){ window.claude.use("db").then(d=>{ if(d){ db=d; subscribe(); } }); }
+/* ---------- Cloud sync (Convex) ----------
+   Optional: with no login the app works exactly as before, on this device only. Signing in attaches a Firestore-style
+   `db` (cloud-db.js) and the existing writeDoc/subscribe code does the rest. */
+const canon = x => JSON.stringify(x, (k, v) => (v && typeof v==="object" && !Array.isArray(v)) ? Object.keys(v).sort().reduce((o,kk)=>{ o[kk]=v[kk]; return o; }, {}) : v);
+const CLOUD_LINKED = "momster_cloud_linked";
+function cloudLocalDocs(){
+  const out=[]; if(FAMILY_SET) out.push({path:"family/main", data:FAMILY});
+  out.push({path:"settings/main", data:settings});
+  Store.keys(/^starjobs_w_\d{4}-\d\d-\d\d_\w+$/).forEach(key=>{ const w=Store.get(key); if(w) out.push({path:"weeks/"+key.slice("starjobs_w_".length), data:w}); });
+  Object.keys(KIDS).forEach(k=>{ if(buddies[k]) out.push({path:"buddies/"+k, data:buddies[k]}); });
+  return out; }
+function cloudBackup(){ if(Store.rawGet("momster_backup_before_sync")) return;
+  const snap={}; Store.keys(/^starjobs_(?!v_)/).forEach(k=>{ snap[k]=Store.rawGet(k); }); try{ localStorage.setItem("momster_backup_before_sync", JSON.stringify(snap)); }catch(e){} }
+function cloudAdoptFamily(d){
+  // Another device (or the cloud copy) has this family's kids and jobs: take them and rebuild the app once.
+  let n=0; try{ n=Number(sessionStorage.getItem("momster_adopt_n")||0); sessionStorage.setItem("momster_adopt_n", String(n+1)); }catch(e){}
+  if(n>=2) return;                                  // never loop
+  cloudBackup(); Store.set("starjobs_family", d); location.reload(); }
+let cloudBusy=false;
+function cloudAttach(){
+  const C=window.MomsterCloud; if(!C || !C.configured || !C.signedIn || db || cloudBusy) return; cloudBusy=true;
+  const d=C.openDb();
+  d.whenLoaded().then(async ()=>{
+    const remote=d.paths().includes("family/main"), first=!Store.rawGet(CLOUD_LINKED);
+    if(remote){ if(first) cloudBackup(); }
+    else if(FAMILY_SET){ try{ await d.bulkSet(cloudLocalDocs()); toast("Synced! Your stars are saved online."); }catch(e){ console.warn("first sync failed", e); cloudBusy=false; toast("Couldn't sync yet. Try again in a moment."); return; } }
+    try{ localStorage.setItem(CLOUD_LINKED,"1"); }catch(e){}
+    db=d; cloudBusy=false; subscribe(); render(); if(document.getElementById("gPanel")) panel();
+  });
+}
+function cloudDetach(){ unsubs.forEach(u=>{ try{ u(); }catch(e){} }); unsubs=[]; db=null; cloudBusy=false; try{ window.MomsterCloud.closeDb(); }catch(e){} }
+function cloudInit(){
+  const C=window.MomsterCloud; if(!C || !C.configured) return;
+  C.onAuthChange(ok=>{ if(ok) cloudAttach(); else { cloudDetach(); render(); } });
+  C.resume().then(ok=>{ if(ok) cloudAttach(); }).catch(()=>{});
+}
+window.addEventListener("momster-cloud-ready", cloudInit);
+const cloudOn = () => !!(window.MomsterCloud && window.MomsterCloud.configured);
+function cloudRow(){
+  if(!cloudOn()) return "";
+  const C=window.MomsterCloud;
+  return C.signedIn
+    ? `<div class="srow"><span class="sl">☁️ Synced across devices<small>Signed in as ${esc(C.email||"your email")}${db?"":" · connecting…"}</small></span><button class="btn ghost sm" data-a="cloudOut">Sign out</button></div>`
+    : `<button class="srow link" data-a="cloudIn"><span class="sl">☁️ Sync across devices<small>Sign in with your email to share stars on every device</small></span><span class="chev">›</span></button>`; }
+function cloudSheet(step, email, msg){
+  layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:420px">
+    <div class="ghead"><h2>☁️ Sync across devices</h2><button class="btn primary sm" data-a="closeOvBtn">Close</button></div>
+    ${step===1
+      ? `<p>Enter your email. We'll send a 6-number code. Anyone you add later signs in the same way.</p>
+         <input id="cloudEmail" class="in tx" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="${esc(email||"")}" style="width:100%;margin:8px 0">
+         <button class="btn primary" data-a="cloudSend" style="width:100%">Send my code</button>`
+      : `<p>We sent a code to <b>${esc(email)}</b>. It works for 10 minutes.</p>
+         <input id="cloudCode" class="in tx" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="123456" style="width:100%;margin:8px 0;font-size:24px;letter-spacing:6px;text-align:center">
+         <button class="btn primary" data-a="cloudVerify" data-e="${esc(email)}" style="width:100%">Sign in</button>
+         <button class="btn ghost sm" data-a="cloudIn" data-e="${esc(email)}" style="width:100%;margin-top:8px">Use a different email</button>`}
+    <p id="cloudMsg" class="hint" style="text-align:center;min-height:1.4em">${esc(msg||"")}</p>
+  </div></div>`;
+  const i=layer.querySelector(step===1?"#cloudEmail":"#cloudCode"); if(i) setTimeout(()=>i.focus(),50); }
+async function cloudSend(){
+  const C=window.MomsterCloud, email=(document.getElementById("cloudEmail")||{}).value||"", msg=document.getElementById("cloudMsg");
+  try{ if(msg) msg.textContent="Sending…"; const e=await C.requestCode(email); cloudSheet(2,e,""); }
+  catch(err){ if(msg) msg.textContent=String(err.message||err).replace(/^Uncaught Error: /,"").slice(0,140); } }
+async function cloudVerify(email){
+  const C=window.MomsterCloud, code=(document.getElementById("cloudCode")||{}).value||"", msg=document.getElementById("cloudMsg");
+  try{ if(msg) msg.textContent="Checking…"; await C.verifyCode(email,code); close(); toast("Signed in!"); cloudAttach(); setTimeout(()=>{ if(!layer.innerHTML) panel(); },500); }
+  catch(err){ if(msg) msg.textContent=String(err.message||err).replace(/^Uncaught Error: /,"").slice(0,140); } }
 setInterval(()=>{ const w=weekStart(); if(w!==WEEK){ WEEK=w; Object.keys(KIDS).forEach(k=>{ prevWeeks[k]=weeks[k]; weeks[k]=normWeek(loadLocal("w_"+WEEK+"_"+k)); }); team={given:false}; subscribe(); render(); } }, 60000);
 
 /* ---------- Helpers ---------- */
@@ -2665,6 +2732,7 @@ function panel(){
     <div class="grp-t">Settings</div>
     <div class="grp">
       ${(window._deferredInstall && !loadLocal("installedHint"))?`<button class="srow link" data-a="pwaInstall"><span class="sl">📲 Install Momster Helper<small>Real app icon on your home screen. Works offline.</small></span><span class="chev">›</span></button>`:""}
+      ${cloudRow()}
       <button class="srow link" data-a="famOpen"><span class="sl">👨‍👩‍👧 Family setup<small>Add a kid · edit kids, jobs and prizes</small></span><span class="chev">›</span></button>
       <div class="srow"><span class="sl">Weekly star goal<small>${possibleThisWeek()} possible${(()=>{ const p=possibleThisWeek(), rec=Math.max(5,Math.round(p*0.8/5)*5); return g===rec?" · ✓ just right":" · Recommended: "+rec; })()}</small></span>
         <span class="seg"><button data-a="goal" data-d="-5">−</button><b class="segv">${g}</b><button data-a="goal" data-d="5">+</button></span></div>
@@ -3065,7 +3133,7 @@ function applyKids(){
     if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"});
   });
 }
-function saveFamily(){ Store.set("starjobs_family", FAMILY); }
+function saveFamily(){ Store.set("starjobs_family", FAMILY); if(db) writeDoc("family/main", JSON.parse(JSON.stringify(FAMILY))); }
 function famRead(){ document.querySelectorAll("[data-fk]").forEach(el=>{ const c=famDraft[+el.dataset.fk]; if(c) c[el.dataset.f]=el.value; }); }
 function famSheet(first){
   if(!famDraft){ famDraft=JSON.parse(JSON.stringify(FAMILY.kids)); if(first) famDraft.forEach(c=>c.name=""); }
@@ -3128,6 +3196,10 @@ document.addEventListener("click", e=>{
     case "famSave": famRead(); { const firstRun=!FAMILY_SET; const kids=famDraft.map(c=>({id:c.id, name:(c.name||"").trim(), av:(c.av||"").trim()||"⭐", color:c.color})).filter(c=>c.name);
       if(!kids.length){ const n=document.getElementById("famNote"); if(n){ n.style.color="#E5484D"; n.textContent="Add at least one name"; } break; }
       FAMILY.kids=kids; saveFamily(); applyKids(); FAMILY_SET=true; famDraft=null; view.kid=null; close(); render(); play(["fanfare"]); if(firstRun){ pinMode="first"; pinSheet(); } } break;
+    case "cloudIn": cloudSheet(1, t.dataset.e||(window.MomsterCloud&&window.MomsterCloud.email)||""); break;
+    case "cloudSend": cloudSend(); break;
+    case "cloudVerify": cloudVerify(t.dataset.e); break;
+    case "cloudOut": window.MomsterCloud.signOut().then(()=>{ cloudDetach(); panel(); toast("Signed out. This device keeps its own copy."); }); break;
     case "pwaInstall": { const d=window._deferredInstall; if(d){ d.prompt(); try{ saveLocal("installedHint","1"); }catch(e){} window._deferredInstall=null; } panel(); play(["fanfare"]); break; }
     case "fadeChart": famDraft=null; famSheet(false); setTimeout(()=>{ const b=[...document.querySelectorAll('[data-a="listOpen"]')].find(x=>x.textContent.includes("Morning")); if(b){ b.click(); } },350); play(["pop"]); break;
     case "listOpen": listSec=t.dataset.s; listDraft=curList(listSec); if(listSec==="pk") famPlanDraft=Object.assign({}, (FAMILY.pickPlan)||{}); listSheet(); break;
@@ -3192,5 +3264,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+<script type="module" src="cloud.js"></script>
 </body>
 </html>

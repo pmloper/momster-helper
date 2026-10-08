@@ -90,7 +90,7 @@ async function run(){
     const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin||DEFAULT_PIN")) || "";
     if(!/kidEnds\s*:/.test(snap) || !/raceOff\s*:/.test(snap)) fail(0,0,"firebase_sync","settings snapshot whitelist drops kidEnds/raceOff");
     const m = sw.match(/const CACHE = "([^"]+)"/);
-    if(!m || m[1] !== "momster-helper-v80-audio-files") fail(0,0,"sw_cache","SW cache not bumped to v80-audio-files: "+(m&&m[1])); }
+    if(!m || m[1] !== "momster-helper-v81-cloud-sync") fail(0,0,"sw_cache","SW cache not bumped to v81-cloud-sync: "+(m&&m[1])); }
 
   for(const [W,H] of VIEWPORTS){
     await send("Emulation.setDeviceMetricsOverride", { width:W, height:H, deviceScaleFactor:2, mobile:true });

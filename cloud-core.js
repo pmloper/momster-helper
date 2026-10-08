@@ -1,10 +1,12 @@
 // Cloud sign-in logic with no browser or network dependencies, so it can be unit tested.
 // cloud.js wires it to the real Convex client. Sync is optional: with no `url`, everything here is inert.
+import { createDb } from "./cloud-db.js";
+
 export function createCloud({ ConvexClient, anyApi, url, storage, now = () => Date.now() }) {
   const KEY_JWT = "momster_auth_jwt", KEY_REFRESH = "momster_auth_refresh";
   const configured = !!url;
   const listeners = new Set();
-  let client = null, signedIn = false;
+  let client = null, signedIn = false, db = null, refreshing = null;
 
   const read = k => { try { return storage.getItem(k); } catch (e) { return null; } };
   const write = (k, v) => { try { storage.setItem(k, v); } catch (e) {} };
@@ -15,8 +17,9 @@ export function createCloud({ ConvexClient, anyApi, url, storage, now = () => Da
     try { const b = jwt.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"); return JSON.parse(atob(b)).exp * 1000; }
     catch (e) { return 0; }
   }
+  const KEY_EMAIL = "momster_auth_email";
   function saveTokens(t) { write(KEY_JWT, t.token); write(KEY_REFRESH, t.refreshToken); }
-  function clearTokens() { drop(KEY_JWT); drop(KEY_REFRESH); }
+  function clearTokens() { drop(KEY_JWT); drop(KEY_REFRESH); drop(KEY_EMAIL); }
 
   function getClient() {
     if (!configured) throw new Error("Sync is not set up for this app yet.");
@@ -32,12 +35,19 @@ export function createCloud({ ConvexClient, anyApi, url, storage, now = () => Da
     const jwt = read(KEY_JWT), refresh = read(KEY_REFRESH);
     if (jwt && !forceRefreshToken && expiryMs(jwt) - now() > 30000) return jwt;
     if (!refresh) return null;
-    try {
-      const r = await getClient().action(anyApi.auth.signIn, { refreshToken: refresh });
-      if (r && r.tokens) { saveTokens(r.tokens); return r.tokens.token; }
-    } catch (e) { /* fall through: treat as signed out */ }
-    clearTokens();
-    return null;
+    // One refresh at a time: refresh tokens rotate, so two parallel refreshes could invalidate each other.
+    const cl = getClient();   // may itself start a refresh through setAuth, so check `refreshing` afterwards
+    if (!refreshing) {
+      refreshing = (async () => {
+        try {
+          const r = await cl.action(anyApi.auth.signIn, { refreshToken: refresh });
+          if (r && r.tokens) { saveTokens(r.tokens); return r.tokens.token; }
+        } catch (e) { /* fall through: treat as signed out */ }
+        clearTokens();
+        return null;
+      })().finally(() => { refreshing = null; });
+    }
+    return refreshing;
   }
 
   return {
@@ -46,6 +56,10 @@ export function createCloud({ ConvexClient, anyApi, url, storage, now = () => Da
     get client() { return configured ? getClient() : null; },
     api: anyApi,
     hasStoredLogin: () => !!read(KEY_REFRESH),
+    get email() { return read(KEY_EMAIL); },
+    // The Firestore-style document store the app syncs through (created on first use, started once).
+    openDb() { if (!db) { db = createDb({ client: getClient(), api: anyApi }); db.start(); } return db; },
+    closeDb() { if (db) { db.stop(); db = null; } },
     onAuthChange(f) { listeners.add(f); return () => listeners.delete(f); },
     // Resume a saved login on page load.
     async resume() { if (!configured || !read(KEY_REFRESH)) return false; const t = await fetchToken(); setSignedIn(!!t); getClient(); return !!t; },
@@ -62,13 +76,14 @@ export function createCloud({ ConvexClient, anyApi, url, storage, now = () => Da
       if (!/^\d{6}$/.test(c)) throw new Error("The code is 6 numbers.");
       const r = await getClient().action(anyApi.auth.signIn, { provider: "email-code", params: { email: e, code: c } });
       if (!r || !r.tokens) throw new Error("That code did not work. Check it and try again.");
-      saveTokens(r.tokens);
+      saveTokens(r.tokens); write(KEY_EMAIL, e);
       getClient().setAuth(fetchToken, ok => setSignedIn(!!ok));
       return true;
     },
     async signOut() {
       try { if (client && signedIn) await client.action(anyApi.auth.signOut, {}); } catch (e) {}
       clearTokens();
+      if (db) { db.stop(); db = null; }
       if (client) { try { client.client.clearAuth(); } catch (e) {} }
       setSignedIn(false);
     },
