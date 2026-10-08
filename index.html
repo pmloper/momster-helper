@@ -719,6 +719,8 @@ body:has(#layer > .sheet) .botnav{display:none}
 .tile .wk{position:absolute;left:6px;top:6px;background:#1E2A47;color:#fff;border:2px solid #FFD84D;border-radius:10px;padding:1px 8px;font-size:clamp(12px,2vh,16px);font-weight:900;line-height:1.4;text-shadow:none;box-shadow:0 2px 5px rgba(0,0,0,.3)}
 .tile.evt{border-color:#E5484D;box-shadow:0 5px 0 #E5484D,var(--shadow);background:color-mix(in srgb,#E5484D 9%,var(--card))}
 .tile.spm{border-color:#7048E8;box-shadow:0 5px 0 #7048E8,var(--shadow);background:color-mix(in srgb,#7048E8 9%,var(--card))}
+.coinpop{position:fixed;left:50%;top:132px;transform:translateX(-50%);z-index:70;pointer-events:none;font-family:var(--disp);font-weight:700;font-size:clamp(20px,3.6vh,28px);color:#7A4B00;background:linear-gradient(180deg,#FFE27A,#FFC23D);border:3px solid #E08A00;border-radius:999px;padding:6px 20px;box-shadow:0 10px 24px rgba(0,0,0,.3);animation:cp-in 2.8s ease-out forwards;white-space:nowrap}
+@keyframes cp-in{0%{opacity:0;transform:translate(-50%,-10px) scale(.7)}8%{opacity:1;transform:translate(-50%,0) scale(1.08)}14%{transform:translate(-50%,0) scale(1)}88%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-8px)}}
 .tile .tileMark{position:absolute;top:5px;right:7px;z-index:3;font-size:clamp(20px,3.4vh,28px);line-height:1;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .tile.spmPick{border-color:#7048E8;border-style:dashed;box-shadow:0 5px 0 #7048E8,var(--shadow);background:color-mix(in srgb,#7048E8 8%,var(--card))}
 /* Distinct Bonus-tab badges per active mission type. Two separate elements (red surprise
@@ -1215,8 +1217,10 @@ const SEASON = {
  11:[["fit","f_sweater","🎄","Holiday sweater",15,"f"],["hat","santa","🎅","Santa hat",15,"santa"],["hold","gift","🎁","Present",10],["hold","xtree","🎄","Tiny tree",12],["pet","reindeer","🦌","Reindeer",25],["pet","snowman","⛄","Snowman",20],["bg","xmas","🎄","Cozy Christmas",25]]
 };
 const ALL_ITEMS = ITEMS.concat(RARE, ...Object.values(SEASON));
-const SLOTS = [["hat","🎩","Hats"],["face","🕶️","Faces"],["neck","🏅","Neck"],["fit","👕","Outfits"],["hold","🎈","Toys (2 hands!)"],["pet","🐣","Pets (2!)"],["bg","🌈","Places"]];
-const SLOT_KEYS = {hold:["hold","hold2"], pet:["pet","pet2"], face:["face","face2"]};
+const SLOTS = [["hat","🎩","Hats"],["face","🕶️","Faces"],["neck","🏅","Neck"],["fit","👕","Outfits"],["hold","🎈","Toys"],["pet","🐣","Pets"],["bg","🌈","Places"]];
+/* What a sidekick can wear at once: one hat, one face, one neck, one outfit, one place, and two hands that hold
+   two toys OR one toy and one pet (never two pets). Toys sit in hold/hold2, a pet in pet. */
+const SLOT_KEYS = {hold:["hold","hold2"]};
 const slotKeys = slot => SLOT_KEYS[slot] || [slot];
 const DEFAULT_LOOK = {color:"#7CC6FE", body:"blob", shape:"round", ears:"bear", eyes:"sparkle", mouth:"smile", nose:"none", pattern:"none", tail:"none"};
 let _bid=0;
@@ -1491,9 +1495,9 @@ async function writeDoc(path, data){
 }
 // If stars get taken back (undo, clear week) after coins were spent, forgive the gap
 // so a kid never has hidden "coin debt" that eats their next stars.
-function settleCoins(k){ const b=buddies[k]; if(!b) return; const max=lifetime(k)+(b.bonusCoins||0);
+function settleCoins(k){ const b=buddies[k]; if(!b) return; const max=earnedCoins(k);
   if((b.spent||0)>max){ b.spent=max; saveBuddy(k); } }
-function saveWeek(kid){ settleCoins(kid); saveLocal("w_"+WEEK+"_"+kid, weeks[kid]); cloudWrite("weeks/"+WEEK+"_"+kid, weeks[kid]); }
+function saveWeek(kid){ reconcileCoins(kid); settleCoins(kid); saveLocal("w_"+WEEK+"_"+kid, weeks[kid]); cloudWrite("weeks/"+WEEK+"_"+kid, weeks[kid]); }
 function saveSettings(){ saveLocal("settings", settings); cloudWrite("settings/main", settings); }
 function subscribe(){
   unsubs.forEach(u=>u()); unsubs=[];
@@ -1506,7 +1510,7 @@ function subscribe(){
   });
   unsubs.push(db.collection("weeks").onSnapshot(qs=>{ const m={}; qs.docs.forEach(d=>{ m[d.id]=normWeek(d.data()); }); allWeeks=m; render(); }, e=>console.warn(e)));
   Object.keys(KIDS).forEach(k=>unsubs.push(db.doc("buddies/"+k).onSnapshot(s=>{ if(s.exists){ const d=s.data();
-    buddies[k]=Object.assign(BLANK_BUDDY(), JSON.parse(JSON.stringify(d)), {look:Object.assign({},DEFAULT_LOOK,d.look||{}), owned:Array.isArray(d.owned)?d.owned.slice():["balloon"], wear:Object.assign({},d.wear||{})});
+    buddies[k]=Object.assign(BLANK_BUDDY(), JSON.parse(JSON.stringify(d)), {look:Object.assign({},DEFAULT_LOOK,d.look||{}), owned:Array.isArray(d.owned)?d.owned.slice():["balloon"], wear:normalizeWear(Object.assign({},d.wear||{}))});
     saveLocal("buddy_"+k,buddies[k]); render(); if(document.getElementById("buddySheet")) buddySheet(k===view.kid?k:view.kid); } }, e=>console.warn(e))));
   unsubs.push(db.doc("family/main").onSnapshot(s=>{ if(testMode || !s.exists) return; const d=s.data();
     if(canon(d)!==canon(FAMILY_SET?FAMILY:null)) cloudAdoptFamily(d); }, e=>console.warn(e)));
@@ -1641,10 +1645,35 @@ function stars(k){ return starsFor(k, weeks[k], WEEK); }
 let allWeeks = {};
 function lifetime(k){ let n=stars(k);
   Object.entries(allWeeks).forEach(([id,w])=>{ const [wk,kid]=id.split("_"); if(kid===k && wk!==WEEK) n+=starsFor(k,w,wk); }); return n; }
-const BLANK_BUDDY = () => ({made:false, look:Object.assign({},DEFAULT_LOOK), owned:["balloon"], wear:{hold:"balloon"}, spent:0});
-let buddies = {}; Object.keys(KIDS).forEach(k=>{ buddies[k]=Object.assign(BLANK_BUDDY(), loadLocal("buddy_"+k)||{});
+const BLANK_BUDDY = () => ({made:false, look:Object.assign({},DEFAULT_LOOK), owned:["balloon"], wear:{hold:"balloon"}, spent:0, coinAwards:{}, adjCoins:0});
+let buddies = {}; Object.keys(KIDS).forEach(k=>{ buddies[k]=Object.assign(BLANK_BUDDY(), loadLocal("buddy_"+k)||{}); buddies[k].wear=normalizeWear(buddies[k].wear);
   if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}); });
-const coins = k => Math.max(0, lifetime(k) + (buddies[k].bonusCoins||0) - (buddies[k].spent||0));
+/* Coins. Earned in three ways, each kept in buddy.coinAwards under its own key so it can only be paid once:
+     cat:<day>:<category>  1 coin for finishing every job in a category that day (2 once the week's villain is beaten);
+                            categories are am / pm / bt / hp, plus pk for the special mission
+     villain:<week>         10 coins to every kid when the week's villain is defeated
+     starter                25 coins when the tutorial finishes
+   Parents can add or remove coins (adjCoins). Spent coins are tracked in spent. Stars no longer make coins. */
+const earnedCoins = k => { const b=buddies[k]||{}; return Object.values(b.coinAwards||{}).reduce((a,x)=>a+x,0) + (b.adjCoins||0) + (b.bonusCoins||0); };
+const coins = k => Math.max(0, earnedCoins(k) - ((buddies[k]||{}).spent||0));
+const CAT_COIN = 1, CAT_COIN_AFTER_VILLAIN = 2, VILLAIN_COINS = 10, STARTER_COINS = 25;
+function coinAward(k, key, n){ const b=buddies[k]; if(!b) return 0; b.coinAwards=b.coinAwards||{}; if(b.coinAwards[key]!=null) return 0; b.coinAwards[key]=n; saveBuddy(k); return n; }
+function coinPop(n, label){ document.querySelectorAll(".coinpop").forEach(x=>x.remove()); const c=document.createElement("div"); c.className="coinpop"; c.textContent="+"+n+" 🪙"+(label?"  "+label:""); document.body.appendChild(c); setTimeout(()=>c.remove(),2800); }
+// A category pays once per kid per day. wasDefeated is whether the villain was already beaten before this finish.
+function awardCategory(k, cat, day, wasDefeated, label){ const n=coinAward(k, "cat:"+day+":"+cat, wasDefeated?CAT_COIN_AFTER_VILLAIN:CAT_COIN); if(n) setTimeout(()=>coinPop(n,label), 1800); return n; }
+const dowOfDay = day => new Date(day+"T12:00:00").getDay();
+function catComplete(k, cat, day){ const done=((weeks[k]||{}).done||{})[day]||[];
+  if(cat==="pk") return done.some(x=>/^pk_/.test(x) && x!=="pk_unselected");
+  const r=ROUTINES.find(x=>x.id===cat); if(!r) return false; const js=jobsFor(r, dowOfDay(day), k); return js.length>0 && js.every(j=>done.includes(j.id)); }
+// If a grown-up takes a star back and a category is no longer complete, its coin is withdrawn.
+function reconcileCoins(k){ const b=buddies[k]; if(!b||!b.coinAwards) return; let changed=false;
+  Object.keys(b.coinAwards).forEach(key=>{ const m=/^cat:(\d{4}-\d\d-\d\d):(\w+)$/.exec(key); if(!m) return;
+    const wkOf=d=>{ const x=new Date(d+"T12:00:00"); x.setDate(x.getDate()-((x.getDay()+6)%7)); return ymd(x); };
+    if(wkOf(m[1])!==WEEK) return;                            // only this week's days can be re-checked here
+    if(!catComplete(k, m[2], m[1])){ delete b.coinAwards[key]; changed=true; } });
+  if(changed) saveBuddy(k); }
+function giveStarterCoins(k){ return coinAward(k, "starter", STARTER_COINS); }
+window.giveStarterCoins = giveStarterCoins;   // the tutorial calls this when it finishes
 function saveBuddy(k){ saveLocal("buddy_"+k, buddies[k]); cloudWrite("buddies/"+k, buddies[k]); }
 const goal = () => settings.goal || DEFAULT_GOAL;
 const isDone = (k,id) => (weeks[k].done[ymd(new Date())]||[]).includes(id);
@@ -1846,8 +1875,8 @@ function bossTap(el){ const m=monster(), left=monsterLeft()>0, lines=left?(TAUNT
 document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="bossTap"]'); if(t) bossTap(t); });
 document.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".kidTime")){ e.preventDefault(); e.target.click(); } });
 function checkMonster(){ if(monsterLeft()>0) return false; let won=false;
-  Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; b.monsters=b.monsters||[]; if(!b.monsters.includes(WEEK)){ b.monsters=b.monsters.concat(WEEK); b.bonusCoins=(b.bonusCoins||0)+5; saveBuddy(k); won=true; } });
-  if(won){ const m=monster(); setTimeout(()=>{ party(["💥",m[2],m[3],"🪙","🎉"]); cheer("💥","Busted! You beat "+m[1]+"! +5 🪙"); play(["punch","fanfare","monsterwin"]); }, 900); setTimeout(()=>{ if(!layer.innerHTML) victoryDance(); }, 3600); checkRank(); }
+  Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; b.monsters=b.monsters||[]; if(!b.monsters.includes(WEEK)){ b.monsters=b.monsters.concat(WEEK); b.coinAwards=b.coinAwards||{}; b.coinAwards["villain:"+WEEK]=VILLAIN_COINS; saveBuddy(k); won=true; } });
+  if(won){ const m=monster(); setTimeout(()=>{ party(["💥",m[2],m[3],"🪙","🎉"]); cheer("💥","Busted! You beat "+m[1]+"! +"+VILLAIN_COINS+" 🪙"); play(["punch","fanfare","monsterwin"]); }, 900); setTimeout(()=>{ if(!layer.innerHTML) victoryDance(); }, 3600); checkRank(); }
   return won; }
 let dmgCardN = 0;   // damage on the card that is open right now
 function dmgPop(n){
@@ -2342,7 +2371,7 @@ let wiz = null;   // wizard state: {step, kids:[], jobs:{am:[],pm:[],bt:[],hp:[]
 function wizStart(){
   wiz = { step: 0, kids: FAMILY_SET ? JSON.parse(JSON.stringify(FAMILY.kids)) : [{id:"k1", name:"", av:"⭐", color:"#E2468A"},{id:"k2", name:"", av:"⭐", color:"#1A9C74"}],
     jobs: { am: starterIds("am"), pm: starterIds("pm"), bt: starterIds("bt"), hp: starterIds("hp") },
-    prizeMode: "pick", voice: true, sound: (typeof FAMILY_SET!=="undefined" && FAMILY_SET) ? (soundLevel===0 ? "off" : voiceLvl===0 ? "fx" : "all") : "all",
+    fresh: !(typeof FAMILY_SET!=="undefined" && FAMILY_SET), prizeMode: "pick", voice: true, sound: (typeof FAMILY_SET!=="undefined" && FAMILY_SET) ? (soundLevel===0 ? "off" : voiceLvl===0 ? "fx" : "all") : "all",
     walkEnd: settings.walkEnd || settings.raceEnd || "07:40", busEnd: settings.busEnd || "07:45", driveEnd: settings.driveEnd || "07:50", rideMode: (settings.rideMode||"walk"),
     raceOn: raceOn(), kidEnds: JSON.parse(JSON.stringify(settings.kidEnds||{})),
     mission: null, pin: "", who: {} };
@@ -2499,6 +2528,8 @@ function wizApply(){
   else if(wiz.prizes && wiz.prizes.length){ FAMILY.prizes=STARTER_REWARDS.filter(p=>wiz.prizes.includes(p.id)).map(p=>({id:p.id,e:p.e,t:p.t})); }
   else { delete FAMILY.prizes; }   // default starter list
   saveFamily(); applyJobs();
+  // Until the tutorial is built, a brand new family gets the starting coins when setup finishes (the tutorial will call giveStarterCoins itself).
+  if(wiz.fresh) Object.keys(KIDS).forEach(k=>{ if(buddies[k]) giveStarterCoins(k); });
   // sound
   saveLocal("readMode", wiz.voice===false ? "nonreaders" : "readers");
   // Talking and Sound Effects / Sound Effects Only / Off. The Sound panel in Grown-ups still has finer levels.
@@ -2731,10 +2762,25 @@ function combinedSoundSheet(k, fromHome){
 }
 let bTab="build", bArm=null, bPart="body";
 // Hands and pets have two spots: fill the empty one first, otherwise swap out the older one.
-function wearToggle(b, slot, id, forceOn){ const keys=slotKeys(slot), at=keys.find(k=>b.wear[k]===id);
-  if(at && !forceOn){ delete b.wear[at]; return; } if(at) return;
-  const free=keys.find(k=>!b.wear[k]);
-  if(free) b.wear[free]=id; else { if(keys.length>1){ b.wear[keys[0]]=b.wear[keys[1]]; b.wear[keys[1]]=id; } else b.wear[keys[0]]=id; }
+// Fix an avatar that has more on than the rules allow (older saves could wear two faces or two pets). Nothing is un-owned.
+function normalizeWear(w){ w=w||{};
+  delete w.face2;                                          // one face item
+  if(w.pet2){ if(!w.pet) w.pet=w.pet2; delete w.pet2; }     // one pet
+  if(!w.hold && w.hold2){ w.hold=w.hold2; delete w.hold2; }
+  if(w.pet && w.hold && w.hold2){ w.hold=w.hold2; delete w.hold2; }   // a pet uses a hand: drop the older toy
+  return w; }
+// Put a toy or pet into the two hands, dropping the older item when the hands are full.
+function equipHands(w, slot, id){
+  if(slot==="pet"){ w.pet=id; if(w.hold && w.hold2){ w.hold=w.hold2; delete w.hold2; } return; }
+  if(!w.hold){ w.hold=id; }
+  else if(!w.hold2 && !w.pet){ w.hold2=id; }
+  else if(w.pet){ w.hold=id; }                              // toy + pet already: swap the toy
+  else { w.hold=w.hold2; w.hold2=id; }                      // two toys: the older one goes
+}
+function wearToggle(b, slot, id, forceOn){ b.wear=b.wear||{}; const w=b.wear, keys=slotKeys(slot), at=keys.find(k=>w[k]===id);
+  if(at && !forceOn){ delete w[at]; return; } if(at) return;
+  if(slot==="hold"||slot==="pet") equipHands(w, slot, id); else w[keys[0]]=id;
+  normalizeWear(w);
   if(!forceOn) play(["pop","wear"]); }
 function buddySheet(k){ if(!k) return; const b=buddies[k], have=coins(k);
   const big=buddySvg(b.look,b.wear,{});
@@ -2757,7 +2803,7 @@ function buddySheet(k){ if(!k) return; const b=buddies[k], have=coins(k);
       const cls = on?"on":(bArm===id?"armed":(!own&&cost>have?"cant":""));
       return `<button class="bopt ${cls}" data-a="bItem" data-v="${id}">${RARE.some(r=>r[1]===id)?'<span class="tag">✨</span>':(seasonItems().some(r=>r[1]===id)?`<span class="tag">${THEME_ICON[MONTH()]}</span>`:"")}<span class="ie">${itemById(id)[5] ? buddySvg(b.look,{[slotKeys(slot)[0]]:id},{noBg:true, vb:slot==="hat"?"20 0 160 120":(slot==="face"?"44 76 112 72":"0 0 200 200")}) : e}</span><span class="iname">${esc(name)}</span><span class="pill ${own?(on?"p-on":"p-wear"):(cost>have?"p-cant":"p-buy")}">${own?(on?"✓ On":"Wear"):(bArm===id?"Buy? 🪙"+cost:"🪙 "+cost)}</span></button>`; }).join("");
   }
-  const hint = bTab==="stickers"||bTab==="build" ? "" : `<div class="bsec" style="margin-top:0">1 ⭐ = 1 🪙${SLOT_KEYS[bTab]?" · Wear up to 2!":""}</div>`;
+  const hint = bTab==="stickers"||bTab==="build" ? "" : `<div class="bsec" style="margin-top:0">Finish a whole group of jobs to earn 🪙${bTab==="hold"||bTab==="pet"?" · Two hands: two toys, or a toy and a pet":""}</div>`;
   opts = hint + opts;
   paintSheet("buddySheet", bTab+":"+bPart, `<div class="ov" data-a="closeOv"><div class="sheet" id="buddySheet" style="max-width:1000px;width:100%;--k:${KIDS[k].color}">
     <div class="bwrap"><div class="bprev"><button class="sidepoke" data-a="poke" aria-label="Poke your sidekick">${big}</button><div class="bfoot"><div class="bcoins">🪙 ${have} to spend<small style="display:block;font-size:12px;font-weight:700;opacity:.75">Coins never take away your stars!</small></div><button class="chip go big" data-a="bDone">Done</button></div></div>
@@ -2790,7 +2836,9 @@ function panel(){
       return `<div class="grp" style="--k:${KIDS[k].color}">${auto.length?`<div class="srow" style="background:color-mix(in srgb,#2ECC71 10%,transparent)"><span class="sl"><small>🌱 Habit watch: ${auto.map(a=>{ const jt=(()=>{ for(const rr of ROUTINES){ const f=(FAMILY.jobs&&FAMILY.jobs[rr.id]||[]).find(x=>x.id===a.id); if(f) return f.t; } const st=STARTER_JOBS.am.concat(STARTER_JOBS.pm||[],STARTER_JOBS.bt||[],STARTER_HELPER||[]).find(x=>x.id===a.id); return st?st.t:a.id; })(); return jt+" ("+a.n+" days in a row)"; }).join(", ")}</small></span><button class="btn ghost sm" data-a="fadeChart" style="flex:none">Fade the chart →</button></div><div class="srow" style="padding-top:0"><span class="sl"><small>Graduating these from the paid list keeps the stars and lets the habit stand on its own.</small></span></div>`:""}
         <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${esc(KIDS[k].name)}</b><small>⭐ ${n} of ${g} this week · 🪙 ${coins(k)} coins</small></span></div>
         <div class="srow"><span class="sl">Bonus stars<small>${weeks[k].bonus||0} given this week</small></span>
-          <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1">+1 star</button></span></div>
+          <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1" aria-label="Take a bonus star away">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1" aria-label="Give a bonus star">+</button></span></div>
+        <div class="srow"><span class="sl">Bonus coins<small>${(buddies[k].adjCoins||0)>0?"+":""}${buddies[k].adjCoins||0} from you · ${coins(k)} to spend</small></span>
+          <span class="seg"><button data-a="coinAdj" data-k="${k}" data-d="-1" aria-label="Take a coin away">−</button><button class="plus" data-a="coinAdj" data-k="${k}" data-d="1" aria-label="Give a coin">+</button></span></div>
         <div class="srow wrap"><span class="sl">Prize<small>${r? r.e+" "+esc(r.t) : "Not picked yet"}</small></span>
           ${r?`<span class="ctl"><button class="btn ghost sm" data-a="clearRw" data-k="${k}" title="Clears the prize so ${esc(KIDS[k].name)} picks a new one">Change prize</button><label class="tl">Given ${sw(weeks[k].rewardGiven,"given",`data-k="${k}"`)}</label>${weeks[k].reward2?`<small>Prize 2: ${(REWARDS.find(x=>x.id===weeks[k].reward2)||{}).t||""}</small>`:""}</span>`:""}</div>
       </div>`; }).join("")}
@@ -2999,7 +3047,7 @@ document.addEventListener("click", e=>{
       // Same pick as the chooser; the dismissal key moves to the chosen id so the entry popup stays quiet.
       saveLocal(specialKey(k), 1); render(); play(["pop","BJ:Ooh, good choice!"]); break; }
     case "pkDo": { const p=todayPick(k); if(!p) break; const w=weeks[k], day=ymd(new Date()); const list=(w.done[day]=w.done[day]||[]);
-      if(!list.includes(t.dataset.j)){ const before=stars(k); list.push(t.dataset.j); saveWeek(k);
+      if(!list.includes(t.dataset.j)){ const before=stars(k), wasDefeated=monsterLeft()<=0; list.push(t.dataset.j); saveWeek(k); awardCategory(k, "pk", day, wasDefeated, "Special mission!");
         const after=stars(k); render(); party(["🎯","⭐","⭐"]); cheer("🎯","Special mission complete! +2 ⭐");
         play(["ding","fanfare"].concat(readsAll()?["BJ:"+p.t+"."]:[],["BJ:Special mission complete! Two big stars!"])); setTimeout(()=>dmgPop(2*DMG_MULT),700); }
       break; }
@@ -3052,6 +3100,9 @@ document.addEventListener("click", e=>{
     case "panel": panel(); break;
     case "exitG": view.grown=false; close(); render(); break;
     case "bonus": { const kk=t.dataset.k; weeks[kk].bonus=Math.max(0,(weeks[kk].bonus||0)+Number(t.dataset.d)); saveWeek(kk); panel(); render(); if(t.dataset.d==="1") play(["bonus"]); } break;
+    case "coinAdj": { const kk=t.dataset.k, d=Number(t.dataset.d), b=buddies[kk];
+      if(d<0 && coins(kk)<=0) break;                       // the balance never goes below zero
+      b.adjCoins=(b.adjCoins||0)+d; saveBuddy(kk); panel(); if(d>0) play(["coin"]); } break;
     case "given": { const kk=t.dataset.k; weeks[kk].rewardGiven=!weeks[kk].rewardGiven; saveWeek(kk); panel(); render(); } break;
     case "clearRw": { const kk=t.dataset.k; weeks[kk].reward=null; weeks[kk].rewardGiven=false; saveWeek(kk); panel(); render(); } break;
     case "goal": settings.goal=Math.max(10,Math.min(possibleThisWeek(),goal()+Number(t.dataset.d))); saveSettings(); panel(); render(); break;
@@ -3109,7 +3160,7 @@ document.addEventListener("click", e=>{
     case "resetBuddies": layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:420px;text-align:center">
       <h2>Reset sidekicks?</h2><p>Sidekicks go back to plain, items are removed, and coins start over from 0.</p>
       <div class="row" style="justify-content:center"><button class="chip big" data-a="panel">Cancel</button><button class="chip go big" data-a="resetBuddiesYes">Yes, reset</button></div></div></div>`; break;
-    case "resetBuddiesYes": Object.keys(KIDS).forEach(kk=>{ buddies[kk]=BLANK_BUDDY(); buddies[kk].spent=lifetime(kk); saveBuddy(kk); }); render(); panel();
+    case "resetBuddiesYes": Object.keys(KIDS).forEach(kk=>{ buddies[kk]=BLANK_BUDDY(); saveBuddy(kk); }); render(); panel();
       { const n=document.querySelector(".sheet p"); if(n) n.textContent="Sidekicks reset. Coins start at 0."; } break;
     case "weekView": wvOpen=ymd(new Date()); weekView(); break;
     case "wvKid": wvKid=t.dataset.k; weekView(); break;
@@ -3153,7 +3204,7 @@ function tapJob(k, id){ settleCoins(k);
     else play([job.snd,pick("a")]);
     return;
   }
-  const before=stars(k), otherFull=Object.keys(KIDS).filter(x=>x!==k).every(x=>stars(x)>=goal()), dmgB=teamDamage(), cbB=comboList().length;
+  const before=stars(k), otherFull=Object.keys(KIDS).filter(x=>x!==k).every(x=>stars(x)>=goal()), dmgB=teamDamage(), cbB=comboList().length, wasDefeated=monsterLeft()<=0;
   list.push(id);
   if(job && voiceLvl>0){ const tw=twistFor(k,r,new Date());
     const hasClip = job.snd && !!voiceFile(job.snd);
@@ -3163,6 +3214,7 @@ function tapJob(k, id){ settleCoins(k);
   if(r.id==="am" && raceOpen(k) && jobsFor(r,todayDow(),k).every(j=>list.includes(j.id)) && !(w.race||{})[day]){ w.race=w.race||{}; w.race[day]=true; raceWon=true; }
   saveWeek(k);
   const left=jobsFor(r,todayDow()).filter(j=>!isDone(k,j.id)).length, after=stars(k), g=goal();
+  if(!left) awardCategory(k, r.id, day, wasDefeated, r.name+" done!");
   if(before<g && after>=g && otherFull){ render(); party(["⭐","🎉",teamPrize().e,"🤝"]); cheer(teamPrize().e,"TEAM WIN! "+teamPrize().t); play(["fanfare","jarfull","teamwin"]); }
   else if(before<g && after>=g){ render(); party(["⭐","🎉",rewardOf(k)?.e||"🎁","🌟"]); cheer(rewardOf(k)?.e||"🎁","Star jar full! You saved up for that - that's what I call stick-to-it!"); play(["fanfare","jarfull"]); }
   else if(!left){ bumpStreak(k, r.id, day); setTimeout(render,700); party(["⭐","🌟","✨"]); setTimeout(()=>{ const dd=(weeks[k].done||{})[day]||[];
@@ -3205,7 +3257,7 @@ function applyKids(){
   KID_IDS.forEach(k=>{
     if(!weeks[k]) weeks[k]=Object.assign(blankWeek(), loadLocal("w_"+WEEK+"_"+k)||{});
     if(!prevWeeks[k]) prevWeeks[k]=normWeek(loadLocal("w_"+prevWeekKey()+"_"+k));
-    if(!buddies[k]) buddies[k]=Object.assign(BLANK_BUDDY(), loadLocal("buddy_"+k)||{});
+    if(!buddies[k]){ buddies[k]=Object.assign(BLANK_BUDDY(), loadLocal("buddy_"+k)||{}); buddies[k].wear=normalizeWear(buddies[k].wear); }
     if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"});
   });
 }
