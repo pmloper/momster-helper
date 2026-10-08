@@ -980,7 +980,21 @@ const PHRASES = PHRASES0.concat([["eggearn", "You earned a mystery egg! Tap it t
 /* ---------- Family setup (names, jobs, prizes live on this device) ---------- */
 const KID_COLORS = ["#E2468A","#1A9C74","#3D8BFF","#F08C00","#8B5CF6","#E5484D"];
 const DEFAULT_FAMILY = {kids:[{id:"k1",name:"Kid 1",av:"🦄",color:"#E2468A"},{id:"k2",name:"Kid 2",av:"🦖",color:"#1A9C74"}]};
-let FAMILY = (()=>{ try{ const v=localStorage.getItem("starjobs_family"); return v?JSON.parse(v):null; }catch(e){ return null; } })();
+/* ---------- Store: the single place this app reads and writes saved data ----------
+   Everything below goes through Store (directly or via loadLocal/saveLocal). Today it is backed by this device's
+   localStorage; a Convex adapter can implement the same few methods without touching the rest of the app.
+   Keys are full names ("starjobs_w_2026-10-05_k1"). Writes to starjobs_* keys are ignored while Test Mode is on. */
+let testMode = false, tmSnapshot = null;
+const Store = {
+  guarded: k => testMode && String(k).startsWith("starjobs_"),
+  rawGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  rawSet(k, str){ if(Store.guarded(k)) return false; try{ localStorage.setItem(k, str); return true; }catch(e){ return false; } },
+  get(k){ try{ const v=localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } },
+  set(k, val){ return Store.rawSet(k, JSON.stringify(val)); },
+  remove(k){ if(Store.guarded(k)) return; try{ localStorage.removeItem(k); }catch(e){} },
+  keys(re){ const out=[]; try{ for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k && re.test(k)) out.push(k); } }catch(e){} return out; }
+};
+let FAMILY = Store.get("starjobs_family");
 let FAMILY_SET = !!FAMILY; if(!FAMILY) FAMILY = JSON.parse(JSON.stringify(DEFAULT_FAMILY));
 /* Sentences that include a kid's name are one generated clip per name: audio/names/<template>/<slug>.mp3.
    A name with no clip falls back to the device voice reading the whole sentence. */
@@ -1107,7 +1121,7 @@ function speakName(text, done){
     let fin=false; const f=()=>{ if(!fin){ fin=true; done(); } };
     u.onend=f; u.onerror=f; setTimeout(f, 1200+text.length*120);
     speechSynthesis.speak(u); }catch(e){ done(); } }
-const MOMSTER_CLIPS = (()=>{ try{ return JSON.parse(localStorage.getItem("momster_voice")||"{}"); }catch(e){ return {}; } })(); // recorded mom voice lives here when added
+const MOMSTER_CLIPS = Store.get("momster_voice") || {}; // recorded mom voice lives here when added
 function nextClip(){
   const k=queue.shift(); if(!k) return;
   // Kid-name sentence: generated clip, else the device voice reads the whole sentence.
@@ -1434,11 +1448,11 @@ function normWeek(d){ d=d||{}; return {done:JSON.parse(JSON.stringify(d.done||{}
 let prevWeeks = {}, team = {given:false};
 const prevWeekKey = () => { const d=new Date(WEEK+"T12:00:00"); d.setDate(d.getDate()-7); return ymd(d); };
 Object.keys(KIDS).forEach(k=>prevWeeks[k]=normWeek(loadLocal("w_"+prevWeekKey()+"_"+k)));
-function loadLocal(key){ try{ const v=localStorage.getItem("starjobs_"+key); return v?JSON.parse(v):null; }catch(e){ return null; } }
-function saveLocal(key,val){ try{ localStorage.setItem("starjobs_"+key, JSON.stringify(val)); }catch(e){} }
+function loadLocal(key){ return Store.get("starjobs_"+key); }
+function saveLocal(key,val){ Store.set("starjobs_"+key, val); }
 
 let db = null, unsubs = [];
-try{ for(let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); const m=key&&key.match(/^starjobs_w_(\d{4}-\d\d-\d\d_\w+)$/); if(m) allWeeks[m[1]]=JSON.parse(localStorage.getItem(key)); } }catch(e){}
+try{ Store.keys(/^starjobs_w_\d{4}-\d\d-\d\d_\w+$/).forEach(key=>{ const w=Store.get(key); if(w) allWeeks[key.slice("starjobs_w_".length)]=w; }); }catch(e){}
 const pending = {}, writing = {};
 async function writeDoc(path, data){
   pending[path] = data; if(writing[path]) return; writing[path] = true;
@@ -1475,12 +1489,12 @@ function b64ToUrl(b64,mime){ const bin=atob(b64), arr=new Uint8Array(bin.length)
 function setVoice(key, rec){ if(VOICE[key]) URL.revokeObjectURL(VOICE[key]); if(rec&&rec.b64) VOICE[key]=b64ToUrl(rec.b64,rec.mime); else delete VOICE[key]; }
 (function loadLocalVoices(){ PHRASES.forEach(([k])=>{ const r=loadLocal("v_"+k); if(r) setVoice(k,r); }); })();
 async function saveVoice(key, rec){ setVoice(key, rec);
-  if(rec) { try{ localStorage.setItem("starjobs_v_"+key, JSON.stringify(rec)); }catch(e){} } else { try{ localStorage.removeItem("starjobs_v_"+key); }catch(e){} }
+  if(rec) Store.set("starjobs_v_"+key, rec); else Store.remove("starjobs_v_"+key);
   if(db){ try{ rec ? await db.doc("voices/"+key).set(rec) : await db.doc("voices/"+key).delete(); }catch(e){ toast("Couldn't save that clip online. It's saved on this device only."); } } }
 function subscribeVoices(){ if(!db) return;
   unsubs.push(db.collection("voices").onSnapshot(qs=>{ const seen=new Set();
     qs.docs.forEach(d=>{ seen.add(d.id); const r=d.data(); const cur=loadLocal("v_"+d.id);
-      if(!cur || cur.b64!==r.b64 || !VOICE[d.id]){ setVoice(d.id,r); try{ localStorage.setItem("starjobs_v_"+d.id, JSON.stringify({mime:r.mime,b64:r.b64})); }catch(e){} } });
+      if(!cur || cur.b64!==r.b64 || !VOICE[d.id]){ setVoice(d.id,r); Store.set("starjobs_v_"+d.id, {mime:r.mime,b64:r.b64}); } });
     if(document.getElementById("recList")) recSheet(); }, e=>console.warn(e))); }
 if(window.claude && window.claude.use){ window.claude.use("db").then(d=>{ if(d){ db=d; subscribe(); } }); }
 setInterval(()=>{ const w=weekStart(); if(w!==WEEK){ WEEK=w; Object.keys(KIDS).forEach(k=>{ prevWeeks[k]=weeks[k]; weeks[k]=normWeek(loadLocal("w_"+WEEK+"_"+k)); }); team={given:false}; subscribe(); render(); } }, 60000);
@@ -1559,8 +1573,8 @@ function doneOn(k, date, rid){ const ds=ymd(date), wk=weekStart(date), w = wk===
 function streak(k){ const d=new Date(); if(!doneOn(k,d,"bt")) d.setDate(d.getDate()-1); let n=0;
   for(let i=0;i<14 && doneOn(k,d,"bt");i++){ n++; d.setDate(d.getDate()-1); } return n; }
 const flame = k => { const n=streak(k); return n>=3 ? `<span class="flame" title="${n} nights in a row">🔥${n}</span>` : ""; };
-function streakStore(){ try{ return JSON.parse(localStorage.getItem("starjobs_streaks")||"{}")||{}; }catch(e){ return {}; } }
-function saveStreaks(s){ try{ localStorage.setItem("starjobs_streaks", JSON.stringify(s)); }catch(e){} }
+function streakStore(){ return loadLocal("streaks") || {}; }
+function saveStreaks(s){ saveLocal("streaks", s); }
 function bumpStreak(k, rid, day){ const s=streakStore(); s[k]=s[k]||{}; const cur=s[k][rid]||{n:0,last:""};
   const y=new Date(day+"T12:00:00"); y.setDate(y.getDate()-1);
   cur.n = (cur.last === ymd(y)) ? cur.n+1 : 1; cur.last = day; s[k][rid]=cur; saveStreaks(s); return cur.n; }
@@ -1629,13 +1643,13 @@ const COMBO_DMG = 3;
 const DMG_MULT = 5;   // kid-visible health numbers: 1 star of effort = 5 health of damage
 const COMBO_NAMES = {am:["☀️","Sunrise Smash"], pm:["🎒","Backpack Blaster"], bt:["🌙","Moonbeam Double Doom"], hp:["🌪️","Helper Hurricane"]};
 function mysteryLeft(k){ return Math.max(0, 2-mysteryUsed(k)); }
-function mysteryUse(k){ try{ const s=JSON.parse(localStorage.getItem("starjobs_mystery")||"{}")||{};
+function mysteryUse(k){ try{ const s=loadLocal("mystery")||{};
   const day=ymd(new Date()); const cur=(s[k]&&s[k].day===day)?(s[k].n||0):0;
-  s[k]={day, n:cur+1}; localStorage.setItem("starjobs_mystery", JSON.stringify(s)); }catch(e){} }
+  s[k]={day, n:cur+1}; saveLocal("mystery", s); }catch(e){} }
 function routineDoneDay(k, day, r){ const a=((weeks[k].done||{})[day])||[], js=jobsFor(r,new Date(day+"T12:00:00").getDay(),k,WEEK); return js.length>0 && js.every(j=>a.includes(j.id)); }
 function jobStreak(k, id){ const d=new Date(); let n=0;
   for(let i=0;i<30;i++){ const day=ymd(d), wk=weekStart(d);
-    let w=null; try{ w=JSON.parse(localStorage.getItem("starjobs_w_"+wk+"_"+k)||"null"); }catch(e){}
+    let w=loadLocal("w_"+wk+"_"+k);
     const a=(w&&w.done&&w.done[day])||[];
     if(a.includes(id)) n++; else if(i===0){ d.setDate(d.getDate()-1); continue; } else break;
     d.setDate(d.getDate()-1); }
@@ -1656,7 +1670,7 @@ function comboList(){ if(KID_IDS.length<2) return []; const days=new Set(); Obje
   [...days].sort().forEach(day=>ROUTINES.forEach(r=>{ if(Object.keys(KIDS).every(k=>routineDoneDay(k,day,r))) out.push(day+"|"+r.id); })); return out; }
 function weakHits(){ let n=0; Object.keys(KIDS).forEach(k=>{ Object.values(weeks[k].done||{}).forEach(a=>a.forEach(id=>{ if(isWeak(id)) n++; }));
   Object.values(weeks[k].extra||{}).forEach(a=>a.forEach(x=>{ if(x.ok && isWeak(x.id)) n++; })); }); return n; }
-function mysteryUsed(k){ try{ const s=JSON.parse(localStorage.getItem("starjobs_mystery")||"{}")||{}; return (s[k]&&s[k].day===ymd(new Date()))?(s[k].n||0):0; }catch(e){ return 0; } }
+function mysteryUsed(k){ try{ const s=loadLocal("mystery")||{}; return (s[k]&&s[k].day===ymd(new Date()))?(s[k].n||0):0; }catch(e){ return 0; } }
 function teamDamage(){ const m = Object.keys(KIDS).reduce((n,k)=>n+mysteryUsed(k),0);
   return Math.round((Object.keys(KIDS).reduce((n,k)=>n+stars(k),0) + m + weakHits() + comboList().length*COMBO_DMG) * DMG_MULT); }
 const STARTER_PICKS = [
@@ -2139,11 +2153,10 @@ function villainIntro(){ const m=monster(); introOpen=true;
 
 /* ---------- Test Mode: play without saving ---------- */
 const TM_KEY = "starjobs_testmode";
-let testMode = false, tmSnapshot = null;
-function tmKeys(){ try{ return Object.keys(localStorage).filter(k=>k.startsWith("starjobs_")); }catch(e){ return []; } }
+function tmKeys(){ return Store.keys(/^starjobs_/); }
 function tmSnapshotAll(){
   const snap = {};
-  tmKeys().forEach(k=>{ try{ snap[k]=localStorage.getItem(k); }catch(e){} });
+  tmKeys().forEach(k=>{ snap[k]=Store.rawGet(k); });
   return snap;
 }
 function tmEnter(){
@@ -2153,9 +2166,9 @@ function tmEnter(){
   // make sure there is something to play with: if no family set up, use a demo family
   if(!FAMILY_SET){
     FAMILY.kids = [{id:"k1", name:"Lily", av:"🦄", color:"#E2468A"},{id:"k2", name:"Logan", av:"🦖", color:"#1A9C74"}];
-    try{ localStorage.setItem("starjobs_family", JSON.stringify(FAMILY)); }catch(e){}
+    Store.set("starjobs_family", FAMILY);
     const s=(typeof settings==="object"&&settings)||{}; s.pin="0000"; s.setupDone=true;
-    try{ localStorage.setItem("starjobs_settings", JSON.stringify(s)); }catch(e){}
+    Store.set("starjobs_settings", s);
     applyKids();
   }
   view.kid=null; view.routine=defaultRoutine();
@@ -2167,8 +2180,8 @@ function tmExit(){
   testMode = false;
   if(tmSnapshot){
     // wipe everything, then restore the snapshot exactly
-    tmKeys().forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
-    Object.entries(tmSnapshot).forEach(([k,v])=>{ try{ if(v!==null) localStorage.setItem(k,v); }catch(e){} });
+    tmKeys().forEach(k=>Store.remove(k));
+    Object.entries(tmSnapshot).forEach(([k,v])=>{ if(v!==null) Store.rawSet(k,v); });
     tmSnapshot=null;
   }
   // hard reload so all in-memory state (weeks, buddies, settings, KIDS) rebuilds from storage
@@ -2183,17 +2196,7 @@ function tmBanner(){
   document.body.appendChild(b);
   document.body.classList.add("tm");
 }
-// Write guard: while in test mode, every starjobs_ write is a no-op.
-const _origSetItem = localStorage.setItem.bind(localStorage);
-localStorage.setItem = function(k, v){
-  if(testMode && String(k).startsWith("starjobs_")) return;
-  return _origSetItem(k, v);
-};
-const _origRemoveItem = localStorage.removeItem.bind(localStorage);
-localStorage.removeItem = function(k){
-  if(testMode && String(k).startsWith("starjobs_")) return;
-  return _origRemoveItem(k);
-};
+// (Test Mode write guard lives in Store: every starjobs_ write is a no-op while testMode is on.)
 // db writes also blocked in test mode
 const _tmWriteDoc = writeDoc;
 writeDoc = function(path, data){ if(testMode) return Promise.resolve(); return _tmWriteDoc(path, data); };
@@ -2757,7 +2760,7 @@ async function launchReset(){
   const ids=new Set(Object.keys(allWeeks)); Object.keys(KIDS).forEach(k=>{ ids.add(WEEK+"_"+k); ids.add(prevWeekKey()+"_"+k); });
   Object.keys(KIDS).forEach(k=>{ weeks[k]=blankWeek(); prevWeeks[k]=normWeek({}); buddies[k]=BLANK_BUDDY(); buddies[k].stickersInit=true; buddies[k].stickers=[]; });
   allWeeks={}; team={given:false};
-  try{ const kill=[]; for(let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); if(/^starjobs_(w_|mon_|buddy_|intro_|evsaid_|rankSeen|report_)/.test(key)) kill.push(key); } kill.forEach(k=>localStorage.removeItem(k)); }catch(e){}
+  Store.keys(/^starjobs_(w_|mon_|buddy_|intro_|evsaid_|rankSeen|report_)/).forEach(k=>Store.remove(k));
   if(db){ for(const id of ids){ try{ await db.doc("weeks/"+id).delete(); }catch(e){} }
     try{ await db.doc("teams/"+WEEK).delete(); }catch(e){}
     for(const k of Object.keys(KIDS)){ try{ await db.doc("buddies/"+k).set(JSON.parse(JSON.stringify(buddies[k]))); }catch(e){} } }
@@ -3062,7 +3065,7 @@ function applyKids(){
     if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"});
   });
 }
-function saveFamily(){ try{ localStorage.setItem("starjobs_family", JSON.stringify(FAMILY)); }catch(e){} }
+function saveFamily(){ Store.set("starjobs_family", FAMILY); }
 function famRead(){ document.querySelectorAll("[data-fk]").forEach(el=>{ const c=famDraft[+el.dataset.fk]; if(c) c[el.dataset.f]=el.value; }); }
 function famSheet(first){
   if(!famDraft){ famDraft=JSON.parse(JSON.stringify(FAMILY.kids)); if(first) famDraft.forEach(c=>c.name=""); }
