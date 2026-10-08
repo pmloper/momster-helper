@@ -10,3 +10,15 @@ Each spoken line is one MP3 at `audio/<voice>/<lineKey>.mp3`. The app fetches a 
 
 After adding or removing files, run `node tools/build-audio-manifest.mjs` to refresh `audio/manifest.json`
 (the app only plays files listed there).
+
+## Kid names
+
+Sentences that include a kid's name are one generated clip per name and template, at
+`audio/names/<template>/<name-slug>.mp3` (slug = lowercase, accents removed, other characters become `-`).
+Templates: `hi`, `justme`, `ready_hero`, `ready_princess`, `ready_knight`, `ready_ninja`.
+
+1. Put one first name per line in a text file.
+2. `node tools/names-sentences.mjs names.txt > audio/names-to-generate.csv` gives the exact sentence and file path for each clip.
+3. Generate the clips, then `node tools/build-audio-manifest.mjs`.
+
+A name with no clip is read by the device voice (whole sentence).

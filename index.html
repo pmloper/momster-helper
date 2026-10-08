@@ -982,7 +982,16 @@ const KID_COLORS = ["#E2468A","#1A9C74","#3D8BFF","#F08C00","#8B5CF6","#E5484D"]
 const DEFAULT_FAMILY = {kids:[{id:"k1",name:"Kid 1",av:"🦄",color:"#E2468A"},{id:"k2",name:"Kid 2",av:"🦖",color:"#1A9C74"}]};
 let FAMILY = (()=>{ try{ const v=localStorage.getItem("starjobs_family"); return v?JSON.parse(v):null; }catch(e){ return null; } })();
 let FAMILY_SET = !!FAMILY; if(!FAMILY) FAMILY = JSON.parse(JSON.stringify(DEFAULT_FAMILY));
-const KIDS = {}; FAMILY.kids.forEach(c=>{ KIDS[c.id]={name:c.name, color:c.color, av:c.av||"⭐", hi:"BJ:Hi "+c.name+"!"}; });
+/* Sentences that include a kid's name are one generated clip per name: audio/names/<template>/<slug>.mp3.
+   A name with no clip falls back to the device voice reading the whole sentence. */
+const nameSlug = n => String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const nameKey = (t, n) => "N:"+t+":"+n;
+function nameLineText(t, n){
+  if(t==="hi") return "Hi "+n+"!";
+  if(t==="justme") return "Back to just "+n+"!";
+  if(t.startsWith("ready_")){ const st=STYLES.find(x=>x[0]===t.slice(6)); return (st?st[2]+" ":"")+n+", ready to help Momster!"; }
+  return n; }
+const KIDS = {}; FAMILY.kids.forEach(c=>{ KIDS[c.id]={name:c.name, color:c.color, av:c.av||"⭐", hi:nameKey("hi",c.name)}; });
 const KID_IDS = Object.keys(KIDS); let FIRST_KID = KID_IDS[0]; const kidIndex = k => Math.max(0, KID_IDS.indexOf(k));
 const PIC = {redpanda:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMjUgMjIgMjYpIj48ZWxsaXBzZSBjeD0iMjIiIGN5PSIyNiIgcng9IjE0IiByeT0iMTYiIGZpbGw9IiNmZmYiLz48ZWxsaXBzZSBjeD0iMjIiIGN5PSIyOCIgcng9IjkiIHJ5PSIxMSIgZmlsbD0iIzVBMjQxMCIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgyNSA3OCAyNikiPjxlbGxpcHNlIGN4PSI3OCIgY3k9IjI2IiByeD0iMTQiIHJ5PSIxNiIgZmlsbD0iI2ZmZiIvPjxlbGxpcHNlIGN4PSI3OCIgY3k9IjI4IiByeD0iOSIgcnk9IjExIiBmaWxsPSIjNUEyNDEwIi8+PC9nPjxlbGxpcHNlIGN4PSI1MCIgY3k9IjU2IiByeD0iNDQiIHJ5PSIzNyIgZmlsbD0iI0NGNUEyQSIvPjxlbGxpcHNlIGN4PSIzMiIgY3k9IjQwIiByeD0iMTAiIHJ5PSI2IiBmaWxsPSIjZmZmIi8+PGVsbGlwc2UgY3g9IjY4IiBjeT0iNDAiIHJ4PSIxMCIgcnk9IjYiIGZpbGw9IiNmZmYiLz48ZWxsaXBzZSBjeD0iMTciIGN5PSI2NiIgcng9IjEwIiByeT0iMTIiIGZpbGw9IiNmZmYiLz48ZWxsaXBzZSBjeD0iODMiIGN5PSI2NiIgcng9IjEwIiByeT0iMTIiIGZpbGw9IiNmZmYiLz48ZWxsaXBzZSBjeD0iNTAiIGN5PSI3NCIgcng9IjE3IiByeT0iMTMiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNMzIgNTQgUTMwIDY4IDM4IDgwIiBzdHJva2U9IiM3QTJBMTAiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTY4IDU0IFE3MCA2OCA2MiA4MCIgc3Ryb2tlPSIjN0EyQTEwIiBzdHJva2Utd2lkdGg9IjYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjM0IiBjeT0iNTQiIHI9IjYuNSIgZmlsbD0iIzJBMUExNCIvPjxjaXJjbGUgY3g9IjY2IiBjeT0iNTQiIHI9IjYuNSIgZmlsbD0iIzJBMUExNCIvPjxjaXJjbGUgY3g9IjM2IiBjeT0iNTIiIHI9IjIuMiIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjY4IiBjeT0iNTIiIHI9IjIuMiIgZmlsbD0iI2ZmZiIvPjxlbGxpcHNlIGN4PSI1MCIgY3k9IjY4IiByeD0iNiIgcnk9IjQuNSIgZmlsbD0iIzJBMUExNCIvPjxwYXRoIGQ9Ik00NCA3NyBRNTAgODIgNTYgNzciIHN0cm9rZT0iIzJBMUExNCIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPgo="};
 
@@ -1091,9 +1100,11 @@ function curVoice(kid){ kid=kid||view.kid||FIRST_KID; const v=rawChoice(kid);
 /* Spoken lines are lazy-loaded files: audio/<voice>/<key>.mp3, listed in audio/manifest.json (see audio/README.md).
    Only the short sound effects are embedded in this page. */
 const AUDIO_DIR = "audio/", DEFAULT_VOICE_DIR = "momster";
-let AUDIO_INDEX = {};   // voice folder -> Set of line keys that have a file
+let AUDIO_INDEX = {}, NAME_INDEX = {};   // voice folder -> Set of line keys with a file; name template -> Set of name slugs
 function loadAudioIndex(){ try{ fetch(AUDIO_DIR+"manifest.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{}).then(m=>{
-  const ix={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); }); AUDIO_INDEX=ix; }).catch(()=>{}); }catch(e){} }
+  const ix={}, nx={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); });
+  Object.keys((m&&m.names)||{}).forEach(t=>{ if(Array.isArray(m.names[t])) nx[t]=new Set(m.names[t]); }); AUDIO_INDEX=ix; NAME_INDEX=nx; }).catch(()=>{}); }catch(e){} }
+const nameFile = (t, n) => { const sl=nameSlug(n); return sl && NAME_INDEX[t] && NAME_INDEX[t].has(sl) ? AUDIO_DIR+"names/"+t+"/"+sl+".mp3" : null; };
 loadAudioIndex();
 // The kid's chosen character voice wins; everyone else gets the default Momster voice. Null means no file, so the app falls back to the device voice.
 function voiceFile(k){ const cv=curVoice(), dirs=CHARS.some(c=>c[0]===cv) ? [cv,DEFAULT_VOICE_DIR] : [DEFAULT_VOICE_DIR];
@@ -1122,6 +1133,9 @@ function nextClip(){
     voiceWaits++; try{ speechSynthesis.getVoices(); }catch(e){} return setTimeout(nextClip,100); }
   voiceWaits=0;
   const k=queue.shift(); if(!k) return;
+  if(k.startsWith("N:")){ const i=k.indexOf(":",2), t=k.slice(2,i), n=k.slice(i+1), f=nameFile(t,n);
+    if(f) return playUrl(f,k);
+    return enVoices().length ? speakText(nameLineText(t,n), nextClip, findTts(curVoice())||null) : nextClip(); }
   if(k.startsWith("BJ:")){ return enVoices().length ? speakText(k.slice(3), nextClip, findTts(curVoice())||null) : nextClip(); }
   if(k.startsWith("momster_")){ const u=MOMSTER_CLIPS[k]; if(u) return playUrl(u); const txt=MOMSTER_LINES[k]; const cv=curVoice(); if(txt && cv && cv.startsWith("tts:")) return speakText(txt, nextClip, findTts(cv)); if(txt && enVoices().length) return speakText(txt, nextClip, findTts(curVoice())||null); return nextClip(); }
   if(VOICE[k]) return playUrl(VOICE[k],k);
@@ -1951,8 +1965,8 @@ function applyStyle(k, st){ const b=buddies[k], r=styledBuddy(k, st==="none"?nul
   if(st==="none") delete b.base; else b.base=r.base;
   Object.values(r.wear).forEach(id=>{ if(id && !(b.owned||[]).includes(id)) b.owned=(b.owned||[]).concat(id); });
   saveBuddy(k); close(); render();
-  if(st==="none"){ party(["😊","⭐","✨"]); cheer("😊", "Just "+KIDS[k].name+"!"); play(["pop","BJ:Back to just "+KIDS[k].name+"!"]); return; }
-  const S=styleOf(k); party(st==="princess"?["👑","✨","💖","🦄"]:[S[1],"⭐","✨"]); cheer(S[1], heroName(k)+", ready!"); play(["fanfare","BJ:"+heroName(k)+", ready to help Momster!"]); }
+  if(st==="none"){ party(["😊","⭐","✨"]); cheer("😊", "Just "+KIDS[k].name+"!"); play(["pop",nameKey("justme",KIDS[k].name)]); return; }
+  const S=styleOf(k); party(st==="princess"?["👑","✨","💖","🦄"]:[S[1],"⭐","✨"]); cheer(S[1], heroName(k)+", ready!"); play(["fanfare",nameKey("ready_"+st,KIDS[k].name)]); }
 const STYLES = [["hero","💥","Super","POW!"],["princess","👑","Princess","SPARKLE SMASH!"],["knight","🛡️","Knight","CLANG!"],["ninja","🥷","Ninja","HI-YA!"]];
 const styleOf = k => STYLES.find(x=>x[0]===((settings.heroStyle||{})[k]))||null;
 const heroName = k => { const st=styleOf(k); return st ? st[2]+" "+KIDS[k].name : KIDS[k].name; };
@@ -3076,7 +3090,7 @@ const SEC = {am:["☀️ Morning jobs","am"], pm:["🎒 After-school jobs","pm"]
 // Apply kid changes right away (no page reload needed).
 function applyKids(){
   Object.keys(KIDS).forEach(k=>delete KIDS[k]);
-  FAMILY.kids.forEach(c=>{ KIDS[c.id]={name:c.name, color:c.color, av:c.av||"⭐", hi:"BJ:Hi "+c.name+"!"}; });
+  FAMILY.kids.forEach(c=>{ KIDS[c.id]={name:c.name, color:c.color, av:c.av||"⭐", hi:nameKey("hi",c.name)}; });
   KID_IDS.length=0; Object.keys(KIDS).forEach(k=>KID_IDS.push(k)); FIRST_KID=KID_IDS[0];
   if(!KIDS[wvKid]) wvKid=FIRST_KID;
   KID_IDS.forEach(k=>{
