@@ -664,7 +664,6 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .bpal:nth-child(2){animation-delay:.3s}.bpal:nth-child(3){animation-delay:.6s}.bpal:nth-child(4){animation-delay:.9s}
 @keyframes palbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .bvs{font-size:26px;margin-left:14px}
-.bmom{flex:none;width:56px;height:56px;margin-right:-4px;pointer-events:none}
 .boss .minfo{gap:3px}
 .boss .minfo small{font-size:12px;color:var(--soft);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
 .boss .minfo b{font-family:var(--disp);font-weight:600;font-size:clamp(17px,2.8vh,22px);line-height:1.1}
@@ -715,7 +714,7 @@ body:has(#layer > .sheet) .botnav{display:none}
 @keyframes bt-zap{0%{transform:scale(.2);opacity:0}45%{transform:scale(1.4);opacity:1}100%{transform:scale(1)}}
 @keyframes bt-hit{0%,100%{transform:translateX(0) rotate(0)}30%{transform:translateX(10px) rotate(14deg)}60%{transform:translateX(-4px) rotate(-6deg)}}
 @keyframes bt-dmg{0%{opacity:0;transform:translate(-50%,-8px)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,10px)}}
-@media (max-width:600px){.hello.bar-card h1{font-size:clamp(20px,5.4vw,26px);white-space:normal;min-width:0;line-height:1.15;overflow:visible}.boss{gap:8px;padding:8px 10px}.bmom{width:48px;height:48px;margin-right:-14px}.bpal svg{width:36px!important;height:36px!important}.bvs{font-size:20px;margin-left:6px}.boss .minfo small{font-size:10px}}
+@media (max-width:600px){.hello.bar-card h1{font-size:clamp(20px,5.4vw,26px);white-space:normal;min-width:0;line-height:1.15;overflow:visible}.boss{gap:8px;padding:8px 10px}.bpal svg{width:36px!important;height:36px!important}.bvs{font-size:20px;margin-left:6px}.boss .minfo small{font-size:10px}}
 .mood{font-size:13px;font-style:italic;color:var(--soft);line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .tile .wk{position:absolute;left:6px;top:6px;background:#1E2A47;color:#fff;border:2px solid #FFD84D;border-radius:10px;padding:1px 8px;font-size:clamp(12px,2vh,16px);font-weight:900;line-height:1.4;text-shadow:none;box-shadow:0 2px 5px rgba(0,0,0,.3)}
 .tile.evt{border-color:#E5484D;box-shadow:0 5px 0 #E5484D,var(--shadow)}
@@ -1825,7 +1824,7 @@ const monsterLeft = () => Math.max(0, monsterHP() - teamDamage());
 const palPic = (k,size) => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:`style="height:${size}px;width:${size}px"`}) : `<span style="font-size:${Math.round(size*.8)}px;line-height:1">${avHtml(rawAv(k))}</span>`;
 function monsterStrip(){ const m=monster(), left=monsterLeft(), pct=left/monsterHP()*100;
   return `<div class="boss ${left?"":"dead"}">
-    <span class="bpals"><span class="bmom">${momsterSvg({attrs:'style="width:100%;height:100%;display:block"',label:"Momster, your ally"})}</span>${Object.keys(KIDS).map(k=>`<button class="bpal" data-a="toot" aria-label="Toot attack">${palPic(k,46)}</button>`).join("")}<span class="bvs">${left?"⚔️":"🏆"}</span></span>
+    <span class="bpals">${Object.keys(KIDS).map(k=>`<button class="bpal" data-a="toot" aria-label="Toot attack">${palPic(k,46)}</button>`).join("")}<span class="bvs">${left?"⚔️":"🏆"}</span></span>
     <span class="minfo"><small>${left?"This week's villain":"Busted! New villain Monday"}</small><b>${esc(m[1])}</b><span class="mbar"><i style="width:${pct}%"></i></span><span class="mood">💬 ${esc(moodLine())}</span></span>
     <button class="bface ${left?"":"ko"}" data-a="bossTap" aria-label="Poke the villain">${left?m[2]:"😵"}<i>${m[3]}</i><em>${left? "❤️ "+left : "KO!"}</em></button></div>`; }
 const TAUNTS = {
@@ -2547,7 +2546,7 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip ${raceDay() && FAMILY.kids.length>2 && new Set(FAMILY.kids.map(c=>raceEnd(c.id))).size>1?"manyTimes":""}" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>esc(c.name)+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:hidden"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip ${raceDay() && FAMILY.kids.length>2 && new Set(FAMILY.kids.map(c=>raceEnd(c.id))).size>1?"manyTimes":""}" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>esc(c.name)+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
