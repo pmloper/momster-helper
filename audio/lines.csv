@@ -579,3 +579,40 @@ say_prize_this_week,momster,app line,This is your prize this week! Ask a grown-u
 say_sound_ok,momster,app line,Hi! Sound is working.,NEW,yes (device voice),
 say_emergency,momster,app line,Emergency! <event title>,NEW,yes (device voice),contains a name or title: needs a generic version or a per-family clip
 say_hi_name,momster,app line,Hi <kid name>!,NEW,yes (device voice),contains a name or title: needs a generic version or a per-family clip
+ui_this_weeks_villain,momster,screen text,This week's villain,NEW,no,on-screen label: home; not read aloud today
+ui_finish_together,momster,screen text,Finish the same routine together for a combo attack!,NEW,no,"on-screen label: home, villain intro; not read aloud today"
+ui_lets_help,momster,screen text,Let's help Momster!,NEW,no,on-screen label: villain intro button; not read aloud today
+ui_pick_a_prize,momster,screen text,Pick a prize.,NEW,no,"on-screen label: kid screen, prize button; not read aloud today"
+ui_choose_mission,momster,screen text,Choose one for today. Two stars when you finish it.,NEW,no,on-screen label: special mission popup; not read aloud today
+ui_coins_safe,momster,screen text,Coins never take away your stars!,NEW,no,on-screen label: buddy shop; not read aloud today
+ui_tab_build,momster,screen text,Build,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_tab_faces,momster,screen text,Faces,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_tab_neck,momster,screen text,Neck,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_tab_outfits,momster,screen text,Outfits,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_tab_pets,momster,screen text,Pets,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_tab_places,momster,screen text,Places,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_tab_stickers,momster,screen text,Stickers,NEW,no,on-screen label: buddy shop tab; not read aloud today
+ui_team_rank,momster,screen text,Team rank,NEW,no,on-screen label: hero HQ; not read aloud today
+ui_team_prize,momster,screen text,Team prize,NEW,no,on-screen label: hero HQ; not read aloud today
+ui_trophy_wall,momster,screen text,Trophy wall,NEW,no,on-screen label: hero HQ; not read aloud today
+ui_stat_jobs,momster,screen text,Jobs done,NEW,no,on-screen label: hero HQ stat; not read aloud today
+ui_stat_combo,momster,screen text,Combo attacks,NEW,no,on-screen label: hero HQ stat; not read aloud today
+ui_stat_weak,momster,screen text,Weak spot hits,NEW,no,on-screen label: hero HQ stat; not read aloud today
+ui_stat_damage,momster,screen text,Total damage,NEW,no,on-screen label: hero HQ stat; not read aloud today
+ui_stat_toots,momster,screen text,Family toots,NEW,no,on-screen label: hero HQ stat; not read aloud today
+ui_dad_joke,momster,screen text,Dad joke of the day!,NEW,no,on-screen label: joke sheet; not read aloud today
+ui_tell_me,momster,screen text,Tell me!,NEW,no,on-screen label: joke sheet button; not read aloud today
+ui_tell_again,momster,screen text,Tell it again!,NEW,no,on-screen label: joke sheet button; not read aloud today
+ui_pick_style,momster,screen text,Pick your hero style!,NEW,no,on-screen label: style sheet; not read aloud today
+ui_style_costume,momster,screen text,Your sidekick gets a free costume to match. Switch anytime!,NEW,no,on-screen label: style sheet; not read aloud today
+ui_just_me,momster,screen text,Just me.,NEW,no,on-screen label: style sheet; not read aloud today
+ui_pick_voice,momster,screen text,Pick your helper voice!,NEW,no,on-screen label: voice sheet; not read aloud today
+ui_tap_voice,momster,screen text,"Tap a voice to hear it, then tap Yes to pick it.",NEW,no,on-screen label: voice sheet; not read aloud today
+ui_tap_prize,momster,screen text,"Tap a prize to choose it, then tap Yes to confirm.",NEW,no,on-screen label: prize chooser; not read aloud today
+ui_getting_to_school,momster,screen text,Getting to school,NEW,no,on-screen label: ride sheet (kid-facing part); not read aloud today
+ui_walk,momster,screen text,Walk,NEW,no,on-screen label: ride sheet; not read aloud today
+ui_bus,momster,screen text,Bus,NEW,no,on-screen label: ride sheet; not read aloud today
+ui_drive,momster,screen text,Drive,NEW,no,on-screen label: ride sheet; not read aloud today
+ui_yes,momster,screen text,Yes!,NEW,no,on-screen label: confirm buttons; not read aloud today
+ui_no,momster,screen text,No.,NEW,no,on-screen label: confirm buttons; not read aloud today
+ui_got_it,momster,screen text,Got it!,NEW,no,on-screen label: popup button; not read aloud today
