@@ -1477,15 +1477,15 @@ const pending = {}, writing = {};
 async function writeDoc(path, data){
   pending[path] = data; if(writing[path]) return; writing[path] = true;
   while(pending[path]){ const d = pending[path]; pending[path] = null;
-    try{ await db.doc(path).set(d); }catch(e){ console.warn("save failed", e); } }
+    try{ await db.doc(path).set(d); if(!pending[path]) clearDirty(path); }catch(e){ console.warn("save failed", e); } }
   writing[path] = false;
 }
 // If stars get taken back (undo, clear week) after coins were spent, forgive the gap
 // so a kid never has hidden "coin debt" that eats their next stars.
 function settleCoins(k){ const b=buddies[k]; if(!b) return; const max=lifetime(k)+(b.bonusCoins||0);
   if((b.spent||0)>max){ b.spent=max; saveBuddy(k); } }
-function saveWeek(kid){ settleCoins(kid); saveLocal("w_"+WEEK+"_"+kid, weeks[kid]); if(db) writeDoc("weeks/"+WEEK+"_"+kid, JSON.parse(JSON.stringify(weeks[kid]))); }
-function saveSettings(){ saveLocal("settings", settings); if(db) writeDoc("settings/main", JSON.parse(JSON.stringify(settings))); }
+function saveWeek(kid){ settleCoins(kid); saveLocal("w_"+WEEK+"_"+kid, weeks[kid]); cloudWrite("weeks/"+WEEK+"_"+kid, weeks[kid]); }
+function saveSettings(){ saveLocal("settings", settings); cloudWrite("settings/main", settings); }
 function subscribe(){
   unsubs.forEach(u=>u()); unsubs=[];
   if(!db) return;
@@ -1522,7 +1522,18 @@ function subscribeVoices(){ if(!db) return;
    Optional: with no login the app works exactly as before, on this device only. Signing in attaches a Firestore-style
    `db` (cloud-db.js) and the existing writeDoc/subscribe code does the rest. */
 const canon = x => JSON.stringify(x, (k, v) => (v && typeof v==="object" && !Array.isArray(v)) ? Object.keys(v).sort().reduce((o,kk)=>{ o[kk]=v[kk]; return o; }, {}) : v);
-const CLOUD_LINKED = "momster_cloud_linked";
+const CLOUD_LINKED = "momster_cloud_linked", DIRTY_KEY = "momster_dirty";
+/* Offline safety: a save made while not connected is remembered as "dirty" and uploaded before any cloud copy is
+   applied, so reconnecting never replaces newer work done on this device. */
+const dirtySet = () => Store.get(DIRTY_KEY) || {};
+function markDirty(path){ const d=dirtySet(); if(d[path]) return; d[path]=1; Store.set(DIRTY_KEY, d); }
+function clearDirty(path){ const d=dirtySet(); if(!d[path]) return; delete d[path]; Store.set(DIRTY_KEY, d); }
+function cloudWrite(path, data){ if(testMode) return; if(Store.rawGet(CLOUD_LINKED)) markDirty(path); if(db) writeDoc(path, JSON.parse(JSON.stringify(data))); }
+function localDocFor(path){ const col=path.split("/")[0], id=path.slice(path.indexOf("/")+1);
+  if(col==="weeks") return Store.get("starjobs_w_"+id); if(col==="buddies") return Store.get("starjobs_buddy_"+id);
+  if(col==="settings") return settings; if(col==="family") return FAMILY_SET ? FAMILY : null; return null; }
+async function flushDirty(d){ for(const path of Object.keys(dirtySet())){ const doc=localDocFor(path); if(!doc){ clearDirty(path); continue; }
+  await d.doc(path).set(JSON.parse(JSON.stringify(doc))); clearDirty(path); } }
 function cloudLocalDocs(){
   const out=[]; if(FAMILY_SET) out.push({path:"family/main", data:FAMILY});
   out.push({path:"settings/main", data:settings});
@@ -1530,7 +1541,7 @@ function cloudLocalDocs(){
   Object.keys(KIDS).forEach(k=>{ if(buddies[k]) out.push({path:"buddies/"+k, data:buddies[k]}); });
   return out; }
 function cloudBackup(){ if(Store.rawGet("momster_backup_before_sync")) return;
-  const snap={}; Store.keys(/^starjobs_(?!v_)/).forEach(k=>{ snap[k]=Store.rawGet(k); }); try{ localStorage.setItem("momster_backup_before_sync", JSON.stringify(snap)); }catch(e){} }
+  const snap={}; Store.keys(/^starjobs_(?!v_)/).forEach(k=>{ snap[k]=Store.rawGet(k); }); Store.rawSet("momster_backup_before_sync", JSON.stringify(snap)); }
 function cloudAdoptFamily(d){
   // Another device (or the cloud copy) has this family's kids and jobs: take them and rebuild the app once.
   let n=0; try{ n=Number(sessionStorage.getItem("momster_adopt_n")||0); sessionStorage.setItem("momster_adopt_n", String(n+1)); }catch(e){}
@@ -1545,7 +1556,8 @@ function cloudAttach(){
     const remote=d.paths().includes("family/main"), first=!Store.rawGet(CLOUD_LINKED);
     if(remote){ if(first) cloudBackup(); }
     else if(FAMILY_SET){ try{ await d.bulkSet(cloudLocalDocs()); toast("Synced! Your stars are saved online."); }catch(e){ console.warn("first sync failed", e); cloudBusy=false; toast("Couldn't sync yet. Try again in a moment."); return; } }
-    try{ localStorage.setItem(CLOUD_LINKED,"1"); }catch(e){}
+    Store.rawSet(CLOUD_LINKED,"1");
+    try{ await flushDirty(d); }catch(e){ console.warn("could not upload offline changes yet", e); cloudBusy=false; setTimeout(cloudAttach, 15000); return; }
     db=d; cloudBusy=false; subscribe(); render(); if(document.getElementById("gPanel")) panel();
   });
 }
@@ -1556,6 +1568,7 @@ function cloudInit(){
   C.resume().then(ok=>{ if(ok) cloudAttach(); }).catch(()=>{});
 }
 window.addEventListener("momster-cloud-ready", cloudInit);
+window.addEventListener("online", () => { const C=window.MomsterCloud; if(!C || !C.configured) return; if(C.signedIn) cloudAttach(); else if(C.hasStoredLogin()) C.resume().catch(()=>{}); });
 const cloudOn = () => !!(window.MomsterCloud && window.MomsterCloud.configured);
 function cloudRow(){
   if(!cloudOn()) return "";
@@ -1588,7 +1601,7 @@ async function cloudDelete(){
   const C=window.MomsterCloud, msg=document.getElementById("cloudMsg");
   try{ if(msg) msg.textContent="Deleting…"; let r; let guard=0;
     do{ r=await C.client.mutation(C.api.account.deleteFamily, {}); guard++; }while(r && !r.done && guard<50);
-    await C.signOut(); cloudDetach(); try{ localStorage.removeItem(CLOUD_LINKED); }catch(e){}
+    await C.signOut(); cloudDetach(); Store.remove(CLOUD_LINKED); Store.remove(DIRTY_KEY);
     close(); toast("Your online data was deleted."); render(); }
   catch(err){ if(msg) msg.textContent=String(err.message||err).replace(/^Uncaught Error: /,"").slice(0,160); } }
 async function cloudSend(){
@@ -1623,7 +1636,7 @@ const BLANK_BUDDY = () => ({made:false, look:Object.assign({},DEFAULT_LOOK), own
 let buddies = {}; Object.keys(KIDS).forEach(k=>{ buddies[k]=Object.assign(BLANK_BUDDY(), loadLocal("buddy_"+k)||{});
   if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}); });
 const coins = k => Math.max(0, lifetime(k) + (buddies[k].bonusCoins||0) - (buddies[k].spent||0));
-function saveBuddy(k){ saveLocal("buddy_"+k, buddies[k]); if(db) writeDoc("buddies/"+k, JSON.parse(JSON.stringify(buddies[k]))); }
+function saveBuddy(k){ saveLocal("buddy_"+k, buddies[k]); cloudWrite("buddies/"+k, buddies[k]); }
 const goal = () => settings.goal || DEFAULT_GOAL;
 const isDone = (k,id) => (weeks[k].done[ymd(new Date())]||[]).includes(id);
 const todayExtra = k => ((weeks[k].extra||{})[ymd(new Date())]||[]);
@@ -2845,7 +2858,7 @@ ${(()=>{ const ex=(w.extra||{})[ds]||[]; if(!ex.length) return "";
 }
 function wvSave(){ const {wk,w}=wvData();
   if(wvWhich==="this") saveWeek(wvKid);
-  else { saveLocal("w_"+wk+"_"+wvKid, w); allWeeks[wk+"_"+wvKid]=w; if(db) writeDoc("weeks/"+wk+"_"+wvKid, JSON.parse(JSON.stringify(w))); settleCoins(wvKid); }
+  else { saveLocal("w_"+wk+"_"+wvKid, w); allWeeks[wk+"_"+wvKid]=w; cloudWrite("weeks/"+wk+"_"+wvKid, w); settleCoins(wvKid); }
   render(); weekView(); }
 document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="wvExtra"],[data-a="wvRace"]'); if(!t) return; const {w}=wvData(), ds=t.dataset.d;
   if(t.dataset.a==="wvExtra"){ const ex=(w.extra||{})[ds]||[]; ex.splice(+t.dataset.x,1); w.extra[ds]=ex; }
@@ -2854,7 +2867,7 @@ document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="wvExt
 function wvToggle(ds,id){ const {wk,w}=wvData(); w.done=w.done||{}; const a=w.done[ds]||[];
   w.done[ds] = a.includes(id) ? a.filter(x=>x!==id) : a.concat(id);
   if(wvWhich==="this") saveWeek(wvKid);
-  else { saveLocal("w_"+wk+"_"+wvKid, w); allWeeks[wk+"_"+wvKid]=w; if(db) writeDoc("weeks/"+wk+"_"+wvKid, JSON.parse(JSON.stringify(w))); settleCoins(wvKid); }
+  else { saveLocal("w_"+wk+"_"+wvKid, w); allWeeks[wk+"_"+wvKid]=w; cloudWrite("weeks/"+wk+"_"+wvKid, w); settleCoins(wvKid); }
   const _sc = document.querySelector(".sheet"); const _sy = _sc?_sc.scrollTop:0;
   render(); weekView();
   { const s2 = document.querySelector(".sheet"); if(s2 && _sy) s2.scrollTop = _sy; } }
@@ -3168,7 +3181,7 @@ function applyKids(){
     if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"});
   });
 }
-function saveFamily(){ Store.set("starjobs_family", FAMILY); if(db) writeDoc("family/main", JSON.parse(JSON.stringify(FAMILY))); }
+function saveFamily(){ Store.set("starjobs_family", FAMILY); cloudWrite("family/main", FAMILY); }
 function famRead(){ document.querySelectorAll("[data-fk]").forEach(el=>{ const c=famDraft[+el.dataset.fk]; if(c) c[el.dataset.f]=el.value; }); }
 function famSheet(first){
   if(!famDraft){ famDraft=JSON.parse(JSON.stringify(FAMILY.kids)); if(first) famDraft.forEach(c=>c.name=""); }

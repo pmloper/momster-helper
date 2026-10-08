@@ -52,9 +52,15 @@ await check('fetchToken reuses a fresh token and refreshes an expiring one', asy
   assert.equal(await c.client.fetchToken({}), fresh); assert.equal(st.getItem('momster_auth_refresh'), 'r2');
   assert.equal(calls.filter(x => x[0] === 'signIn').length, 1);
 });
-await check('a failed refresh signs the user out locally', async () => {
+await check('a network failure keeps the login for later', async () => {
+  const st = mem(); st.setItem('momster_auth_refresh', 'keep');
+  const { ConvexClient } = fake(() => { throw new Error('Failed to fetch'); });
+  const c = createCloud({ ConvexClient, anyApi, url: 'https://x.convex.cloud', storage: st, now: () => T });
+  assert.equal(await c.resume(), false); assert.equal(st.getItem('momster_auth_refresh'), 'keep');
+});
+await check('an invalid login signs the user out locally', async () => {
   const st = mem(); st.setItem('momster_auth_refresh', 'bad');
-  const { ConvexClient } = fake(() => { throw new Error('invalid'); });
+  const { ConvexClient } = fake(() => { throw new Error('Invalid refresh token'); });
   const c = createCloud({ ConvexClient, anyApi, url: 'https://x.convex.cloud', storage: st, now: () => T });
   assert.equal(await c.resume(), false); assert.equal(st.getItem('momster_auth_refresh'), null);
 });

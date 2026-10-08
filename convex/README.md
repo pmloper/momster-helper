@@ -54,5 +54,11 @@ used: `family/main`, `settings/main`, `weeks/<weekStart>_<kidId>`, `buddies/<kid
 - Signed out, the app works exactly as before on this device only. Signing in is optional (Grown-ups, then "Sync across devices").
 - First sign-in on a device that already has a set-up family and an empty cloud copy uploads that family. If the cloud
   copy already exists, the device takes it (a backup of the old local data is kept in `momster_backup_before_sync`).
-- Known limits: last write wins per document; the grown-ups PIN is synced inside `settings/main` as plain text (visible to
-  signed-in family members only); recorded voice clips are synced but are legacy.
+- Offline safety: every save is remembered as "dirty" (`momster_dirty`) until the cloud accepts it. On reconnect or app
+  start, dirty documents are uploaded before any cloud copy is applied, so newer work on a device is never replaced.
+  A network failure keeps the login; only an "invalid refresh token" answer signs the user out.
+- PIN: stored as `pinHash` + `pinSalt` (salted SHA-256), never plain text; an older plain PIN is upgraded on first sync.
+- Abuse limits: 5 sign-in codes per address per hour and 300 overall per hour (`throttle.ts`).
+- Delete my online data: owner-only `account.deleteFamily` removes the family's documents, members and sign-ins.
+- Known limits: last write wins per document (two devices editing the same kid's week while both offline: the later upload wins);
+  recorded voice clips are synced but are legacy.

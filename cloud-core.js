@@ -42,7 +42,10 @@ export function createCloud({ ConvexClient, anyApi, url, storage, now = () => Da
         try {
           const r = await cl.action(anyApi.auth.signIn, { refreshToken: refresh });
           if (r && r.tokens) { saveTokens(r.tokens); return r.tokens.token; }
-        } catch (e) { /* fall through: treat as signed out */ }
+        } catch (e) {
+          // Only a clear "this login is no longer valid" answer signs the user out; a network problem keeps the login for later.
+          if (!/refresh token|invalid|expired|unauthor/i.test(String((e && e.message) || e))) return null;
+        }
         clearTokens();
         return null;
       })().finally(() => { refreshing = null; });
