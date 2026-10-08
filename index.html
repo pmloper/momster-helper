@@ -717,8 +717,9 @@ body:has(#layer > .sheet) .botnav{display:none}
 @media (max-width:600px){.hello.bar-card h1{font-size:clamp(20px,5.4vw,26px);white-space:normal;min-width:0;line-height:1.15;overflow:visible}.boss{gap:8px;padding:8px 10px}.bpal svg{width:36px!important;height:36px!important}.bvs{font-size:20px;margin-left:6px}.boss .minfo small{font-size:10px}}
 .mood{font-size:13px;font-style:italic;color:var(--soft);line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .tile .wk{position:absolute;left:6px;top:6px;background:#1E2A47;color:#fff;border:2px solid #FFD84D;border-radius:10px;padding:1px 8px;font-size:clamp(12px,2vh,16px);font-weight:900;line-height:1.4;text-shadow:none;box-shadow:0 2px 5px rgba(0,0,0,.3)}
-.tile.evt{border-color:#E5484D;box-shadow:0 5px 0 #E5484D,var(--shadow)}
-.tile.spm{border-color:#7048E8;box-shadow:0 5px 0 #7048E8,var(--shadow)}
+.tile.evt{border-color:#E5484D;box-shadow:0 5px 0 #E5484D,var(--shadow);background:color-mix(in srgb,#E5484D 9%,var(--card))}
+.tile.spm{border-color:#7048E8;box-shadow:0 5px 0 #7048E8,var(--shadow);background:color-mix(in srgb,#7048E8 9%,var(--card))}
+.tile .tileMark{position:absolute;top:5px;right:7px;z-index:3;font-size:clamp(20px,3.4vh,28px);line-height:1;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
 .tile.spmPick{border-color:#7048E8;border-style:dashed;box-shadow:0 5px 0 #7048E8,var(--shadow);background:color-mix(in srgb,#7048E8 8%,var(--card))}
 /* Distinct Bonus-tab badges per active mission type. Two separate elements (red surprise
    and purple special) so the kid and parent can tell which mission is waiting at a
@@ -2116,9 +2117,9 @@ const pickJob = (k) => { if(!k || !pickList().length) return null; const p=today
   if(p) return { id:"pk_"+p.id, e:p.e, t:p.t, pts:2, sp:true };
   // Otherwise the special is active and unselected — render a chooser CTA tile.
   return { id:"pk_unselected", e:"🎯", t:"Pick today's special mission", pts:2, spPick:true }; };
-const kidBonusJobsWithPick = () => { const list=(eventJob()?[eventJob()]:[]).concat(bonusJobs());
-  const k=view.kid; if(k){ const sp=pickJob(k); if(sp){ if(!list.find(x=>x.id===sp.id)) list.push(sp); } }
-  return list; };
+const kidBonusJobsWithPick = () => { const k=view.kid, sp=k?pickJob(k):null, ev=eventJob();
+  // Special mission first, surprise mission second, then the regular bonus jobs.
+  return [].concat(sp?[sp]:[], ev?[ev]:[], bonusJobs().filter(x=>(!sp||x.id!==sp.id)&&(!ev||x.id!==ev.id))); };
 const regExtraClean = k => todayExtra(k).filter(x=>!String(x.id).startsWith("ev_") && !String(x.id).startsWith("pk_"));
 // --- Active marker state (per kid, per day) ---
 // Surprise is "active" while the daily event exists AND the kid has not approved/completed
@@ -2598,7 +2599,7 @@ function kidView(k){
       const act = isPickChooser ? "pkPickOpen" : isPick ? "pkDo" : "bjob";
       const cls = `tile bonus hasB ${st} ${isEvent?"evt":""} ${isPick?"spm":""} ${isPickChooser?"spmPick":""}`;
       const label = isPickChooser ? `<div class="wait">⏳ Pick one</div>` : (st==="waiting"?'<div class="wait">⏳ Ask a grown-up</div>':"");
-      return `<button class="${cls}" data-a="${act}" data-j="${j.id}"><span class="badges">${isWeak(j.id)&&!x?'<span class="wk">💥x2</span>':""}<span class="x2">${"⭐".repeat(Math.min(3,j.pts||2))}</span></span><div class="em">${esc(j.e)}</div><div class="tx">${esc(j.t)}</div>${label}</button>`; }).join("")}</div>`; }
+      return `<button class="${cls}" data-a="${act}" data-j="${j.id}">${isEvent?'<span class="tileMark" role="img" aria-label="Surprise mission">🚨</span>':((isPick||isPickChooser)?'<span class="tileMark" role="img" aria-label="Special mission">🎯</span>':"")}<span class="badges">${isWeak(j.id)&&!x?'<span class="wk">💥x2</span>':""}<span class="x2">${"⭐".repeat(Math.min(3,j.pts||2))}</span></span><div class="em">${esc(j.e)}</div><div class="tx">${esc(j.t)}</div>${label}</button>`; }).join("")}</div>`; }
   else if(!list.length) body = `<div class="fullmsg rest"><div class="big">😎</div>No ${r.name.toLowerCase()} jobs today!</div>`;
   else if(list.every(j=>isDone(k,j.id))){ const land = innerWidth > innerHeight && innerWidth > 700, n=list.length, cols = land ? (n<=4?n:(n<=6?3:4)) : (n<=1?1:2);
     body = `<div class="donebar"><span class="db-ic">${r.doneIcon||"🎉"}</span><span class="db-tx"><b>${r.doneMsg||"All done! Great job!"}</b><small>${"⭐".repeat(Math.min(list.length,8))} + 🌟 bonus · ${(()=>{ const day=ymd(new Date()), oth=Object.keys(KIDS).filter(x=>x!==k), wait=oth.filter(x=>!routineDoneDay(x,day,r)); return !oth.length?"":(wait.length? "🤝 When "+wait.map(x=>esc(KIDS[x].name)).join(" + ")+" finishes too: COMBO ATTACK!" : "💥 Combo attack landed!"); })()}</small></span>
