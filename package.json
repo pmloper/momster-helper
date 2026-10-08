@@ -4,9 +4,20 @@
   "description": "Kids' chore adventure PWA: stars, coins, sidekicks, and weekly mess villains.",
   "scripts": {
     "check": "node local_checks_v59.mjs",
-    "test": "node local_checks_v59.mjs && for f in tests/*.test.js; do echo \"== $f\"; node \"$f\" || exit 1; done"
+    "test": "node local_checks_v59.mjs && for f in tests/*.test.js; do echo \"== $f\"; node \"$f\" || exit 1; done",
+    "test:convex": "node --experimental-strip-types tests/auth-email.test.mjs",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@auth/core": "^0.41.3",
+    "@convex-dev/auth": "^0.0.96",
+    "convex": "^1.46.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2"
   }
 }

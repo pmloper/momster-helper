@@ -22,3 +22,24 @@ with Convex Auth (email code). It is not wired into the app and has not been val
 - Week boundary: the server uses `families.timezone`; the client's 60-second rollover timer goes away.
 - Merge behaviour: whole-document overwrites become small mutations (for example `completeJob`, `undoJob`, `spendCoins`).
 - First-launch import of an existing family's localStorage data into these tables.
+
+## Sign-in (email code)
+
+Files: `auth.ts` (providers + first-sign-in family linking), `authEmail.ts` (code generation and sender),
+`auth.config.ts`, `http.ts`, `families.ts` (`myFamily`, `addAllowedEmail`, `removeAllowedEmail`, `linkUser`).
+
+- 6-digit code, valid 10 minutes, at most 5 failed attempts per hour. The typed email is matched case-insensitively.
+- First verified sign-in: if the email is in `allowedEmails` the user joins that family as a member, otherwise a new family
+  is created with the user as owner. Only the owner can add or remove allowed emails.
+- The email is sent by a webhook so GoHighLevel can send it. Set these in the Convex dashboard (never commit them):
+  - `AUTH_EMAIL_WEBHOOK_URL` : the GHL inbound webhook URL. If unset, the code is only logged (dev).
+  - `AUTH_EMAIL_WEBHOOK_SECRET` : optional; sent as the `x-webhook-secret` header.
+- Webhook body: `{ "email": "...", "code": "123456", "expiresInMinutes": 10, "app": "Momster Helper" }`.
+  The GHL workflow should send "Your Momster Helper code is {{code}}. It works for {{expiresInMinutes}} minutes."
+- Also set `CONVEX_SITE_URL` (Convex sets it) and run `npx @convex-dev/auth` once to generate the JWT keys.
+
+## Checks
+- `npm run test:convex` : unit tests for the code sender (no deployment needed).
+- `npm run typecheck` : needs `convex/_generated/`, which `npx convex dev` creates (it is gitignored).
+
+Not done yet: nothing in `index.html` calls any of this, and none of it has run against a real Convex deployment.
