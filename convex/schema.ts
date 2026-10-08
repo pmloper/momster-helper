@@ -140,6 +140,13 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index("by_family_path", ["familyId", "path"]),
 
+  // Counters for abuse limits (sign-in emails per address, and overall).
+  throttle: defineTable({
+    key: v.string(),
+    windowStart: v.number(),
+    count: v.number(),
+  }).index("by_key", ["key"]),
+
   // Generated clips for text a family wrote (custom jobs, prizes, missions).
   // `key` is textKey(text) from index.html, so the app finds the clip by the same name as the shipped ones.
   voiceClips: defineTable({
