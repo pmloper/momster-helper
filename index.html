@@ -890,6 +890,7 @@ button.bpal{border:0;background:none;padding:0;cursor:pointer}
   .boss{padding:6px 10px;margin-bottom:8px}.boss .mood{display:none}
 }
 @media (max-height:520px){.hello{margin-bottom:6px}.hello h1{font-size:22px;white-space:normal;line-height:1.15;overflow:visible;text-overflow:clip}.gear{width:42px!important;height:42px!important;font-size:20px!important}.kids:not(.multi) .kidBtn>.av{font-size:min(22vh,16vw)!important}}
+.kids.many{overflow-y:auto!important;overflow-x:hidden;grid-auto-rows:calc((100% - (var(--pg-rows) - 1)*16px)/var(--pg-rows))!important;align-content:start}
 .hello .gear{margin-left:6px}.hello h1{flex:1;min-width:0}
 @media (max-width:600px){.hello .gear{width:44px;height:44px;font-size:22px;margin-left:2px}}
 .tile .badges{position:absolute;top:6px;right:6px;left:6px;display:flex;justify-content:flex-end;gap:4px;z-index:2;pointer-events:none}
@@ -2429,7 +2430,7 @@ function wizKids(){
     <div class="kcolors">${KID_COLORS.map(col=>`<button class="kc ${c.color===col?"on":""}" style="background:${col}" data-a="wizColor" data-i="${i}" data-c="${col}" aria-label="color"></button>`).join("")}
       ${wiz.kids.length>1?`<button class="btn ghost sm" data-a="wizDelKid" data-i="${i}">Remove</button>`:""}</div></div></div>`).join("");
   return `${momster}<p class="hint" style="margin-top:0">Add each kid — their own jar, coins, and sidekick.</p>${rows}
-    ${wiz.kids.length<4?'<button class="btn" data-a="wizAddKid">+ Add a kid</button>':""}`;
+    <button class="btn" data-a="wizAddKid">+ Add a kid</button>`;
 }
 function wizWhoChips(sec,id){ if(wiz.kids.length<2||sec==="hp") return "";
   const cur=whoList({who:(wiz.who||{})[sec+"_"+id]});
@@ -2593,7 +2594,7 @@ function homeView(){
   const g=goal();
   return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:hidden"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="spk homeSpk" data-a="sound" aria-label="Sound & voice" title="Sound & voice">${volIcon()}</button></div>
   ${eventBar(null)}${monsterStrip()}
-  <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
+  <div class="kids ${KID_IDS.length>2?"multi":""} ${KID_IDS.length>4?"many":""}" style="${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700, cols=land? Math.min(n,4) : (n<=2?1:2), rows=Math.ceil(Math.min(n,4)/cols); return `grid-template-columns:repeat(${cols},minmax(0,1fr));--pg-rows:${rows}`; })()}">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
       ${raceDay()?`<span class="kidTime" role="button" tabindex="0" data-a="rideQuick" aria-label="${esc(KIDS[k].name)} leaves at ${tm12(raceEnd(k))}. Tap to change how getting to school today.">${RIDES_ICONS[rideToday()]} ${tm12(raceEnd(k))}</span>`:""}
       <div class="av">${avC(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${esc(KIDS[k].name)}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
@@ -3274,7 +3275,7 @@ function famSheet(first){
     <div class="ghead"><h2>${first?"💪 Welcome to Momster Helper!":"👨‍👩‍👧 Family"}</h2>${first?"":'<button class="btn" data-a="panel">Back</button>'}</div>
     <p class="hint">${first?"Add your kids and pick a color. Each kid gets a monster sidekick they can dress up, and the whole team battles a silly mess villain every week. Everything stays on this device. Next: pick a grown-up PIN. Fair warning: this app is loud, sticky, and full of toot jokes. There's an off switch in ⚙️ Settings.":"Names and colors. Need another kid later? Come back here and tap + Add a kid."}</p>
     <div class="grp-t">Kids</div>${rows}
-    ${famDraft.length<4?'<button class="btn" data-a="famAdd" style="margin-top:10px">+ Add a kid</button>':""}
+    <button class="btn" data-a="famAdd" style="margin-top:10px">+ Add a kid</button>
     ${first?"":`<div class="grp-t">Jobs and prizes</div><div class="grp">${Object.keys(SEC).map(k=>`<button class="srow link" data-a="listOpen" data-s="${k}"><span class="sl">${SEC[k][0]}</span><span class="chev">›</span></button>`).join("")}</div>`}
     <div class="sact" style="margin-top:16px"><small class="saved" id="famNote"></small><button class="btn primary" data-a="famSave">${first?"Let's go!":"Save"}</button></div>
   </div></div>`);
