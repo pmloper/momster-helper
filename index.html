@@ -1674,7 +1674,14 @@ function reconcileCoins(k){ const b=buddies[k]; if(!b||!b.coinAwards) return; le
     if(!catComplete(k, m[2], m[1])){ delete b.coinAwards[key]; changed=true; } });
   if(changed) saveBuddy(k); }
 function giveStarterCoins(k){ return coinAward(k, "starter", STARTER_COINS); }
-window.giveStarterCoins = giveStarterCoins;   // the tutorial calls this when it finishes
+window.giveStarterCoins = giveStarterCoins;   // the tutorial calls this at its reward line
+// Momster's tutorial lives in tour.js and is fetched the first time it is needed. If it can't load (offline on the very first run),
+// a brand new family still gets its starter coins.
+function startTour(opts){ opts=opts||{};
+  const fail=()=>{ if(opts.fresh) Object.keys(KIDS).forEach(k=>{ if(buddies[k]) giveStarterCoins(k); }); };
+  if(window.MomsterTour) return window.MomsterTour.start(opts);
+  const sc=document.createElement("script"); sc.src="tour.js"; sc.onload=()=>{ window.MomsterTour ? window.MomsterTour.start(opts) : fail(); }; sc.onerror=fail; document.head.appendChild(sc); }
+window.startTour = startTour;
 function saveBuddy(k){ saveLocal("buddy_"+k, buddies[k]); cloudWrite("buddies/"+k, buddies[k]); }
 const goal = () => settings.goal || DEFAULT_GOAL;
 const isDone = (k,id) => (weeks[k].done[ymd(new Date())]||[]).includes(id);
@@ -2308,7 +2315,7 @@ function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; party(["
   cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️"); play(["punch","fanfare","BJ:Combo attack! "+c[1]+"!"]); }
 const villainIntroText = m => "Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+(m[6]||"")+" jobs: double damage!";
 let introOpen=false;
-function villainIntro(){ const m=monster(); introOpen=true;
+function villainIntro(){ if(window.tourOn) return; const m=monster(); introOpen=true;
   layer.innerHTML=`<div class="ov"><div class="sheet intro"><div class="i-alert">🚨 URGENT MESSAGE 🚨</div><p>A villain has invaded the house!</p>
     <div class="i-face">${m[2]}<i>${m[3]}</i></div><h2>${esc(m[1])}</h2><p>${esc(m[7]||"")}</p>
     <div class="i-facts"><span>❤️ ${monsterHP()} health</span><span>💥 Weak to ${esc(m[6]||"")}: double damage!</span>${KID_IDS.length>1?`<span>🤝 Finish the same routine together for a COMBO ATTACK!</span>`:""}</div>
@@ -2529,8 +2536,6 @@ function wizApply(){
   else if(wiz.prizes && wiz.prizes.length){ FAMILY.prizes=STARTER_REWARDS.filter(p=>wiz.prizes.includes(p.id)).map(p=>({id:p.id,e:p.e,t:p.t})); }
   else { delete FAMILY.prizes; }   // default starter list
   saveFamily(); applyJobs();
-  // Until the tutorial is built, a brand new family gets the starting coins when setup finishes (the tutorial will call giveStarterCoins itself).
-  if(wiz.fresh) Object.keys(KIDS).forEach(k=>{ if(buddies[k]) giveStarterCoins(k); });
   // sound
   saveLocal("readMode", wiz.voice===false ? "nonreaders" : "readers");
   // Talking and Sound Effects / Sound Effects Only / Off. The Sound panel in Grown-ups still has finer levels.
@@ -2552,8 +2557,10 @@ function wizApply(){
   return true;
 }
 function wizFinish(){
+  const fresh=!!(wiz && wiz.fresh);
   if(!wizApply()) return;
   wiz=null; close();
+  if(fresh){ startTour({fresh:true}); return; }   // Momster's tutorial ends with the 25 starter coins
   party(["💪", (monster()[2]||"💪"), "💥", "\u2B50"]);
   if(!loadLocal("intro_"+WEEK) && monsterLeft()>0) setTimeout(()=>{ if(!view.kid && !introOpen && !layer.innerHTML) villainIntro(); }, 900);
 }
@@ -2576,14 +2583,15 @@ function render(){
   app.innerHTML = '<div class="screen">' + (view.kid ? kidView(view.kid) : homeView()) + '</div>';
   refreshMissionHub();
 
-  if(!view.kid && !introOpen && !layer.innerHTML && !loadLocal("intro_"+WEEK) && monsterLeft()>0) setTimeout(()=>{ if(!view.kid && !layer.innerHTML && !introOpen) villainIntro(); }, 600);
+  if(window.tourOn){}   // Momster's tutorial is running: no popups behind it
+  else if(!view.kid && !introOpen && !layer.innerHTML && !loadLocal("intro_"+WEEK) && monsterLeft()>0) setTimeout(()=>{ if(!view.kid && !layer.innerHTML && !introOpen) villainIntro(); }, 600);
   else if(!view.kid && !layer.innerHTML && todayDow()===0 && new Date().getHours()>=17 && !loadLocal("report_"+WEEK)) setTimeout(()=>{ if(!view.kid && !layer.innerHTML){ saveLocal("report_"+WEEK,1); hqSheet("report"); play(["fanfare","BJ:Mission report! Look what the Momster Helpers did this week!"]); } }, 900);
-  if(!view.kid) checkRank();
+  if(!view.kid && !window.tourOn) checkRank();
   const k=view.kid; if(!k) return;
   // Mission popup dispatch: show one combined dismissible popup on entering kid view
   // when surprise or special is pending. Fires only when no other sheet is open and the
   // popup wasn't already dismissed for today.
-  if(!layer.innerHTML && !missionPopupOpen && (surprisePending(k) || specialPending(k))){
+  if(!window.tourOn && !layer.innerHTML && !missionPopupOpen && (surprisePending(k) || specialPending(k))){
     setTimeout(()=>{ if(view.kid===k && !layer.innerHTML && !missionPopupOpen) missionPopup(k); }, 250);
   }
   const c=coins(k), was=lastCoins[k]; lastCoins[k]=c;
@@ -2897,6 +2905,7 @@ function panel(){
       <li><b>Pick consequences before you're mad.</b> Toy thrown → shelf until tomorrow. Switch fight → Switch off for the day.</li>
       <li><b>Back each other up.</b> If one parent starts a consequence, the other supports it. Talk later.</li></ol></details></div>
 
+    <div class="grp"><div class="srow wrap"><span class="sl">🎬 Momster's tutorial<small>Watch the narrated tour of how stars, coins, missions and the villain work.</small></span><button class="btn" data-a="tour">Watch</button></div></div>
     ${launched ? "" : `<div class="grp launch"><div class="srow wrap"><span class="sl">🚀 Done testing?<small>One time only: erases test stars, coins, sidekicks, eggs, stickers, hero styles and missions. Then this goes away.</small></span><button class="btn primary" data-a="launch">Start for real</button></div></div>`}
   </div></div>`);
 }
@@ -3080,6 +3089,7 @@ document.addEventListener("click", e=>{
       close(); render(); play(["fanfare","picked"]); } break;
     case "rwNo": { document.querySelectorAll(".rw").forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); const oc=document.querySelector(".rwConfirm"); if(oc) oc.remove(); play(["pop"]); } break;
     case "gear": pinSheet(); break;
+    case "tour": close(); view.kid=null; startTour(); break;
     case "rideQuick": if(raceDay()){ pendingRide=true; pinSheet(); } else { rideSheet(); } break;
     case "ridePick": { const v=t.dataset.v; settings.rideMode=v; settings.rideDate=ymd(new Date()); saveSettings(); rideSheet(); render(); play(["pop","BJ:"+(v==="walk"?"Walking today!":v==="bus"?"Bus today!":"Driving today!")]); } break;
     case "rideSave": { const a1=document.getElementById("rsWalk"), b1=document.getElementById("rsBus"), c1=document.getElementById("rsDrive");

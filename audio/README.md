@@ -23,3 +23,7 @@ Templates: `hi`, `justme`, `blame`, `ready_hero`, `ready_princess`, `ready_knigh
 3. Generate the clips, then `node tools/build-audio-manifest.mjs`.
 
 A name with no clip is read by the device voice (whole sentence).
+
+## Momster's tutorial
+
+`momster/tour_1.mp3` to `tour_10.mp3` are the ten lines of the narrated tutorial (`tour.js`, texts in `lines.csv`). They always play, whatever sound option a family picked. The caption timings and highlights are the `STEPS` table at the top of `tour.js`; if you re-record a clip, re-check its pause times there. Pose pictures live in `art/momster/`.

@@ -8,7 +8,7 @@
 //   * 1 coin the first time a kid finishes every job in a category that day (morning, after school, bedtime, helper)
 //     and 1 for the special mission; a grown-up taking a star back withdraws it; never paid twice for the same day
 //   * 10 coins to every kid when the week's villain is defeated; categories then pay 2 until the next villain
-//   * 25 starter coins (once) when a brand new family finishes setup, via giveStarterCoins() for the tutorial
+//   * 25 starter coins (once) at the reward line of Momster's tutorial, which a brand new family sees when setup ends
 //   * Grown-ups can add and remove coins (never below zero), next to the bonus star buttons
 //
 // Real Chromium over CDP against a tiny static server (node >= 22, no deps).
@@ -28,7 +28,7 @@ const CDP_PORT = 19484, HTTP_PORT = 19485;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function startServer(){
-  const types = { ".html":"text/html", ".js":"application/javascript", ".json":"application/json", ".png":"image/png", ".svg":"image/svg+xml" };
+  const types = { ".html":"text/html", ".js":"application/javascript", ".json":"application/json", ".png":"image/png", ".svg":"image/svg+xml", ".mp3":"audio/mpeg", ".webp":"image/webp" };
   const svr = http.createServer((req, res) => {
     let p = decodeURIComponent(req.url.split("?")[0]); if(p === "/") p = "/index.html";
     const file = path.join(REPO, p);
@@ -163,16 +163,24 @@ async function run(){
     const btns = await ev(`(function(){ view.kid=null; render(); panel(); const q=a=>[...document.querySelectorAll('#gPanel [data-a="'+a+'"][data-k="k1"]')].map(b=>b.textContent.trim()); const r={stars:q("bonus"),coins:q("coinAdj")}; layer.innerHTML=""; return r; })()`);
     ok(same(btns,{stars:["−","+"],coins:["−","+"]}), "Grown-ups has − and + buttons for both stars and coins");
 
-    // ---------- a brand new family gets the starter coins when setup ends; an existing one does not ----------
+    // ---------- a brand new family gets the starter coins at the end of Momster's tutorial; an existing one does not ----------
     await send("Page.navigate", { url: URL_ }); await ready();
     await ev(`localStorage.clear(); true`); await send("Page.navigate", { url: URL_ }); await ready();
     await ev(`wizStart(); wiz.kids=[{id:"k1",name:"Ana",av:"🦄",color:"#E2468A"},{id:"k2",name:"Ben",av:"🦖",color:"#1A9C74"}]; wiz.step=WIZ_STEPS.indexOf("pin"); wizSheet(); true`);
     for(const n of ["1","2","3","4"]) await ev(`document.querySelector('[data-a="wizPin"][data-n="${n}"]').click(); true`);
-    await sleep(700);
-    ok(same(await ev(`Object.keys(KIDS).map(k=>coins(k))`),[25,25]), "a brand new family's kids each start with 25 coins");
+    await sleep(900);
+    ok(await ev(`!!window.tourOn && !!document.getElementById("tour")`), "finishing setup for a brand new family starts Momster's tutorial");
+    ok(same(await ev(`Object.keys(KIDS).map(k=>coins(k))`),[0,0]), "no coins yet while the tutorial is still talking");
+    await ev(`MomsterTour.finish(false); true`);
+    ok(same(await ev(`Object.keys(KIDS).map(k=>coins(k))`),[0,0]), "skipping the tutorial gives no starter coins");
+    await ev(`MomsterTour.start(); true`); await sleep(300);
+    await ev(`MomsterTour.reward(); true`); await sleep(300);
+    ok(same(await ev(`Object.keys(KIDS).map(k=>coins(k))`),[25,25]), "the tutorial's reward line gives each kid 25 coins");
+    await ev(`MomsterTour.finish(true); true`);
     await ev(`wizStart(); wiz.step=WIZ_STEPS.indexOf("pin"); wizSheet(); true`);
     for(const n of ["9","9","9","9"]) await ev(`document.querySelector('[data-a="wizPin"][data-n="${n}"]').click(); true`);
     await sleep(600);
+    ok(!(await ev(`!!window.tourOn`)), "running setup again for an existing family does not start the tutorial");
     ok(same(await ev(`Object.keys(KIDS).map(k=>Object.keys(buddies[k].coinAwards).length)`),[1,1]), "running setup again does not give the starter coins twice");
   } catch(e){ fails++; console.log("EXCEPTION "+(e && e.stack || e)); }
   finally { try { ws.close(); } catch(e){} try { proc.kill(); } catch(e){} try { server.close(); } catch(e){} }
