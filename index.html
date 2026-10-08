@@ -1707,8 +1707,21 @@ function party(emojis){ const p=document.createElement("div"); p.className="part
     s.style.left=Math.random()*100+"vw"; s.style.animationDelay=(Math.random()*.6)+"s"; p.appendChild(s); }
   document.body.appendChild(p); setTimeout(()=>p.remove(),3200); }
 function sr(text){ try{ const el=document.getElementById("sr"); if(el){ el.textContent=""; setTimeout(()=>{el.textContent=text;},30); } }catch(e){} }
-function cheer(big,text){ const c=document.createElement("div"); c.className="cheer"; c.innerHTML='<div class="big"></div><div></div>';
-  c.firstChild.textContent=big; c.lastChild.textContent=text; document.body.appendChild(c); setTimeout(()=>c.remove(),2400); }
+/* One celebration at a time: the damage card, cheer banners, combo, sticker, level-up, egg and victory dance wait for their turn
+   instead of piling up on top of each other. popup(show, ms, gate): show() runs when it is this one's turn; the next one starts
+   ms later, or (with gate) once gate() stops being true (a card or sheet that stays until it is closed). */
+const popQ=[]; let popBusy=false;
+function popup(show, ms, gate, extra){ popQ.push(Object.assign({show,ms,gate},extra||{})); if(!popBusy) popNext(); }
+function popNext(){ const it=popQ.shift(); if(!it){ popBusy=false; return; } popBusy=true;
+  try{ it.show(it); }catch(e){ console.warn(e); }
+  const next=()=>setTimeout(popNext,250);
+  if(it.gate){ const t0=Date.now(), iv=setInterval(()=>{ let on=false; try{ on=it.gate(); }catch(e){} if(!on||Date.now()-t0>90000){ clearInterval(iv); next(); } },300); }
+  else setTimeout(next, it.ms||2400); }
+// cheer(big, text, keys?, confetti?): the banner, its confetti and its sound all arrive together, when it is its turn.
+function cheer(big,text,keys,confetti){ popup(()=>{ if(confetti) party(confetti);
+  const c=document.createElement("div"); c.className="cheer"; c.innerHTML='<div class="big"></div><div></div>';
+  c.firstChild.textContent=big; c.lastChild.textContent=text; document.body.appendChild(c); setTimeout(()=>c.remove(),2400);
+  if(keys) play(keys); },2400); }
 // Non-readers mode: read UI text out loud.
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
@@ -1849,10 +1862,14 @@ document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="bossT
 document.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".kidTime")){ e.preventDefault(); e.target.click(); } });
 function checkMonster(){ if(monsterLeft()>0) return false; let won=false;
   Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; b.monsters=b.monsters||[]; if(!b.monsters.includes(WEEK)){ b.monsters=b.monsters.concat(WEEK); b.bonusCoins=(b.bonusCoins||0)+5; saveBuddy(k); won=true; } });
-  if(won){ const m=monster(); setTimeout(()=>{ party(["💥",m[2],m[3],"🪙","🎉"]); cheer("💥","Busted! You beat "+m[1]+"! +5 🪙"); play(["punch","fanfare","monsterwin"]); }, 900); setTimeout(()=>{ if(!layer.innerHTML) victoryDance(); }, 3600); checkRank(); }
+  if(won){ const m=monster(); setTimeout(()=>cheer("💥","Busted! You beat "+m[1]+"! +5 🪙",["punch","fanfare","monsterwin"],["💥",m[2],m[3],"🪙","🎉"]), 900); setTimeout(()=>popup(()=>{ if(!layer.innerHTML) victoryDance(); },0,()=>!!document.querySelector(".disco")), 3600); checkRank(); }
   return won; }
 let dmgCardN = 0;   // damage on the card that is open right now
 function dmgPop(n){
+  if(document.querySelector(".dmgpop-ov")) return dmgPopNow(n);          // a card is showing: add to it right away
+  const q=popQ.find(x=>x.dmg); if(q){ q.dmg+=n; return; }                // one is already waiting its turn: add to that
+  popup(it=>dmgPopNow(it.dmg), 0, ()=>!!document.querySelector(".dmgpop-ov"), {dmg:n}); }
+function dmgPopNow(n){
   const open=document.querySelector(".dmgpop-ov");
   if(open){ n+=dmgCardN; open.remove(); }                       // another card still showing: add together
   if(document.querySelector(".battle") && powState.n>0){ n+=powState.n; clearPow(); }   // quick pop still showing: fold it in
@@ -1912,7 +1929,7 @@ function kidStats(k){ const b=buddies[k], wk={}; Object.entries(allWeeks).forEac
 function checkStickers(k, quiet){ const b=buddies[k], st=kidStats(k), have=new Set(b.stickers||[]);
   const fresh=STICKERS.filter(s=>s[3](st) && !have.has(s[0]));
   if(!fresh.length) return; b.stickers=[...have, ...fresh.map(s=>s[0])]; saveBuddy(k);
-  if(!quiet && b.stickersInit){ setTimeout(()=>{ cheer(fresh[0][1],"New sticker: "+fresh[0][2]+"!"); play(["sparkle","sticker"]); }, 2600); }
+  if(!quiet && b.stickersInit){ setTimeout(()=>cheer(fresh[0][1],"New sticker: "+fresh[0][2]+"!",["sparkle","sticker"]), 2600); }
   if(!b.stickersInit){ b.stickersInit=true; saveBuddy(k); } }
 function stickerBook(k){ const have=new Set(buddies[k].stickers||[]);
   return `<div class="bsec" style="margin-top:0">${have.size} of ${STICKERS.length} stickers</div>` + STICKERS.map(([id,e,n])=>`<div class="stk ${have.has(id)?"got":""}"><span>${e}</span>${have.has(id)?esc(n):"???"}</div>`).join(""); }
@@ -2019,7 +2036,7 @@ const bustedWeeks = () => [...new Set(Object.keys(KIDS).flatMap(k=>buddies[k].mo
 function rankPoints(){ return bustedWeeks().length + Math.floor(Object.keys(KIDS).reduce((n,k)=>n+lifetime(k),0)/100); }
 function rankInfo(){ const pts=rankPoints(); let i=0; RANKS.forEach((r,j)=>{ if(pts>=r[0]) i=j; }); return {i, pts, r:RANKS[i], next:RANKS[i+1]||null}; }
 function checkRank(){ const ri=rankInfo(), seen=loadLocal("rankSeen"); if(seen==null){ saveLocal("rankSeen",ri.i); return; }
-  if(ri.i>seen){ saveLocal("rankSeen",ri.i); setTimeout(()=>{ party([ri.r[1],"⭐","🎉","💥"]); cheer(ri.r[1],"LEVEL UP! "+ri.r[2]+"!"); play(["fanfare","BJ:Level up! You are now "+ri.r[2]+"!"]); }, 3400); } }
+  if(ri.i>seen){ saveLocal("rankSeen",ri.i); setTimeout(()=>cheer(ri.r[1],"LEVEL UP! "+ri.r[2]+"!",["fanfare","BJ:Level up! You are now "+ri.r[2]+"!"],[ri.r[1],"⭐","🎉","💥"]), 3400); } }
 const KO_WORDS = ["Nooo! Not the folding!","I'll be back... maybe.","Curse you, Momster Helper!","My beautiful mess!","I'm telling my mom!","Okay okay, I give up!","Un-flush-believable!","You win this round, snot-noses!","The cleaning... it BURNS!","My landlord will hear about this!","Tell my mess I loved her!","I fought the law, and the law was TIDY!"];
 function weekStats(){ const day=d=>new Date(d+"T12:00:00").getDay(); const per={};
   Object.keys(KIDS).forEach(k=>{ const w=weeks[k], rc={}; let jobs=0;
@@ -2276,8 +2293,8 @@ function refreshMissionHub(){
   paintSheet("missionHub", "", missionHubHtml(k));
 }
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && layer.querySelector("#missionHub")) close(); });
-function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; party(["💥",c[0],"🤝","⭐"]);
-  cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️"); play(["punch","fanfare","BJ:Combo attack! "+c[1]+"!"]); }
+function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; 
+  cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️",["punch","fanfare","BJ:Combo attack! "+c[1]+"!"],["💥",c[0],"🤝","⭐"]); }
 const villainIntroText = m => "Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+(m[6]||"")+" jobs: double damage!";
 let introOpen=false;
 function villainIntro(){ const m=monster(); introOpen=true;
@@ -2541,6 +2558,7 @@ function paintSheet(id, key, html){
 }
 const tm12 = v => { const [h,m]=(v||"07:40").split(":").map(Number); return ((h%12)||12)+":"+String(m).padStart(2,"0")+(h<12?" am":" pm"); };
 const lastCoins={};
+let missionPopQueued=false;
 function render(){
   try{ fixCostumes(); }catch(e){ console.warn(e); }
   app.innerHTML = '<div class="screen">' + (view.kid ? kidView(view.kid) : homeView()) + '</div>';
@@ -2553,8 +2571,9 @@ function render(){
   // Mission popup dispatch: show one combined dismissible popup on entering kid view
   // when surprise or special is pending. Fires only when no other sheet is open and the
   // popup wasn't already dismissed for today.
-  if(!layer.innerHTML && !missionPopupOpen && (surprisePending(k) || specialPending(k))){
-    setTimeout(()=>{ if(view.kid===k && !layer.innerHTML && !missionPopupOpen) missionPopup(k); }, 250);
+  if(!layer.innerHTML && !missionPopupOpen && !missionPopQueued && (surprisePending(k) || specialPending(k))){
+    missionPopQueued=true;   // waits its turn behind any damage card or banner that is still showing
+    setTimeout(()=>popup(()=>{ missionPopQueued=false; if(view.kid===k && !layer.innerHTML && !missionPopupOpen) missionPopup(k); }, 0, ()=>!!layer.innerHTML), 250);
   }
   const c=coins(k), was=lastCoins[k]; lastCoins[k]=c;
   if(was!=null && c>was){ const btn=document.querySelector(".coinBtn"); if(btn){ btn.classList.add("coinPop");
@@ -2562,7 +2581,7 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:hidden"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="spk homeSpk" data-a="sound" aria-label="Sound & voice" title="Sound & voice">${volIcon()}</button></div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:hidden"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1><button class="spk homeSpk" data-a="sound" aria-label="Sound & voice" title="Sound & voice">${volIcon()}</button></div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""} ${KID_IDS.length>4?"many":""}" style="${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700, cols=land? Math.min(n,4) : (n<=2?1:2), rows=Math.ceil(Math.min(n,4)/cols); return `grid-template-columns:repeat(${cols},minmax(0,1fr));--pg-rows:${rows}`; })()}">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
@@ -3172,16 +3191,16 @@ function tapJob(k, id){ settleCoins(k);
         dmgPop(Math.max(1,dmgR)); },650); const sk = r.id==="bt" ? streak(k) : 0, fire = [3,5,7,10,14].includes(sk);
     setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r)); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r)); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐"); }, 1400);
     play(["fanfare","bonus", raceWon?"raceWin":null, fire?"streak":null, r.doneSnd||"alldone"]);
-    if(!eggReady(k)) setTimeout(()=>play(["jokeintro", pickJoke()]), 4200); }
+    if(!eggReady(k)) setTimeout(()=>popup(()=>play(["jokeintro", pickJoke()]), 5500), 4200); }
   else { render(); let hit = Math.max(1,teamDamage()-dmgB);
     const ms = mysteryLeft(k)>0 && Math.random()<0.12;
     if(ms){ mysteryUse(k); hit += 5; }
     pow(hit);
-    if(ms) setTimeout(()=>{ cheer("💥","MYSTERY HIT! Double damage! Lucky you!"); play(["magic","punch"]); }, POW_MS+100);
+    if(ms) setTimeout(()=>cheer("💥","MYSTERY HIT! Double damage! Lucky you!",["magic","punch"]), POW_MS+100);
     { const pw=Math.random()<.35||ms, gn=Math.random()<.2; play(["ding", job.snd].concat(pw?["punch",pick("p")]:[pick("c")], [MORE(left)], gn?["BJ:"+N_LINES[Math.floor(Math.random()*N_LINES.length)]]:[])); } }
   if(comboList().length>cbB) setTimeout(()=>comboFx(r), 2600);
   checkMonster(); checkStickers(k);
-  if(!left && eggReady(k)) setTimeout(()=>{ eggTaps=0; eggSheet(k); play(["eggearn"]); }, 3200);
+  if(!left && eggReady(k)) setTimeout(()=>popup(()=>{ eggTaps=0; eggSheet(k); play(["eggearn"]); },0,()=>!!layer.innerHTML), 3200);
 }
 function clearLp(){ clearTimeout(lpTimer); lpTimer=null; document.querySelectorAll(".tile.pressing").forEach(x=>x.classList.remove("pressing")); }
 let lpStart=null;
