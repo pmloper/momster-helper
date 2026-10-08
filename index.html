@@ -1763,7 +1763,7 @@ function dayAllDone(k, date){ const a=(weeks[k].done||{})[ymd(date)]||[]; let an
 const eggReady = k => dayAllDone(k,new Date()) && !((buddies[k].eggs||{})[ymd(new Date())]);
 let eggTaps=0;
 function eggSheet(k, item){
-  const egg = item ? `<div style="font-size:120px;line-height:1">${item[2]}</div><h2>${esc(item[3])}!</h2><p>A rare treasure. Your sidekick is wearing it!</p>
+  const egg = item ? `<div style="font-size:120px;line-height:1">${item[2]}</div><h2>${esc(item[3])}!</h2><p>${item[1]==="coins"?(item[5]?"Double coins! The villain is beaten, so your egg paid twice. Spend them in the shop!":"Spend them in the shop!"):"A rare treasure. Your sidekick is wearing it!"}</p>
       <div style="width:200px;margin:0 auto">${buddySvg(buddies[k].look,buddies[k].wear,{attrs:'style="width:200px;height:200px"'})}</div>
       <button class="chip go big" data-a="closeOv" style="margin-top:8px">Yay!</button>`
     : `<div class="egg ${eggTaps?"shake":""}" data-a="eggTap" style="font-size:${150+eggTaps*12}px">🥚${eggTaps>=1?'<span class="crack">⚡</span>':""}</div><h2>Mystery egg!</h2><p>Tap it ${3-eggTaps} more ${3-eggTaps===1?"time":"times"}!</p>`;
@@ -1772,7 +1772,7 @@ function eggSheet(k, item){
 function openEgg(k){ const b=buddies[k], day=ymd(new Date()); const left=RARE.filter(r=>!b.owned.includes(r[1]));
   let item=null;
   if(left.length){ item=left[Math.floor(Math.random()*left.length)]; b.owned=b.owned.concat(item[1]); wearToggle(b,item[0],item[1],true); }
-  else { const n=1+Math.floor(Math.random()*5); b.bonusCoins=(b.bonusCoins||0)+n; item=["bonus","coins","🪙",n+" bonus "+(n===1?"coin":"coins"),0]; }
+  else { const dbl=monsterLeft()===0, n=(1+Math.floor(Math.random()*5))*(dbl?2:1); b.bonusCoins=(b.bonusCoins||0)+n; item=["bonus","coins","🪙",n+" bonus "+(n===1?"coin":"coins"),0,dbl]; }
   b.eggs=Object.assign({},b.eggs||{},{[day]:item[1]}); b.made=true; saveBuddy(k); return item; }
 
 // --- Weekly mess monster (both kids' stars hit it) ---
