@@ -11,41 +11,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Momster Helper">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<meta name="theme-color" content="#1B2140">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Momster Helper">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<meta name="theme-color" content="#1B2140">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Momster Helper">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<meta name="theme-color" content="#1B2140">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Momster Helper">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<meta name="theme-color" content="#1B2140">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Momster Helper">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
-<meta name="theme-color" content="#1B2140">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Momster Helper">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -2452,11 +2417,11 @@ function render(){
 }
 function homeView(){
   const g=goal();
-  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip ${raceDay() && FAMILY.kids.length>2 && new Set(FAMILY.kids.map(c=>raceEnd(c.id))).size>1?"manyTimes":""}" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>c.name+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
+  return `<div class="hello bar-card"><h1>${momsterSvg({attrs:'style="height:1.3em;width:1.3em;margin:-.2em -.1em -.2em 0;vertical-align:-.3em;overflow:visible"'})} <span class="h-lg">${MONTH()===9 ? "Momster Helper, assemble! 🎃" : "Momster Helper, assemble! 👊"}</span><span class="h-sm">${MONTH()===9 ? "Momster Helper 🎃" : "Momster Helper 👊"}</span> ${MONTH()===9 ? "" : (THEME_ICON[MONTH()]||"")}</h1>${raceOn() ? `<button class="ridechip ${raceDay() && FAMILY.kids.length>2 && new Set(FAMILY.kids.map(c=>raceEnd(c.id))).size>1?"manyTimes":""}" data-a="rideQuick" aria-label="Getting to school today${raceDay()?": "+FAMILY.kids.map(c=>esc(c.name)+" leaves at "+tm12(raceEnd(c.id))).join(", "):""}">${raceDay() ? RIDES_ICONS[rideToday()]+" "+homeChipTime() : RIDES_ICONS[rideToday()]}</button>` : ""}</div>
   ${eventBar(null)}${monsterStrip()}
   <div class="kids ${KID_IDS.length>2?"multi":""}" style="grid-template-columns:repeat(${(()=>{ const n=KID_IDS.length, land=innerWidth>innerHeight&&innerWidth>700; return land? n : (n<=2?1:2); })()},minmax(0,1fr))">${Object.keys(KIDS).map(k=>{ const n=stars(k), r=rewardOf(k);
     return `<button class="kidBtn" style="--k:${KIDS[k].color}" data-a="kid" data-k="${k}">
-      <div class="av">${avC(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${KIDS[k].name}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
+      <div class="av">${avC(k)}${flame(k)}</div>${styleOf(k)?`<div class="htitle">${styleOf(k)[1]} ${styleOf(k)[2]}</div>`:""}<div class="nmrow"><div class="nm">${esc(KIDS[k].name)}</div><span class="nscore">⭐ ${n} / ${g}</span></div>
       <div class="bar big slim"><i style="width:${Math.min(100,n/g*100)}%"></i></div>
       <div class="kchips"><span>🪙 ${coins(k)}</span>${r?`<span>${r.e} prize${weeks[k].reward2?" +"+((REWARDS.find(x=>x.id===weeks[k].reward2)||{}).e||""):""}</span>`:`<span>🎁 pick a prize</span>`}${eggReady(k)?`<span class="hot">🥚 egg!</span>`:""}</div></button>`; }).join("")}</div>
   <nav class="botnav">
@@ -2492,7 +2457,7 @@ function kidView(k){
       return `<button class="${cls}" data-a="${act}" data-j="${j.id}"><span class="badges">${isWeak(j.id)&&!x?'<span class="wk">💥x2</span>':""}<span class="x2">${"⭐".repeat(Math.min(3,j.pts||2))}</span></span><div class="em">${esc(j.e)}</div><div class="tx">${esc(j.t)}</div>${label}</button>`; }).join("")}</div>`; }
   else if(!list.length) body = `<div class="fullmsg rest"><div class="big">😎</div>No ${r.name.toLowerCase()} jobs today!</div>`;
   else if(list.every(j=>isDone(k,j.id))){ const land = innerWidth > innerHeight && innerWidth > 700, n=list.length, cols = land ? (n<=4?n:(n<=6?3:4)) : (n<=1?1:2);
-    body = `<div class="donebar"><span class="db-ic">${r.doneIcon||"🎉"}</span><span class="db-tx"><b>${r.doneMsg||"All done! Great job!"}</b><small>${"⭐".repeat(Math.min(list.length,8))} + 🌟 bonus · ${(()=>{ const day=ymd(new Date()), oth=Object.keys(KIDS).filter(x=>x!==k), wait=oth.filter(x=>!routineDoneDay(x,day,r)); return !oth.length?"":(wait.length? "🤝 When "+wait.map(x=>KIDS[x].name).join(" + ")+" finishes too: COMBO ATTACK!" : "💥 Combo attack landed!"); })()}</small></span>
+    body = `<div class="donebar"><span class="db-ic">${r.doneIcon||"🎉"}</span><span class="db-tx"><b>${r.doneMsg||"All done! Great job!"}</b><small>${"⭐".repeat(Math.min(list.length,8))} + 🌟 bonus · ${(()=>{ const day=ymd(new Date()), oth=Object.keys(KIDS).filter(x=>x!==k), wait=oth.filter(x=>!routineDoneDay(x,day,r)); return !oth.length?"":(wait.length? "🤝 When "+wait.map(x=>esc(KIDS[x].name)).join(" + ")+" finishes too: COMBO ATTACK!" : "💥 Combo attack landed!"); })()}</small></span>
       <span class="db-btns">${eggReady(k)?`<button class="prize eggBtn" data-a="egg"><b>🥚</b>Egg!</button>`:""}<button class="prize" data-a="joke"><b>🤣</b>Joke</button>${r.id==="bt"?`<button class="prize" data-a="dance"><b>🕺</b>Dance</button>`:""}</span></div>
     <div class="tiles" style="--cols:${cols}">${list.map(j=>`<button class="tile done" data-a="job" data-j="${j.id}"><div class="em">${j.e}</div><div class="tx">${esc(j.t)}</div><span class="stars">${"⭐".repeat(Math.min(3,pts(j.id)))}</span></button>`).join("")}</div>`; }
   else { const land = innerWidth > innerHeight && innerWidth > 700, n=list.length, cols = land ? (n<=4?n:(n<=6?3:4)) : (n<=1?1:2);
@@ -2683,15 +2648,15 @@ function panel(){
       const totStars=kids.reduce((a,k)=>a+stars(k),0);
       const left=monsterLeft();
       const best=kids.map(k=>[k,Object.values(weeks[k].done||{}).reduce((b,arr)=>b+(arr||[]).filter(x=>!String(x).startsWith("pk_")).length,0)]).sort((a,b)=>b[1]-a[1]);
-      return `<div class="grp-t">This week so far</div><div class="grp" style="background:color-mix(in srgb,var(--gold) 8%,var(--card))"><div class="srow"><span class="sl"><b>📋 Weekly recap</b><small>${doneJobs} jobs · ${totStars} stars · ${left?"❤️ "+left+" left":"🏆 Busted!"}${best[0]&&best[0][1]>0?" · 🏆 "+KIDS[best[0][0]].name:""}</small></span></div></div>`; })()}
+      return `<div class="grp-t">This week so far</div><div class="grp" style="background:color-mix(in srgb,var(--gold) 8%,var(--card))"><div class="srow"><span class="sl"><b>📋 Weekly recap</b><small>${doneJobs} jobs · ${totStars} stars · ${left?"❤️ "+left+" left":"🏆 Busted!"}${best[0]&&best[0][1]>0?" · 🏆 "+esc(KIDS[best[0][0]].name):""}</small></span></div></div>`; })()}
     <div class="grp-t">Kids this week</div>
     ${Object.keys(KIDS).map(k=>{ const r=rewardOf(k), n=stars(k); const auto=autoJobs(k);
       return `<div class="grp" style="--k:${KIDS[k].color}">${auto.length?`<div class="srow" style="background:color-mix(in srgb,#2ECC71 10%,transparent)"><span class="sl"><small>🌱 Habit watch: ${auto.map(a=>{ const jt=(()=>{ for(const rr of ROUTINES){ const f=(FAMILY.jobs&&FAMILY.jobs[rr.id]||[]).find(x=>x.id===a.id); if(f) return f.t; } const st=STARTER_JOBS.am.concat(STARTER_JOBS.pm||[],STARTER_JOBS.bt||[],STARTER_HELPER||[]).find(x=>x.id===a.id); return st?st.t:a.id; })(); return jt+" ("+a.n+" days in a row)"; }).join(", ")}</small></span><button class="btn ghost sm" data-a="fadeChart" style="flex:none">Fade the chart →</button></div><div class="srow" style="padding-top:0"><span class="sl"><small>Graduating these from the paid list keeps the stars and lets the habit stand on its own.</small></span></div>`:""}
-        <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${KIDS[k].name}</b><small>⭐ ${n} of ${g} this week · 🪙 ${coins(k)} coins</small></span></div>
+        <div class="srow head"><span class="kav">${av(k)}</span><span class="sl"><b>${esc(KIDS[k].name)}</b><small>⭐ ${n} of ${g} this week · 🪙 ${coins(k)} coins</small></span></div>
         <div class="srow"><span class="sl">Bonus stars<small>${weeks[k].bonus||0} given this week</small></span>
           <span class="seg"><button data-a="bonus" data-k="${k}" data-d="-1">−</button><button class="plus" data-a="bonus" data-k="${k}" data-d="1">+1 star</button></span></div>
         <div class="srow wrap"><span class="sl">Prize<small>${r? r.e+" "+esc(r.t) : "Not picked yet"}</small></span>
-          ${r?`<span class="ctl"><button class="btn ghost sm" data-a="clearRw" data-k="${k}" title="Clears the prize so ${KIDS[k].name} picks a new one">Change prize</button><label class="tl">Given ${sw(weeks[k].rewardGiven,"given",`data-k="${k}"`)}</label>${weeks[k].reward2?`<small>Prize 2: ${(REWARDS.find(x=>x.id===weeks[k].reward2)||{}).t||""}</small>`:""}</span>`:""}</div>
+          ${r?`<span class="ctl"><button class="btn ghost sm" data-a="clearRw" data-k="${k}" title="Clears the prize so ${esc(KIDS[k].name)} picks a new one">Change prize</button><label class="tl">Given ${sw(weeks[k].rewardGiven,"given",`data-k="${k}"`)}</label>${weeks[k].reward2?`<small>Prize 2: ${(REWARDS.find(x=>x.id===weeks[k].reward2)||{}).t||""}</small>`:""}</span>`:""}</div>
       </div>`; }).join("")}
 
     <div class="grp-t">Today</div>
@@ -2776,7 +2741,7 @@ ${(()=>{ const ex=(w.extra||{})[ds]||[]; if(!ex.length) return "";
       <span class="wvgo">${future?"":(wvOpen===ds?"▲":"✏️")}</span></button>${detail}</div>`; }).join("");
   paintSheet("wvSheet","",`<div class="ov"><div class="sheet gsheet" id="wvSheet">
     <div class="ghead"><h2>📅 Week view</h2><button class="chip big" data-a="panel">Back</button></div>
-    <div class="row">${Object.keys(KIDS).map(k=>`<button class="chip big ${wvKid===k?"go":""}" data-a="wvKid" data-k="${k}">${av(k)} ${KIDS[k].name}</button>`).join("")}
+    <div class="row">${Object.keys(KIDS).map(k=>`<button class="chip big ${wvKid===k?"go":""}" data-a="wvKid" data-k="${k}">${av(k)} ${esc(KIDS[k].name)}</button>`).join("")}
       <span style="flex:1"></span><button class="chip ${wvWhich==="this"?"go":""}" data-a="wvWhich" data-v="this">This week</button><button class="chip ${wvWhich==="last"?"go":""}" data-a="wvWhich" data-v="last">Last week</button></div>
     <p class="note">Week of ${start.toLocaleDateString(undefined,{month:"short",day:"numeric"})} · ⭐ ${total} ${total===1?"star":"stars"}${wvWhich==="last"?" (adds to their coins and streak)":""}. Tap a day to fix it.</p>
     ${rows}</div></div>`);
@@ -3226,41 +3191,6 @@ if(!FAMILY_SET) wizStart();
 else if(!settings.setupDone && !loadLocal("wizOffered")){ saveLocal("wizOffered",1); }
 window.MB_DEBUG = {TWISTS, MONSTERS, TAUNTS, VJOKES, JOKES, N_LINES, MOODS, KO_LINES, KO_WORDS, wiz: (typeof wiz!=="undefined" ? wiz : null)};
 setTimeout(()=>Object.keys(KIDS).forEach(k=>{ if(!buddies[k].stickersInit) checkStickers(k,true); }), 4000);
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW failed", err));
-  });
-}
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW failed", err));
-  });
-}
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW failed", err));
-  });
-}
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW failed", err));
-  });
-}
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW failed", err));
-  });
-}
 </script>
 <script>
 if ("serviceWorker" in navigator) {
