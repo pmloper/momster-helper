@@ -1445,10 +1445,15 @@ function weekStart(d=new Date()){ const x=new Date(d); x.setDate(x.getDate()-((x
 const todayDow = () => new Date().getDay();
 const activeFor = (item,dow) => !item.days || item.days.includes(dow);
 function weekParity(wk){ return Math.floor(new Date((wk||WEEK)+"T12:00:00").getTime()/(7*864e5))%2; }
+/* A job's `who` is empty (everyone), one kid id (older saves), or a list of kid ids. */
+const whoList = j => { const w=j&&j.who; return Array.isArray(w) ? w.filter(Boolean) : (w ? [w] : []); };
+const jobIsFor = (j, kid) => { const w=whoList(j); return !w.length || w.includes(kid); };
+const normWho = ids => ids.length===0 ? "" : ids.length===1 ? ids[0] : ids.slice();
+function toggleWho(ids, kidId){ return ids.includes(kidId) ? ids.filter(x=>x!==kidId) : ids.concat(kidId); }
 function jobsFor(r,dow,kid,wk){ kid=kid||view.kid||FIRST_KID;
   if(r.helper){ const n=HELPER_LIST.length; if(!n) return []; const wn=Math.floor(new Date((wk||WEEK)+"T12:00:00").getTime()/(7*864e5));
     return [HELPER_LIST[(dow + kidIndex(kid) + wn) % n]]; }
-  return activeFor(r,dow) ? r.jobs.filter(j=>(!j.who||j.who===kid)&&activeFor(j,dow)) : []; }
+  return activeFor(r,dow) ? r.jobs.filter(j=>jobIsFor(j,kid)&&activeFor(j,dow)) : []; }
 const pts = id => String(id).startsWith("h_") ? 2 : 1;
 function possibleThisWeek(){ let n=0; for(const kid of KID_IDS){ let m=0; for(let d=0; d<7; d++){ ROUTINES.forEach(r=>{ const js=jobsFor(r,d,kid); js.forEach(j=>m+=pts(j.id)); if(js.length) m+=1; }); if(pickList().length) m+=2; } if(m>n) n=m; } return n; }
 function teamPossible(){ let n=0; for(const kid of KID_IDS){ for(let d=0; d<7; d++){ ROUTINES.forEach(r=>{ const js=jobsFor(r,d,kid); js.forEach(j=>n+=pts(j.id)); if(js.length) n+=1; }); if(pickList().length) n+=2; } } return n; }
@@ -2383,12 +2388,12 @@ function wizKids(){
     ${wiz.kids.length<4?'<button class="btn" data-a="wizAddKid">+ Add a kid</button>':""}`;
 }
 function wizWhoChips(sec,id){ if(wiz.kids.length<2||sec==="hp") return "";
-  const cur=(wiz.who||{})[sec+"_"+id];
-  const chips = wiz.kids.map(c=>`<button class="dc wc ${cur===c.id?"on":""}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name||"Kid "+(wiz.kids.indexOf(c)+1))}</button>`).join("");
-  return `<div class="dchips whorow" style="margin-top:4px"><span class="wholab">Who does this one?</span>${chips}<button class="dc ${!cur?"on":""}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="">Everyone</button></div>`; }
+  const cur=whoList({who:(wiz.who||{})[sec+"_"+id]});
+  const chips = wiz.kids.map(c=>`<button class="dc wc ${cur.includes(c.id)?"on":""}" aria-pressed="${cur.includes(c.id)}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name||"Kid "+(wiz.kids.indexOf(c)+1))}</button>`).join("");
+  return `<div class="dchips whorow" style="margin-top:4px"><span class="wholab">Who does this one?</span>${chips}<button class="dc ${!cur.length?"on":""}" aria-pressed="${!cur.length}" data-a="wizWho" data-s="${sec}" data-id="${id}" data-k="">Everyone</button></div>`; }
 function wizJobs(){
   const cats = [["am","\u2600\uFE0F Morning"],["pm","🎒 After school"],["bt","🌙 Bedtime"],["hp","🧹 Helper"]];
-  return `<p class="hint" style="margin-top:0">Tap a job to turn it on or off. ${wiz.kids.length>1?"Under each job, tap a kid's name to give it just to them. ":""}Helper jobs rotate one per kid per day.</p>` +
+  return `<p class="hint" style="margin-top:0">Tap a job to turn it on or off. ${wiz.kids.length>1?"Under each job, tap one or more kids' names to give it just to them, or Everyone. ":""}Helper jobs rotate one per kid per day.</p>` +
     cats.map(([sec,label])=>{
       const pool = wizPool(sec);
       return `<div class="grp-t">${label}</div><div class="grp" style="padding:8px 10px"><div class="wizgrid">
@@ -3216,13 +3221,13 @@ function listSheet(){
   const _sc = document.getElementById("listSheet");
   const _sy = _sc ? _sc.scrollTop : 0;
   const withDays = !["hp","prizes","pk"].includes(listSec);
-  const note = listSec==="hp" ? "Each kid gets one helper job a day (worth ⭐⭐). They rotate so kids get different ones." : listSec==="prizes" ? "Kids pick one of these each week to fill their star jar for." : listSec==="pk" ? "Kids choose ONE of these as their special mission each day (worth ⭐⭐). It's their choice, from your list." : (FAMILY.kids.length>1 ? "Tap the days to choose when each job shows up. Tap a name under a job to give it to just that kid." : "Tap the days to choose when each job shows up.");
+  const note = listSec==="hp" ? "Each kid gets one helper job a day (worth ⭐⭐). They rotate so kids get different ones." : listSec==="prizes" ? "Kids pick one of these each week to fill their star jar for." : listSec==="pk" ? "Kids choose ONE of these as their special mission each day (worth ⭐⭐). It's their choice, from your list." : (FAMILY.kids.length>1 ? "Tap the days to choose when each job shows up. Tap one or more names under a job to give it to just those kids, or Everyone." : "Tap the days to choose when each job shows up.");
   const rows=listDraft.map((j,i)=>`<div class="srow stack"><div class="tpgrid" style="grid-template-columns:64px minmax(0,1fr) auto">
       <input class="in em" data-li="${i}" data-f="e" value="${esc(j.e||"")}" maxlength="8" aria-label="Picture">
       <input class="in tx" data-li="${i}" data-f="t" value="${esc(j.t||"")}" maxlength="40" aria-label="Name">
       <button class="btn ghost sm" data-a="listDel" data-i="${i}" aria-label="Remove">🗑</button></div>
       ${withDays?`<div class="dchips">${[...DAYS].map((d,n)=>`<button class="dc ${!j.days||j.days.includes(n)?"on":""}" data-a="listDay" data-i="${i}" data-d="${n}">${d}</button>`).join("")}</div>`:""}
-      ${(withDays&&FAMILY.kids.length>1)?`<div class="dchips whorow"><span class="wholab">For:</span>${FAMILY.kids.map(c=>`<button class="dc wc ${(j.who===c.id)?"on":""}" data-a="listWho" data-i="${i}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name)}</button>`).join("")}<button class="dc ${!j.who?"on":""}" data-a="listWho" data-i="${i}" data-k="">Everyone</button></div>`:""}</div>`).join("");
+      ${(withDays&&FAMILY.kids.length>1)?`<div class="dchips whorow"><span class="wholab">For:</span>${FAMILY.kids.map(c=>`<button class="dc wc ${whoList(j).includes(c.id)?"on":""}" aria-pressed="${whoList(j).includes(c.id)}" data-a="listWho" data-i="${i}" data-k="${c.id}" style="--kc:${c.color}">${esc(c.name)}</button>`).join("")}<button class="dc ${!whoList(j).length?"on":""}" aria-pressed="${!whoList(j).length}" data-a="listWho" data-i="${i}" data-k="">Everyone</button></div>`:""}</div>`).join("");
   paintSheet("listSheet",listSec,`<div class="ov"><div class="sheet gsheet" id="listSheet">
     <div class="ghead"><h2>${SEC[listSec][0]}</h2><button class="btn" data-a="famOpen">Back</button></div>
     <p class="hint">${note}</p><div class="grp">${rows||'<div class="srow"><span class="sl"><small>None yet.</small></span></div>'}</div>
@@ -3260,7 +3265,7 @@ document.addEventListener("click", e=>{
     case "listDel": listRead(); listDraft.splice(i,1); listSheet(); break;
     case "listReset": listDraft=starterList(listSec); listSheet(); break;
     case "listDay": listRead(); { const j=listDraft[i], d=+t.dataset.d; let ds=j.days?j.days.slice():[0,1,2,3,4,5,6]; ds = ds.includes(d)? ds.filter(x=>x!==d) : ds.concat(d).sort(); j.days = ds.length===7?null:ds; } listSheet(); break;
-    case "listWho": listRead(); { const j=listDraft[i]; j.who = (t.dataset.k||""); } listSheet(); break;
+    case "listWho": listRead(); { const j=listDraft[i]; j.who = t.dataset.k ? normWho(toggleWho(whoList(j), t.dataset.k)) : ""; } listSheet(); break;
     case "listSave": listRead(); { const clean=listDraft.map(j=>Object.assign({id:j.id, e:(j.e||"").trim()||"⭐", t:(j.t||"").trim()}, j.days?{days:j.days}:{}, j.who?{who:j.who}:{})).filter(j=>j.t);
       if(listSec==="prizes"){ FAMILY.prizes=clean; } else if(listSec==="hp") FAMILY.helper=clean; else if(listSec==="pk"){ FAMILY.picks=clean; FAMILY.pickPlan=famPlanDraft||{}; if(!FAMILY.pickPlan||!Object.keys(FAMILY.pickPlan).length) delete FAMILY.pickPlan; } else { FAMILY.jobs=Object.assign({},FAMILY.jobs||{},{[listSec]:clean}); }
       saveFamily(); applyJobs(); famDraft=null; famSheet(false); render(); { const n=document.getElementById("famNote"); if(n) n.textContent = clean.length ? "✓ "+SEC[listSec][0].replace(/^\S+\s/,"")+" saved" : (listSec==="prizes" ? "✓ Prizes are now a surprise — kids just see the jar fill up" : "✓ Saved (empty list)"); } } break;
@@ -3284,7 +3289,9 @@ document.addEventListener("click", e=>{
   if(a==="wizJob"){ { const sec=t.dataset.s, id=t.dataset.id, arr=wiz.jobs[sec]||[];
       const at=arr.indexOf(id); if(at>=0) arr.splice(at,1); else arr.push(id); wiz.jobs[sec]=arr; } wizSheet(); return; }
   if(a==="wizWho"){ wiz.who = wiz.who||{}; const key=t.dataset.s+"_"+t.dataset.id;
-      if(t.dataset.k) wiz.who[key]=t.dataset.k; else delete wiz.who[key]; wizSheet(); return; }
+      if(t.dataset.k){ const next=normWho(toggleWho(whoList({who:wiz.who[key]}), t.dataset.k)); if(next.length) wiz.who[key]=next; else delete wiz.who[key]; }
+      else delete wiz.who[key];                       // Everyone clears the kids
+      wizSheet(); return; }
   if(a==="wizPrize"){ if(!wiz.prizes) wiz.prizes=STARTER_REWARDS.map(p=>p.id); const at=wiz.prizes.indexOf(t.dataset.id); if(at>=0){ wiz.prizes.splice(at,1); } else { wiz.prizes.push(t.dataset.id); } wizSheet(); return; }
   if(a==="wizPrizeMode"){ if(t.dataset.v!==wiz.prizeMode) wiz.prizes=null; wiz.prizeMode=t.dataset.v; wizSheet(); return; }
   if(a==="wizRead"){ wiz.voice = t.dataset.v==="readers" ? true : false; wizSheet(); return; }
