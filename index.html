@@ -621,10 +621,11 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .db-tx{flex:1;min-width:140px;display:flex;flex-direction:column;line-height:1.15}
 .db-tx b{font-family:var(--disp);font-weight:600;font-size:clamp(18px,2.8vh,24px);color:var(--doneInk)}
 .db-tx small{font-size:14px}
-.db-btns{display:flex;gap:6px;margin-left:auto}
-.db-btns .prize{width:auto;padding:6px 12px;font-size:16px}
-.db-btns .prize b{font-size:22px}
-@media (max-width:600px){.db-ic{font-size:28px}.db-btns{width:100%}.db-btns .prize{flex:1}}
+.db-btns{display:flex;flex-wrap:wrap;gap:10px;margin-left:auto}
+.db-btns .prize{width:auto;min-height:52px;padding:10px 18px;font-size:20px;line-height:1.2;gap:10px;white-space:nowrap;flex:0 0 auto}
+.db-btns .prize b{font-size:30px;line-height:1;flex:none}
+@media (max-width:600px){.db-ic{font-size:28px}.db-btns{width:100%}.db-btns .prize{flex:1 1 120px;padding:10px 12px}}
+@media (max-height:520px){.db-btns .prize{min-height:44px;padding:6px 14px;font-size:18px}.db-btns .prize b{font-size:26px}}
 .coinBtn{position:relative;overflow:visible}
 .coinBtn.coinPop{animation:coinpop .6s ease-out}
 @keyframes coinpop{0%{transform:scale(1)}35%{transform:scale(1.25)}100%{transform:scale(1)}}
