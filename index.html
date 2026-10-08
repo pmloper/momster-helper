@@ -1850,7 +1850,13 @@ function checkMonster(){ if(monsterLeft()>0) return false; let won=false;
   Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; b.monsters=b.monsters||[]; if(!b.monsters.includes(WEEK)){ b.monsters=b.monsters.concat(WEEK); b.bonusCoins=(b.bonusCoins||0)+5; saveBuddy(k); won=true; } });
   if(won){ const m=monster(); setTimeout(()=>{ party(["💥",m[2],m[3],"🪙","🎉"]); cheer("💥","Busted! You beat "+m[1]+"! +5 🪙"); play(["punch","fanfare","monsterwin"]); }, 900); setTimeout(()=>{ if(!layer.innerHTML) victoryDance(); }, 3600); checkRank(); }
   return won; }
-function dmgPop(n){ const m=monster(), left=monsterLeft(), hp=monsterHP(), pct=Math.round(left/hp*100);
+let dmgCardN = 0;   // damage on the card that is open right now
+function dmgPop(n){
+  const open=document.querySelector(".dmgpop-ov");
+  if(open){ n+=dmgCardN; open.remove(); }                       // another card still showing: add together
+  if(document.querySelector(".battle") && powState.n>0){ n+=powState.n; clearPow(); }   // quick pop still showing: fold it in
+  dmgCardN=n;
+  const m=monster(), left=monsterLeft(), hp=monsterHP(), pct=Math.round(left/hp*100);
   const day=ymd(new Date());
   const firstToday = !(loadLocal("dmgExplained")||"").includes(day);
   if(firstToday){ try{ saveLocal("dmgExplained", (loadLocal("dmgExplained")||"")+day+","); }catch(e){} }
@@ -1872,9 +1878,16 @@ function dmgPop(n){ const m=monster(), left=monsterLeft(), hp=monsterHP(), pct=M
 }
 /* How long the quick damage pop (after each job) and the bigger damage card (after a routine) stay on screen. */
 const POW_MS = 3500, DMGPOP_MS = 5000;
-function pow(n){ const m=monster(); const k=view.kid; document.querySelectorAll(".battle").forEach(x=>x.remove()); const p=document.createElement("div"); p.className="battle"; p.style.setProperty("--pow-ms", POW_MS+"ms");
-  p.innerHTML=`<span class="bt-pal">${k?palPic(k,74):"⭐"}</span><span class="bt-pow ${k&&styleOf(k)?"st-"+styleOf(k)[0]:""}">${k&&styleOf(k)?styleOf(k)[3]:"POW!"}</span><span class="bt-mon">${monsterLeft()>0?m[2]:"😵"}<i>−${n||5} health</i></span>`;
-  document.body.appendChild(p); setTimeout(()=>p.remove(), POW_MS); }
+let powState = { n: 0, timer: null };   // damage shown by the quick pop that is on screen right now
+function clearPow(){ clearTimeout(powState.timer); powState.timer=null; powState.n=0; document.querySelectorAll(".battle").forEach(x=>x.remove()); }
+function pow(n){ const m=monster(); const k=view.kid; const add=n||5;
+  // A tap before the last pop has finished adds to it: one pop, bigger number, timer restarted.
+  const showing = !!document.querySelector(".battle") && powState.n>0;
+  const total = showing ? powState.n+add : add;
+  clearPow(); powState.n=total;
+  const p=document.createElement("div"); p.className="battle"; p.style.setProperty("--pow-ms", POW_MS+"ms");
+  p.innerHTML=`<span class="bt-pal">${k?palPic(k,74):"⭐"}</span><span class="bt-pow ${k&&styleOf(k)?"st-"+styleOf(k)[0]:""}">${k&&styleOf(k)?styleOf(k)[3]:"POW!"}</span><span class="bt-mon">${monsterLeft()>0?m[2]:"😵"}<i>−${total} health</i></span>`;
+  document.body.appendChild(p); powState.timer=setTimeout(clearPow, POW_MS); }
 
 // --- Sticker book ---
 const STICKERS = [
