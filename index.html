@@ -2327,7 +2327,7 @@ let wiz = null;   // wizard state: {step, kids:[], jobs:{am:[],pm:[],bt:[],hp:[]
 function wizStart(){
   wiz = { step: 0, kids: FAMILY_SET ? JSON.parse(JSON.stringify(FAMILY.kids)) : [{id:"k1", name:"", av:"⭐", color:"#E2468A"},{id:"k2", name:"", av:"⭐", color:"#1A9C74"}],
     jobs: { am: starterIds("am"), pm: starterIds("pm"), bt: starterIds("bt"), hp: starterIds("hp") },
-    prizeMode: "pick", voice: true, vol: 1,
+    prizeMode: "pick", voice: true, sound: (typeof FAMILY_SET!=="undefined" && FAMILY_SET) ? (soundLevel===0 ? "off" : voiceLvl===0 ? "fx" : "all") : "all",
     walkEnd: settings.walkEnd || settings.raceEnd || "07:40", busEnd: settings.busEnd || "07:45", driveEnd: settings.driveEnd || "07:50", rideMode: (settings.rideMode||"walk"),
     raceOn: raceOn(), kidEnds: JSON.parse(JSON.stringify(settings.kidEnds||{})),
     mission: null, pin: "", who: {} };
@@ -2420,8 +2420,9 @@ function wizReading(){
     ${seg(wiz.voice===false, "nonreaders", "👂", "Not yet (Everything read out loud)", "")}
   </div>
   <div class="grp-t">Sound</div>
-  <div class="grp">${[[1,"🔊 Loud","Talking + sound effects"],[0.4,"🔉 Quiet","Sound effects only"],[0,"🔇 Off","No sound at all"]].map(([v,ic,t])=>`<button class="srow link" data-a="wizVol" data-v="${v}" style="width:100%">
-    <span class="sl"><b>${ic} ${t}</b></span><span class="chev">${wiz.vol===v?"✓":""}</span></button>`).join("")}</div>`;
+  <div class="grp">${[["all","🔊","Talking and Sound Effects"],["fx","🎵","Sound Effects Only"],["off","🔇","Off (No Sound)"]].map(([v,ic,t])=>`<button class="srow link" data-a="wizSound" data-v="${v}" style="width:100%">
+    <span class="sl"><b>${ic} ${t}</b></span><span class="chev">${wiz.sound===v?"✓":""}</span></button>`).join("")}</div>
+  ${(wiz.voice===false && wiz.sound!=="all")?`<p class="hint">Kids who can't read yet need "Talking and Sound Effects" so the app can read to them.</p>`:""}`;
 }
 function wizTimes(){
   const modes = [["walk","🛴","Walk"],["bus","🚌","Bus"],["drive","🚗","Drive"]];
@@ -2481,8 +2482,9 @@ function wizApply(){
   saveFamily(); applyJobs();
   // sound
   saveLocal("readMode", wiz.voice===false ? "nonreaders" : "readers");
-  voiceLvl = 1; saveLocal("voiceLvl",voiceLvl);   // talking defaults ON; Sound panel has its own 3 levels
-  soundLevel = wiz.vol; saveLocal("vol",soundLevel);
+  // Talking and Sound Effects / Sound Effects Only / Off. The Sound panel in Grown-ups still has finer levels.
+  voiceLvl = wiz.sound==="all" ? 1 : 0; saveLocal("voiceLvl",voiceLvl);
+  soundLevel = wiz.sound==="off" ? 0 : 1; saveLocal("vol",soundLevel);
   // times
   settings.walkEnd=wiz.walkEnd; settings.busEnd=wiz.busEnd; settings.driveEnd=wiz.driveEnd;
   settings.raceEnd=wiz.walkEnd;
@@ -3295,7 +3297,7 @@ document.addEventListener("click", e=>{
   if(a==="wizPrize"){ if(!wiz.prizes) wiz.prizes=STARTER_REWARDS.map(p=>p.id); const at=wiz.prizes.indexOf(t.dataset.id); if(at>=0){ wiz.prizes.splice(at,1); } else { wiz.prizes.push(t.dataset.id); } wizSheet(); return; }
   if(a==="wizPrizeMode"){ if(t.dataset.v!==wiz.prizeMode) wiz.prizes=null; wiz.prizeMode=t.dataset.v; wizSheet(); return; }
   if(a==="wizRead"){ wiz.voice = t.dataset.v==="readers" ? true : false; wizSheet(); return; }
-  if(a==="wizVol"){ wiz.vol=Number(t.dataset.v); wizSheet(); if(wiz.vol>0) play(["ding"]); return; }
+  if(a==="wizSound"){ wiz.sound=t.dataset.v; wizSheet(); if(wiz.sound!=="off") play(["ding"]); return; }
   if(a==="wizRace"){ wizReadInputs(); wiz.raceOn=!wiz.raceOn; wizSheet(); return; }
   if(a==="wizRide"){ wizReadInputs(); wiz.rideMode=t.dataset.v; wizSheet(); return; }
   if(a==="wizMission"){ wiz.mission=t.dataset.id; wizSheet(); return; }
