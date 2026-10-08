@@ -704,16 +704,16 @@ body:has(#layer > .sheet) .botnav{display:none}
 .dp-mom{font-size:14px}
 .dp-react{font-size:15px;font-weight:700;opacity:.85;margin-top:6px}
 .battle{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:32;pointer-events:none;display:flex;align-items:center;gap:6px;
-  background:var(--card);border:3px solid #E5484D;border-radius:999px;padding:4px 18px;box-shadow:0 12px 30px rgba(0,0,0,.3);animation:bt-in 1.3s ease-out forwards}
+  background:var(--card);border:3px solid #E5484D;border-radius:999px;padding:4px 18px;box-shadow:0 12px 30px rgba(0,0,0,.3);animation:bt-in var(--pow-ms,3500ms) ease-out forwards}
 .bt-pal{display:inline-flex;animation:bt-lunge .6s ease-out}
 .bt-pow{font-family:var(--disp);font-weight:700;font-size:28px;color:#E5484D;animation:bt-zap .6s ease-out}
 .bt-mon{position:relative;font-size:58px;line-height:1;animation:bt-hit .6s ease-out .2s}
-.bt-mon i{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-style:normal;font-size:16px;font-weight:900;color:#fff;background:#E5484D;border-radius:999px;padding:0 8px;white-space:nowrap;animation:bt-dmg 1.1s ease-out forwards}
-@keyframes bt-in{0%{opacity:0;transform:translate(-50%,-14px) scale(.8)}15%{opacity:1;transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-10px)}}
+.bt-mon i{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-style:normal;font-size:16px;font-weight:900;color:#fff;background:#E5484D;border-radius:999px;padding:0 8px;white-space:nowrap;animation:bt-dmg var(--pow-ms,3500ms) ease-out forwards}
+@keyframes bt-in{0%{opacity:0;transform:translate(-50%,-14px) scale(.8)}6%{opacity:1;transform:translate(-50%,0) scale(1)}88%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-10px)}}
 @keyframes bt-lunge{0%{transform:translateX(-10px)}40%{transform:translateX(22px) rotate(8deg)}100%{transform:translateX(0)}}
 @keyframes bt-zap{0%{transform:scale(.2);opacity:0}45%{transform:scale(1.4);opacity:1}100%{transform:scale(1)}}
 @keyframes bt-hit{0%,100%{transform:translateX(0) rotate(0)}30%{transform:translateX(10px) rotate(14deg)}60%{transform:translateX(-4px) rotate(-6deg)}}
-@keyframes bt-dmg{0%{opacity:0;transform:translate(-50%,-8px)}25%{opacity:1}100%{opacity:0;transform:translate(-50%,10px)}}
+@keyframes bt-dmg{0%{opacity:0;transform:translate(-50%,-8px)}8%{opacity:1;transform:translate(-50%,0)}88%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,4px)}}
 @media (max-width:600px){.hello.bar-card h1{font-size:clamp(20px,5.4vw,26px);white-space:normal;min-width:0;line-height:1.15;overflow:visible}.boss{gap:8px;padding:8px 10px}.bpal svg{width:36px!important;height:36px!important}.bvs{font-size:20px;margin-left:6px}.boss .minfo small{font-size:10px}}
 .mood{font-size:13px;font-style:italic;color:var(--soft);line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .tile .wk{position:absolute;left:6px;top:6px;background:#1E2A47;color:#fff;border:2px solid #FFD84D;border-radius:10px;padding:1px 8px;font-size:clamp(12px,2vh,16px);font-weight:900;line-height:1.4;text-shadow:none;box-shadow:0 2px 5px rgba(0,0,0,.3)}
@@ -1867,12 +1867,14 @@ function dmgPop(n){ const m=monster(), left=monsterLeft(), hp=monsterHP(), pct=M
     <div class="dp-mom">💪 <span>Momster says: <b>${momSay}</b></span></div>
     <button class="chip go" onclick="this.closest('.dmgpop-ov').remove()" style="margin-top:10px">💪 Keep helping Momster!</button>
   </div>`;
-  document.body.appendChild(o); setTimeout(()=>{ if(o.parentNode) o.remove(); }, 4500);
+  document.body.appendChild(o); setTimeout(()=>{ if(o.parentNode) o.remove(); }, DMGPOP_MS);
   try{ play(["BJ:"+(firstToday? "Every chore you finish takes health from "+(m[1]||"the monster")+"! " : "")+(left>0? "Minus "+n+" health! "+(m[1]||"monster")+" has "+left+" health left!"+(left<=0? " And... he is down!":"") : ""),"momster_"+(left<=0?"win":(pct<=35?"almost":"cheer"))]); }catch(e){}
 }
-function pow(n){ const m=monster(); const k=view.kid; const p=document.createElement("div"); p.className="battle";
+/* How long the quick damage pop (after each job) and the bigger damage card (after a routine) stay on screen. */
+const POW_MS = 3500, DMGPOP_MS = 5000;
+function pow(n){ const m=monster(); const k=view.kid; document.querySelectorAll(".battle").forEach(x=>x.remove()); const p=document.createElement("div"); p.className="battle"; p.style.setProperty("--pow-ms", POW_MS+"ms");
   p.innerHTML=`<span class="bt-pal">${k?palPic(k,74):"⭐"}</span><span class="bt-pow ${k&&styleOf(k)?"st-"+styleOf(k)[0]:""}">${k&&styleOf(k)?styleOf(k)[3]:"POW!"}</span><span class="bt-mon">${monsterLeft()>0?m[2]:"😵"}<i>−${n||5} health</i></span>`;
-  document.body.appendChild(p); setTimeout(()=>p.remove(),1300); }
+  document.body.appendChild(p); setTimeout(()=>p.remove(), POW_MS); }
 
 // --- Sticker book ---
 const STICKERS = [
@@ -3159,7 +3161,7 @@ function tapJob(k, id){ settleCoins(k);
     const ms = mysteryLeft(k)>0 && Math.random()<0.12;
     if(ms){ mysteryUse(k); hit += 5; }
     pow(hit);
-    if(ms) setTimeout(()=>{ cheer("💥","MYSTERY HIT! Double damage! Lucky you!"); play(["magic","punch"]); }, 1300);
+    if(ms) setTimeout(()=>{ cheer("💥","MYSTERY HIT! Double damage! Lucky you!"); play(["magic","punch"]); }, POW_MS+100);
     { const pw=Math.random()<.35||ms, gn=Math.random()<.2; play(["ding", job.snd].concat(pw?["punch",pick("p")]:[pick("c")], [MORE(left)], gn?["BJ:"+N_LINES[Math.floor(Math.random()*N_LINES.length)]]:[])); } }
   if(comboList().length>cbB) setTimeout(()=>comboFx(r), 2600);
   checkMonster(); checkStickers(k);
