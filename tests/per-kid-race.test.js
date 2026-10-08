@@ -87,7 +87,7 @@ async function run(){
 
   // ---- static checks (viewport independent) -------------------------------------------------------
   { const html = fs.readFileSync(path.join(REPO,"index.html"),"utf8"), sw = fs.readFileSync(path.join(REPO,"sw.js"),"utf8");
-    const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin||DEFAULT_PIN")) || "";
+    const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin")) || "";
     if(!/kidEnds\s*:/.test(snap) || !/raceOff\s*:/.test(snap)) fail(0,0,"firebase_sync","settings snapshot whitelist drops kidEnds/raceOff");
     const m = sw.match(/const CACHE = "([^"]+)"/);
     if(!m || m[1] !== "momster-helper-v81-cloud-sync") fail(0,0,"sw_cache","SW cache not bumped to v81-cloud-sync: "+(m&&m[1])); }

@@ -1073,6 +1073,26 @@ const DEFAULT_BONUS = [
 ];
 const BONUS_MAX = 2;
 const DEFAULT_GOAL = 100, DEFAULT_PIN = "1234";
+/* PIN: kept as a salted SHA-256 hash (settings.pinHash + settings.pinSalt) so it is never saved or synced as plain text.
+   An older plain-text settings.pin still works until upgradePin() converts it. */
+const sha256hex = (() => {
+  const K=[], H0=[]; const isPrime=x=>{ for(let i=2;i*i<=x;i++) if(x%i===0) return false; return true; };
+  for(let n=2,c=0;c<64;n++){ if(!isPrime(n)) continue; if(c<8) H0[c]=(Math.sqrt(n)%1)*4294967296|0; K[c]=(Math.cbrt(n)%1)*4294967296|0; c++; }
+  const rotr=(x,n)=>(x>>>n)|(x<<(32-n));
+  return str => { const b=new TextEncoder().encode(str), l=b.length, nb=((l+9+63)>>6)<<6, m=new Uint8Array(nb); m.set(b); m[l]=0x80;
+    const dv=new DataView(m.buffer); dv.setUint32(nb-4,(l*8)>>>0); dv.setUint32(nb-8,Math.floor(l*8/4294967296));
+    const h=H0.slice(), w=new Int32Array(64);
+    for(let o=0;o<nb;o+=64){ for(let i=0;i<16;i++) w[i]=dv.getInt32(o+4*i);
+      for(let i=16;i<64;i++){ const a=w[i-15], c=w[i-2], s0=rotr(a,7)^rotr(a,18)^(a>>>3), s1=rotr(c,17)^rotr(c,19)^(c>>>10); w[i]=(w[i-16]+s0+w[i-7]+s1)|0; }
+      let [a,b2,c2,d,e,f,g,hh]=h;
+      for(let i=0;i<64;i++){ const S1=rotr(e,6)^rotr(e,11)^rotr(e,25), ch=(e&f)^(~e&g), t1=(hh+S1+ch+K[i]+w[i])|0, S0=rotr(a,2)^rotr(a,13)^rotr(a,22), mj=(a&b2)^(a&c2)^(b2&c2), t2=(S0+mj)|0;
+        hh=g; g=f; f=e; e=(d+t1)|0; d=c2; c2=b2; b2=a; a=(t1+t2)|0; }
+      h[0]=(h[0]+a)|0; h[1]=(h[1]+b2)|0; h[2]=(h[2]+c2)|0; h[3]=(h[3]+d)|0; h[4]=(h[4]+e)|0; h[5]=(h[5]+f)|0; h[6]=(h[6]+g)|0; h[7]=(h[7]+hh)|0; }
+    return h.map(x=>(x>>>0).toString(16).padStart(8,"0")).join(""); };
+})();
+function setPin(pin){ const r=new Uint8Array(8); crypto.getRandomValues(r); settings.pinSalt=[...r].map(x=>x.toString(16).padStart(2,"0")).join(""); settings.pinHash=sha256hex(settings.pinSalt+pin); delete settings.pin; }
+function pinMatches(input){ return settings.pinHash ? sha256hex((settings.pinSalt||"")+input)===settings.pinHash : input===(settings.pin||DEFAULT_PIN); }
+function upgradePin(){ if(settings.pinHash) return false; setPin(settings.pin||DEFAULT_PIN); return true; }
 // Apply this family's own jobs and prizes (if they've edited them).
 ROUTINES.find(r=>r.id==="pm").days=[1,2,3,4,5];
 ROUTINES.forEach(r=>{ if(STARTER_JOBS.hasOwnProperty(r.id)) STARTER_JOBS[r.id]=r.jobs.map(j=>Object.assign({},j)); });
@@ -1483,7 +1503,7 @@ function subscribe(){
     if(canon(d)!==canon(FAMILY_SET?FAMILY:null)) cloudAdoptFamily(d); }, e=>console.warn(e)));
   unsubs.push(db.doc("teams/"+WEEK).onSnapshot(s=>{ team = s.exists ? {given:!!s.data().given} : {given:false}; render(); }, e=>console.warn(e)));
   unsubs.push(db.doc("settings/main").onSnapshot(s=>{
-    if(s.exists){ const d=s.data(); settings = {pin:d.pin||DEFAULT_PIN, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true, setupDone:!!d.setupDone}; saveLocal("settings",settings); render(); }
+    if(s.exists){ const d=s.data(); settings = {pin:d.pinHash?undefined:(d.pin||DEFAULT_PIN), pinHash:d.pinHash||undefined, pinSalt:d.pinSalt||undefined, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true, setupDone:!!d.setupDone}; if(!settings.pinHash){ upgradePin(); writeDoc("settings/main", JSON.parse(JSON.stringify(settings))); } saveLocal("settings",settings); render(); }
   }, e=>console.warn(e)));
   subscribeVoices();
 }
@@ -1521,6 +1541,7 @@ function cloudAttach(){
   const C=window.MomsterCloud; if(!C || !C.configured || !C.signedIn || db || cloudBusy) return; cloudBusy=true;
   const d=C.openDb();
   d.whenLoaded().then(async ()=>{
+    if(upgradePin()) saveSettings();
     const remote=d.paths().includes("family/main"), first=!Store.rawGet(CLOUD_LINKED);
     if(remote){ if(first) cloudBackup(); }
     else if(FAMILY_SET){ try{ await d.bulkSet(cloudLocalDocs()); toast("Synced! Your stars are saved online."); }catch(e){ console.warn("first sync failed", e); cloudBusy=false; toast("Couldn't sync yet. Try again in a moment."); return; } }
@@ -2440,7 +2461,7 @@ function wizApply(){
   if(wiz.mission && wiz.mission!=="none"){ const ev=EVENTS.find(x=>x[0]===wiz.mission);
     if(ev) settings.event={id:ev[0], e:ev[1], title:ev[2], t:ev[3], pts:ev[4], day:ymd(new Date())}; }
   // pin
-  if(wiz.pin && /^\d{4}$/.test(wiz.pin)) settings.pin=wiz.pin;
+  if(wiz.pin && /^\d{4}$/.test(wiz.pin)) setPin(wiz.pin);
   settings.launched=ymd(new Date()); settings.setupDone=true;
   saveSettings(); render();
   return true;
@@ -2964,8 +2985,8 @@ document.addEventListener("click", e=>{
       saveSettings(); rideSheet(); render(); const n=document.getElementById("rsNote"); if(n) n.textContent="✓ Saved"; } break;
     case "pin": { const n=t.dataset.n; if(n==="⌫") pinBuf=pinBuf.slice(0,-1); else pinBuf+=n;
       document.getElementById("dots").textContent="●".repeat(pinBuf.length);
-      if(pinBuf.length===4 && (pinMode==="new"||pinMode==="first")){ settings.pin=pinBuf; saveSettings(); const wasFirst=pinMode==="first"; pinMode=null; if(wasFirst){ close(); toast("PIN saved! Grown-ups: hold any star to take it back."); render(); } else { panel(); const n=document.querySelector(".sheet p"); if(n) n.textContent="New PIN saved: "+settings.pin; } break; }
-      if(pinBuf.length===4){ if(pinBuf===(settings.pin||DEFAULT_PIN)){
+      if(pinBuf.length===4 && (pinMode==="new"||pinMode==="first")){ const newPin=pinBuf; setPin(newPin); saveSettings(); const wasFirst=pinMode==="first"; pinMode=null; if(wasFirst){ close(); toast("PIN saved! Grown-ups: hold any star to take it back."); render(); } else { panel(); const n=document.querySelector(".sheet p"); if(n) n.textContent="New PIN saved: "+newPin; } break; }
+      if(pinBuf.length===4){ if(pinMatches(pinBuf)){
         if(pendingUnstar && pendingUnstar.bonus){ const pu=pendingUnstar; pendingUnstar=null;
           if(pu.waiting){ layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:420px;text-align:center"><h2>Bonus job done?</h2>
             <div class="row" style="justify-content:center"><button class="chip big" data-a="bnNo" data-k="${pu.kid}" data-j="${pu.id}">✗ Not yet</button><button class="chip go big" data-a="bnYes" data-k="${pu.kid}" data-j="${pu.id}">✓ Give stars</button></div></div></div>`; }
