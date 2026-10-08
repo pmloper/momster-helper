@@ -1561,7 +1561,8 @@ function cloudRow(){
   if(!cloudOn()) return "";
   const C=window.MomsterCloud;
   return C.signedIn
-    ? `<div class="srow"><span class="sl">☁️ Synced across devices<small>Signed in as ${esc(C.email||"your email")}${db?"":" · connecting…"}</small></span><button class="btn ghost sm" data-a="cloudOut">Sign out</button></div>`
+    ? `<div class="srow"><span class="sl">☁️ Synced across devices<small>Signed in as ${esc(C.email||"your email")}${db?"":" · connecting…"}</small></span><button class="btn ghost sm" data-a="cloudOut">Sign out</button></div>
+       <button class="srow link" data-a="cloudDelAsk"><span class="sl">🗑️ Delete my online data<small>Removes your family's synced data and sign-in. This device keeps its own copy.</small></span><span class="chev">›</span></button>`
     : `<button class="srow link" data-a="cloudIn"><span class="sl">☁️ Sync across devices<small>Sign in with your email to share stars on every device</small></span><span class="chev">›</span></button>`; }
 function cloudSheet(step, email, msg){
   layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:420px">
@@ -1577,6 +1578,19 @@ function cloudSheet(step, email, msg){
     <p id="cloudMsg" class="hint" style="text-align:center;min-height:1.4em">${esc(msg||"")}</p>
   </div></div>`;
   const i=layer.querySelector(step===1?"#cloudEmail":"#cloudCode"); if(i) setTimeout(()=>i.focus(),50); }
+function cloudDeleteSheet(msg){
+  layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:420px;text-align:center">
+    <h2>Delete your online data?</h2>
+    <p>This permanently removes your family's synced stars, kids and settings from the cloud, and deletes the sign-in for everyone on this account. Other devices will stop syncing. This device keeps its own copy.</p>
+    <div class="row" style="justify-content:center;gap:10px"><button class="btn ghost" data-a="closeOvBtn">Keep it</button><button class="btn primary" data-a="cloudDelYes" style="background:#d33">Delete</button></div>
+    <p id="cloudMsg" class="hint" style="min-height:1.4em">${esc(msg||"")}</p></div></div>`; }
+async function cloudDelete(){
+  const C=window.MomsterCloud, msg=document.getElementById("cloudMsg");
+  try{ if(msg) msg.textContent="Deleting…"; let r; let guard=0;
+    do{ r=await C.client.mutation(C.api.account.deleteFamily, {}); guard++; }while(r && !r.done && guard<50);
+    await C.signOut(); cloudDetach(); try{ localStorage.removeItem(CLOUD_LINKED); }catch(e){}
+    close(); toast("Your online data was deleted."); render(); }
+  catch(err){ if(msg) msg.textContent=String(err.message||err).replace(/^Uncaught Error: /,"").slice(0,160); } }
 async function cloudSend(){
   const C=window.MomsterCloud, email=(document.getElementById("cloudEmail")||{}).value||"", msg=document.getElementById("cloudMsg");
   try{ if(msg) msg.textContent="Sending…"; const e=await C.requestCode(email); cloudSheet(2,e,""); }
@@ -3220,6 +3234,8 @@ document.addEventListener("click", e=>{
     case "cloudIn": cloudSheet(1, t.dataset.e||(window.MomsterCloud&&window.MomsterCloud.email)||""); break;
     case "cloudSend": cloudSend(); break;
     case "cloudVerify": cloudVerify(t.dataset.e); break;
+    case "cloudDelAsk": cloudDeleteSheet(); break;
+    case "cloudDelYes": cloudDelete(); break;
     case "cloudOut": window.MomsterCloud.signOut().then(()=>{ cloudDetach(); panel(); toast("Signed out. This device keeps its own copy."); }); break;
     case "pwaInstall": { const d=window._deferredInstall; if(d){ d.prompt(); try{ saveLocal("installedHint","1"); }catch(e){} window._deferredInstall=null; } panel(); play(["fanfare"]); break; }
     case "fadeChart": famDraft=null; famSheet(false); setTimeout(()=>{ const b=[...document.querySelectorAll('[data-a="listOpen"]')].find(x=>x.textContent.includes("Morning")); if(b){ b.click(); } },350); play(["pop"]); break;
