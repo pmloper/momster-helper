@@ -64,6 +64,11 @@ r = await run(w, ['--voice', 'momster', '--takes', '1', '--max-chars', '500'], w
 ok(requests.length === 2 && /3 lines, 2 need their own clip \(1 repeat/.test(r.out), 'two lines with the same words are generated once: ' + requests.length + ' requests');
 ok(JSON.parse(fs.readFileSync(path.join(w, 'audio/_candidates/momster/a1/meta.json'), 'utf8')).aliases.join() === 'a2', 'the repeat is recorded as an alias in meta.json');
 
+// ---- the key can be stored under the other names ----
+w = workdir(); requests.length = 0;
+r = await run(w, ['--voice', 'momster', '--limit', '1', '--takes', '1', '--max-chars', '500'], { ELEVEN_LABS_API: KEY });
+ok(r.code === 0 && requests.length === 1 && requests[0].headers['xi-api-key'] === KEY && !r.out.includes(KEY), 'the key is found under ELEVEN_LABS_API too, and still never printed');
+
 // ---- a small live run ----
 w = workdir(); requests.length = 0;
 r = await run(w, ['--voice', 'momster', '--limit', '3', '--takes', '2', '--max-chars', '5000'], withKey);

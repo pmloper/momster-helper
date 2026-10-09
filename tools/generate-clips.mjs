@@ -15,13 +15,15 @@
 //   --out <dir>            where candidates go (default audio/_candidates)
 //   --dry-run              print the plan and the cost, call nothing
 //
-// The key comes from the ELEVENLABS_API_KEY environment variable and is never printed or written. ELEVENLABS_BASE_URL overrides
+// The key comes from the ELEVENLABS_API_KEY environment variable (ELEVEN_LABS_API, ELEVEN_LABS_API_KEY and XI_API_KEY also work) and is never printed or written. ELEVENLABS_BASE_URL overrides
 // https://api.elevenlabs.io (used by the tests). Candidates land in <out>/<voice>/<key>/take<N>.mp3 with a meta.json beside them;
 // nothing is copied into audio/<voice>/ until tools/promote-clips.mjs does it after review.
 import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.cwd();
+// The key can be stored under any of these environment variable names.
+const KEY_NAMES = ['ELEVENLABS_API_KEY', 'ELEVEN_LABS_API', 'ELEVEN_LABS_API_KEY', 'XI_API_KEY'];
 const args = process.argv.slice(2);
 const flag = n => args.includes('--' + n);
 const opt = (n, d) => { const i = args.indexOf('--' + n); return i >= 0 && args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : d; };
@@ -112,8 +114,8 @@ export async function main() {
   for (const [v, b] of Object.entries(byVoice)) console.log(`  ${v.padEnd(18)} ${String(b.clips).padStart(5)} generations  ${String(b.chars).padStart(7)} characters${cfg.voices?.[v]?.voice_id ? '' : '   (no voice_id in audio/voices.json yet)'}`);
   if (dry) { console.log('dry run: nothing was sent.'); return 0; }
 
-  const apiKey = process.env.ELEVENLABS_API_KEY;
-  if (!apiKey) { console.error('Set ELEVENLABS_API_KEY in the environment first (the key is never read from a file).'); return 2; }
+  const apiKey = KEY_NAMES.map(n => process.env[n]).find(Boolean);
+  if (!apiKey) { console.error(`Set ${KEY_NAMES[0]} (or ${KEY_NAMES.slice(1).join(', ')}) in the environment first; the key is never read from a file.`); return 2; }
   if (!maxChars) { console.error(`A live run needs a spending limit: add --max-chars <n> (this plan is ${chars} characters).`); return 2; }
   const missingIds = [...new Set(todo.map(t => t.voice))].filter(v => !cfg.voices?.[v]?.voice_id);
   if (missingIds.length) { console.error('No voice_id in audio/voices.json for: ' + missingIds.join(', ')); return 2; }

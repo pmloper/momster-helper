@@ -17,6 +17,8 @@ import path from 'node:path';
 import { execFile } from 'node:child_process';
 
 const ROOT = process.cwd();
+const KEY_NAMES = ['ELEVENLABS_API_KEY', 'ELEVEN_LABS_API', 'ELEVEN_LABS_API_KEY', 'XI_API_KEY'];
+const API_KEY = KEY_NAMES.map(n => process.env[n]).find(Boolean);
 const args = process.argv.slice(2);
 const flag = n => args.includes('--' + n);
 const opt = (n, d) => { const i = args.indexOf('--' + n); return i >= 0 && args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : d; };
@@ -36,7 +38,7 @@ async function transcribe(file) {
   const base = (process.env.ELEVENLABS_BASE_URL || 'https://api.elevenlabs.io').replace(/\/$/, '');
   const form = new FormData(); form.append('model_id', 'scribe_v1'); form.append('file', new Blob([fs.readFileSync(file)], { type: 'audio/mpeg' }), path.basename(file));
   for (let attempt = 0; attempt < 4; attempt++) {
-    const res = await fetch(base + '/v1/speech-to-text', { method: 'POST', headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY }, body: form });
+    const res = await fetch(base + '/v1/speech-to-text', { method: 'POST', headers: { 'xi-api-key': API_KEY }, body: form });
     if (res.ok) return (await res.json()).text || '';
     if (res.status === 429 || res.status >= 500) { await new Promise(r => setTimeout(r, 1000 * 2 ** attempt)); continue; }
     throw Object.assign(new Error(`speech-to-text answered ${res.status}`), { status: res.status });
@@ -47,7 +49,7 @@ async function transcribe(file) {
 export async function main() {
   if (!(await sh('ffmpeg', ['-version'])).ok) { console.error('ffmpeg is not installed or not on the PATH.'); return 2; }
   const wantText = flag('transcribe');
-  if (wantText && !process.env.ELEVENLABS_API_KEY) { console.error('--transcribe needs ELEVENLABS_API_KEY in the environment.'); return 2; }
+  if (wantText && !API_KEY) { console.error('--transcribe needs ELEVENLABS_API_KEY (or ELEVEN_LABS_API) in the environment.'); return 2; }
   const only = opt('voice');
   const items = [];
   for (const voiceDir of fs.existsSync(out) ? walkVoices(out) : []) {

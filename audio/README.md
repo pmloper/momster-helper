@@ -35,7 +35,7 @@ A name with no clip is read by the device voice (whole sentence).
 
 ## Generating the clips (ElevenLabs)
 
-Everything below runs from the repo root. The ElevenLabs key is only ever read from the `ELEVENLABS_API_KEY` environment variable.
+Everything below runs from the repo root. The ElevenLabs key is only ever read from the environment: `ELEVENLABS_API_KEY`, or `ELEVEN_LABS_API` / `ELEVEN_LABS_API_KEY` / `XI_API_KEY`.
 
 1. Fill in `audio/voices.json`: a `voice_id` for `momster` (the same voice, model and settings as the tutorial lines) and for each villain. Each villain has a `description` you can paste into ElevenLabs Voice Design.
 2. See the plan and the cost: `node tools/generate-clips.mjs --voice all --dry-run`. Labels (shop parts, stickers, headings) are included for tap-to-hear; add `--played-only` to leave them out. Lines that say the same words in the same voice share one clip: it is generated once and copied to each key when promoted.
