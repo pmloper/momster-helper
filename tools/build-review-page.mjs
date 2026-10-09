@@ -17,7 +17,7 @@ const report = fs.existsSync(path.join(out, 'report.json')) ? JSON.parse(fs.read
 const lines = [];
 const voices = []; for (const d of fs.existsSync(out) ? fs.readdirSync(out, { withFileTypes: true }) : []) { if (!d.isDirectory() || d.name === 'review') continue;
   if (d.name === 'villains') for (const v of fs.readdirSync(path.join(out, d.name))) voices.push('villains/' + v); else voices.push(d.name); }
-for (const voice of voices) { if (only && voice !== only) continue;
+for (const voice of voices) { if (only && voice !== only && !voice.startsWith(only + '/')) continue;
   const vdir = path.join(out, voice);
   for (const key of fs.readdirSync(vdir)) { const dir = path.join(vdir, key), mf = path.join(dir, 'meta.json'); if (!fs.existsSync(mf)) continue;
     const meta = JSON.parse(fs.readFileSync(mf, 'utf8'));
