@@ -76,8 +76,8 @@ hk5,momster,joke,What room does a ghost not need? A living room!,existing,yes,,,
 hk6,momster,joke,Why did the vampire need mouthwash? He had bat breath!,existing,yes,,,momster
 hk7,momster,joke,What do you get when you cross a vampire and a snowman? Frostbite!,existing,yes,,,momster
 hk8,momster,joke,Why are ghosts bad at lying? You can see right through them!,existing,yes,,,momster
-buddyhi,momster,general,Let's make your sidekick!,NEW,yes,,,momster
-shop,momster,general,Sidekick shop! Pick something cool!,NEW,yes,,,momster
+buddyhi,momster,general,Let's make your hero helper!,NEW,yes,,,momster
+shop,momster,general,Hero helper shop! Pick something cool!,NEW,yes,,,momster
 tapbuy,momster,general,Tap again to buy it!,existing,yes,,,momster
 bought,momster,general,You got it! Looking fancy!,existing,yes,,,momster
 needcoins,momster,general,Not enough coins yet! Finish a whole group of jobs to earn more!,NEW,yes,,,momster
@@ -468,7 +468,7 @@ t_dragon_73654acd,momster,sticker name,Dragon!,NEW,NO (label),tap-to-hear needed
 t_unicorn_03f97362,momster,sticker name,Unicorn!,NEW,NO (label),tap-to-hear needed,,momster
 t_5-bonus-jobs_23de36fd,momster,sticker name,5 bonus jobs,NEW,NO (label),tap-to-hear needed,,momster
 t_little-chef_6e9f3543,momster,sticker name,Little chef,NEW,NO (label),tap-to-hear needed,,momster
-t_made-a-sidekick_6fc711c4,momster,sticker name,Made a sidekick,NEW,NO (label),tap-to-hear needed,,momster
+t_made-a-hero-helper_74e2cf2b,momster,sticker name,Made a hero helper,NEW,NO (label),tap-to-hear needed,,momster
 t_dance-party_b73fe758,momster,sticker name,Dance party,NEW,NO (label),tap-to-hear needed,,momster
 t_rookie-helpers_b5c17be3,momster,rank name,Rookie Helpers,NEW,NO (label),,,momster
 t_junior-helpers_7b4d8211,momster,rank name,Junior Helpers,NEW,NO (label),,,momster
@@ -631,7 +631,7 @@ t_dad-joke-of-the-day_edfcd32e,momster,screen text,Dad joke of the day!,NEW,NO (
 t_tell-me_da5e85a7,momster,screen text,Tell me!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_tell-it-again_5f04b936,momster,screen text,Tell it again!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_pick-your-hero-style_3831445b,momster,screen text,Pick your hero style!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
-t_your-sidekick-gets-a-free-costume-to-mat_7f3be6c5,momster,screen text,Your sidekick gets a free costume to match. Switch anytime!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_your-hero-helper-gets-a-free-costume-to_9e537dfc,momster,screen text,Your hero helper gets a free costume to match. Switch anytime!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_just-me_173e9e23,momster,screen text,Just me.,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_tap-a-prize-to-choose-it-then-tap-yes-to_4be45a88,momster,screen text,"Tap a prize to choose it, then tap Yes to confirm.",NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_getting-to-school_d506c3c0,momster,screen text,Getting to school,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
@@ -648,10 +648,10 @@ tour_3,momster,tutorial,"Each week, a different villain visits our house to caus
 tour_4,momster,tutorial,"Some tasks and combos do extra damage. First, tap your card to open your profile. Pick the prize you’d like to earn this week. Then you’ll see a Special Mission and a Surprise Mission. You can choose your Special Mission now or come back to it later.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
 tour_5,momster,tutorial,"Your tasks are sorted into five groups: Morning, After School, Bedtime, Helper, and Bonus. Pick a group from the menu to see its tasks. When you finish one, tap its card to see how much damage you did to the villain.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
 tour_6,momster,tutorial,"See a siren in the top-right corner? Tap it to check any Special or Surprise Missions you haven’t finished yet. You can find them in Bonus, too. They often do extra damage and come with extra rewards!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
-tour_7,momster,tutorial,"For helping me, you’ll earn stars and coins. Each task card shows how many stars you can earn. You also get your very own sidekick! You can dress it up and it wears the treasures you find.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
-tour_8,momster,tutorial,"Collect stars to unlock stickers and badges in Hero HQ. When you reach the weekly star goal your family set, you’ll defeat the villain! You’ll also get one coin each time you finish a task group, up to five coins a day. If you complete all the tasks in a day, you can also hatch a mystery egg, which awards you rare items for your sidekick or bonus coins! Defeat the weekly villain and you’ll get ten more coins.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
-tour_9,momster,tutorial,"And don’t stop there: until the next villain arrives, you’ll earn double coins for your tasks. You can keep collecting stars for stickers, too. Spend your coins on clothes, accessories, toys, pets, and backgrounds for your sidekick. Make it yours!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
-tour_10,momster,tutorial,"You listened all the way through, so here’s that awesome reward I promised: 25 coins to get you started! Spend them on something for your sidekick, or save them for later. Now, let’s pick your first task and show that villain what we can do!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_7,momster,tutorial,"For helping me, you’ll earn stars and coins. Each task card shows how many stars you can earn. You also get your very own hero helper! You can dress it up and it wears the treasures you find.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_8,momster,tutorial,"Collect stars to unlock stickers and badges in Hero HQ. When you reach the weekly star goal your family set, you’ll defeat the villain! You’ll also get one coin each time you finish a task group, up to five coins a day. If you complete all the tasks in a day, you can also hatch a mystery egg, which awards you rare items for your hero helper or bonus coins! Defeat the weekly villain and you’ll get ten more coins.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_9,momster,tutorial,"And don’t stop there: until the next villain arrives, you’ll earn double coins for your tasks. You can keep collecting stars for stickers, too. Spend your coins on clothes, accessories, toys, pets, and backgrounds for your hero helper. Make it yours!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_10,momster,tutorial,"You listened all the way through, so here’s that awesome reward I promised: 25 coins to get you started! Spend them on something for your hero helper, or save them for later. Now, let’s pick your first task and show that villain what we can do!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
 t_emergency-the-great-crumb-incident-wipe_5fd1b5dc,momster,surprise mission,Emergency! THE GREAT CRUMB INCIDENT! Wipe the table and sweep up crumbs!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
 t_emergency-the-sock-has-awakened-find-str_6955ecfc,momster,surprise mission,Emergency! THE SOCK HAS AWAKENED! Find stray socks and put them in the hamper!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
 t_emergency-toy-avalanche-5-minute-toy-pic_9da4b761,momster,surprise mission,Emergency! TOY AVALANCHE! 5-minute toy pickup race!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
@@ -1091,12 +1091,11 @@ nm_zoey,momster,kid name,Zoey,NEW,yes (kid name),spoken alone; stitched between 
 nm_zuri,momster,kid name,Zuri,NEW,yes (kid name),spoken alone; stitched between a lead-in and a tail,,momster
 nlead_hi,momster,name lead-in,Hi,NEW,yes (kid name),"plays before a kid's name: ""Hi <name>!""",,momster
 nlead_justme,momster,name lead-in,Back to just,NEW,yes (kid name),"plays before a kid's name: ""Back to just <name>!""",,momster
-nlead_blame,momster,name lead-in,I blame,NEW,yes (kid name),"plays before a kid's name: ""I blame <name>!""",,momster
 nlead_hero,momster,name lead-in,Super,NEW,yes (kid name),"plays before a kid's name: ""Super <name>, ready to help Momster!""",,momster
 nlead_princess,momster,name lead-in,Princess,NEW,yes (kid name),"plays before a kid's name: ""Princess <name>, ready to help Momster!""",,momster
 nlead_knight,momster,name lead-in,Knight,NEW,yes (kid name),"plays before a kid's name: ""Knight <name>, ready to help Momster!""",,momster
 nlead_ninja,momster,name lead-in,Ninja,NEW,yes (kid name),"plays before a kid's name: ""Ninja <name>, ready to help Momster!""",,momster
-ntail_ready,momster,name tail,"ready to help Momster!",NEW,yes (kid name),"plays after a kid's name in the hero-style lines",,momster
+ntail_ready,momster,name tail,ready to help Momster!,NEW,yes (kid name),plays after a kid's name in the hero-style lines,,momster
 t_your-hands-are-full-put-one-away-to-hold_46951e37,momster,screen text,Your hands are full! Put one away to hold this.,NEW,yes,hands-full popup in the sidekick shop,,momster
 t_nice-hustle-all-done-without-being-asked_bde71da7,momster,app line,Nice hustle! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
 t_look-at-that-all-done-without-being-aske_f9d0a992,momster,app line,Look at that! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster

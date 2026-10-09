@@ -62,8 +62,8 @@ async function run(){
   const clips = [...Array(10).keys()].map(i=>path.join(REPO,"audio/momster/tour_"+(i+1)+".mp3"));
   ok(clips.every(f=>fs.existsSync(f)), "all ten recorded lines are in audio/momster/tour_1..10.mp3");
   ok(["wave","stand","point","thumbs","cheer"].every(n=>fs.existsSync(path.join(REPO,"art/momster/"+n+".webp"))), "all five Momster pose pictures exist");
-  ok(!/avatar/i.test(tourJs), "the captions say sidekick, never avatar");
-  ok(/sidekick/.test(tourJs) && /ten more coins/.test(tourJs) && /25 coins/.test(tourJs), "the captions match the recorded script's coin facts");
+  ok(!/avatar/i.test(tourJs), "the captions say hero helper, never avatar");
+  ok(/hero helper/.test(tourJs) && /ten more coins/.test(tourJs) && /25 coins/.test(tourJs), "the captions match the recorded script's coin facts");
   ok(!/soundLevel===0\)\s*return/.test(tourJs) && !/speechSynthesis/.test(tourJs), "the tutorial never goes quiet because of the sound option and never uses the device voice");
 
   async function ready(){

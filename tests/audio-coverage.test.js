@@ -167,7 +167,7 @@ async function run(){
     const DYNAMIC = [
       "Numbers on screen (health, damage, star and coin counts, \"N family toots!\"): not spoken; only the number words 6 to 100 are, for \"N more to go!\"",
       "A family's own text: custom jobs, prizes and special missions (generated per family, or silent)",
-      "Kid-name sentences: hi, justme, blame, ready_hero/princess/knight/ninja (stitched from lead-in + name + tail clips; names are nm_<slug> rows)"
+      "Kid-name sentences: hi, justme, ready_hero/princess/knight/ninja (stitched from lead-in + name + tail clips; names are nm_<slug> rows)"
     ];
     const dynamicIds = a => false;
     const missing = new Map();

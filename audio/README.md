@@ -21,7 +21,6 @@ A sentence with a kid's name is stitched from three clips played back to back: a
 |---|---|
 | `Hi <name>!` | `nlead_hi` + `nm_<slug>` |
 | `Back to just <name>!` | `nlead_justme` + `nm_<slug>` |
-| `I blame <name>!` | `nlead_blame` + `nm_<slug>` |
 | `Super / Princess / Knight / Ninja <name>, ready to help Momster!` | `nlead_hero / princess / knight / ninja` + `nm_<slug>` + `ntail_ready` |
 
 `<slug>` = lowercase, accents removed, other characters become `-`. The lead-ins and tail are ordinary rows in `lines.csv`. If any piece is missing, the device voice reads the whole sentence instead.

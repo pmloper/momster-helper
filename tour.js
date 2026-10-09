@@ -43,28 +43,28 @@ const STEPS = [
   [2.54, "Tap it to check any Special or Surprise Missions you haven’t finished yet.", "point", SIREN],
   [6.88, "You can find them in Bonus, too.", "point", BONUS],
   [9.00, "They often do extra damage and come with extra rewards!", "cheer", BONUS]]},
- {dur:12.67, c:[
+ {dur:13.06, c:[
   [0,    "For helping me, you’ll earn stars and coins.", "thumbs", [".hdStars", ".hdCoin"]],
-  [3.55, "Each task card shows how many stars you can earn.", "point", TILE],
-  [6.86, "You also get your very own sidekick!", "cheer", WHO],
-  [9.68, "You can dress it up and it wears the treasures you find.", "point", WHO]]},
- {dur:27.32, c:[
+  [3.44, "Each task card shows how many stars you can earn.", "point", TILE],
+  [6.74, "You also get your very own hero helper!", "cheer", WHO],
+  [9.92, "You can dress it up and it wears the treasures you find.", "point", WHO]]},
+ {dur:27.66, c:[
   [0,    "Collect stars to unlock stickers and badges in Hero HQ.", "point", HQ, "home"],
-  [4.59, "When you reach the weekly star goal your family set, you’ll defeat the villain!", "thumbs", [".hdStars", ".hdBar"], "kid"],
-  [9.32, "You’ll also get one coin each time you finish a task group, up to five coins a day.", "point", ".tabs"],
-  [14.90,"If you complete all the tasks in a day, you can also hatch a mystery egg,", "point", ".tabs"],
-  [19.76,"which awards you rare items for your sidekick or bonus coins!", "cheer", WHO],
-  [23.87,"Defeat the weekly villain and you’ll get ten more coins.", "point", ".boss", "home"]]},
- {dur:16.67, c:[
+  [4.48, "When you reach the weekly star goal your family set, you’ll defeat the villain!", "thumbs", [".hdStars", ".hdBar"], "kid"],
+  [9.22, "You’ll also get one coin each time you finish a task group, up to five coins a day.", "point", ".tabs"],
+  [14.94,"If you complete all the tasks in a day, you can also hatch a mystery egg,", "point", ".tabs"],
+  [19.80,"which awards you rare items for your hero helper or bonus coins!", "cheer", WHO],
+  [24.16,"Defeat the weekly villain and you’ll get ten more coins.", "point", ".boss", "home"]]},
+ {dur:16.56, c:[
   [0,    "And don’t stop there: until the next villain arrives, you’ll earn double coins for your tasks.", "cheer", ".hdCoin", "kid"],
-  [6.26, "You can keep collecting stars for stickers, too.", "thumbs", ".hdStars"],
-  [9.27, "Spend your coins on clothes, accessories, toys, pets, and backgrounds for your sidekick.", "point", ".hdCoin"],
-  [15.41,"Make it yours!", "cheer", WHO]]},
- {dur:15.8, c:[
+  [6.14, "You can keep collecting stars for stickers, too.", "thumbs", ".hdStars"],
+  [9.16, "Spend your coins on clothes, accessories, toys, pets, and backgrounds for your hero helper.", "point", ".hdCoin"],
+  [15.28,"Make it yours!", "cheer", WHO]]},
+ {dur:16.14, c:[
   [0,    "You listened all the way through, so here’s that awesome reward I promised:", "thumbs", ".hdCoin"],
-  [4.99, "25 coins to get you started!", "cheer", ".hdCoin", "kid", "coins"],
-  [7.56, "Spend them on something for your sidekick, or save them for later.", "point", WHO],
-  [11.32,"Now, let’s pick your first task and show that villain what we can do!", "cheer", ".kidBtn", "home"]]}
+  [5.16, "25 coins to get you started!", "cheer", ".hdCoin", "kid", "coins"],
+  [7.62, "Spend them on something for your hero helper, or save them for later.", "point", WHO],
+  [11.62,"Now, let’s pick your first task and show that villain what we can do!", "cheer", ".kidBtn", "home"]]}
 ];
 // Fill in each chunk's view (it carries forward) and where its speech stops.
 (function(){ let v="home"; STEPS.forEach(st=>{ st.c=st.c.map((c,j,all)=>{ v=c[4]||v; return {t:c[0], text:c[1], pose:c[2], sel:c[3]||null, v, act:c[5]||null, end:(j+1<all.length? all[j+1][0]-0.4 : st.dur)}; }); }); })();

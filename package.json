@@ -1,7 +1,7 @@
 {
   "name": "momster-helper",
   "private": true,
-  "description": "Kids' chore adventure PWA: stars, coins, sidekicks, and weekly mess villains.",
+  "description": "Kids' chore adventure PWA: stars, coins, hero helpers, and weekly mess villains.",
   "scripts": {
     "check": "node local_checks_v59.mjs",
     "test": "node local_checks_v59.mjs && for f in tests/*.test.js; do echo \"== $f\"; node \"$f\" || exit 1; done",

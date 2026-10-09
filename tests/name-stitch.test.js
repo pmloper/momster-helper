@@ -69,11 +69,10 @@ async function run(){
       window.speakName=function(t,done){ window.__log.push("DEVICE:"+t); done(); }; window.enVoices=()=>[1]; window.ttsOk=false; true`);
     const run = async keys => { await ev(`window.__log.length=0; play(${JSON.stringify(keys)}); true`); await sleep(150); return JSON.parse(await ev(`JSON.stringify(window.__log)`)); };
     const have = async () => JSON.parse(await ev(`JSON.stringify(["nlead_hi","nlead_hero","ntail_ready","nm_emma","nm_zoey"].map(k=>!!voiceFile(k)))`));
-    await ev(`AUDIO_INDEX.momster = new Set(["nlead_hi","nlead_justme","nlead_blame","nlead_hero","nlead_princess","nlead_knight","nlead_ninja","ntail_ready","nm_emma"]); true`);
+    await ev(`AUDIO_INDEX.momster = new Set(["nlead_hi","nlead_justme","nlead_hero","nlead_princess","nlead_knight","nlead_ninja","ntail_ready","nm_emma"]); true`);
 
     let l = await run([N("hi","Emma")]); ok(l.join()==="nlead_hi.mp3,nm_emma.mp3", "Hi + name: " + l.join(" + "));
     l = await run([N("justme","Emma")]); ok(l.join()==="nlead_justme.mp3,nm_emma.mp3", "Back to just + name: " + l.join(" + "));
-    l = await run([N("blame","Emma")]); ok(l.join()==="nlead_blame.mp3,nm_emma.mp3", "I blame + name: " + l.join(" + "));
     l = await run([N("ready_hero","Emma")]); ok(l.join()==="nlead_hero.mp3,nm_emma.mp3,ntail_ready.mp3", "style line is lead + name + tail: " + l.join(" + "));
     l = await run([N("ready_ninja","Emma")]); ok(l.join()==="nlead_ninja.mp3,nm_emma.mp3,ntail_ready.mp3", "each style has its own lead-in: " + l.join(" + "));
     l = await run(["pop", N("hi","Emma"), "coin"]); ok(l.length===4 && l[1]==="nlead_hi.mp3" && l[2]==="nm_emma.mp3", "stitched pieces play in order between other clips: " + l.join(" + "));

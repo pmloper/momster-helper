@@ -72,7 +72,7 @@ export default defineSchema({
   }).index("by_kid_week", ["kidId", "weekStart"])
     .index("by_family_week", ["familyId", "weekStart"]),
 
-  // Sidekick, coins and collections (localStorage: starjobs_buddy_<kidId>).
+  // Hero helper, coins and collections (localStorage: starjobs_buddy_<kidId>).
   buddies: defineTable({
     familyId: v.id("families"),
     kidId: v.id("kids"),

@@ -1,4 +1,4 @@
-// Hero-style costumes are drawn over the sidekick and never unlock or replace anything; the two hands ask before swapping.
+// Hero-style costumes are drawn over the hero helper and never unlock or replace anything; the two hands ask before swapping.
 // Real Chromium over CDP (node >= 22, no deps).   Usage: node tests/costume-hands.test.js   (CHROME env var overrides the browser path)
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -70,9 +70,9 @@ async function run(){
     const before = await get(`({owned:buddies.k1.owned.slice(), wear:buddies.k1.wear, look:buddies.k1.look})`);
     await ev(`applyStyle("k1","knight"); true`);
     const after = await get(`({owned:buddies.k1.owned, wear:buddies.k1.wear, look:buddies.k1.look})`);
-    ok(J(before) === J(after), "picking Knight changes nothing the sidekick owns, wears or looks like");
+    ok(J(before) === J(after), "picking Knight changes nothing the hero helper owns, wears or looks like");
     const dw = await get(`dressed("k1").wear`);
-    ok(dw.hat === "khelm" && dw.fit === "f_armor" && dw.hold === "sword" && dw.hold2 === "shield", "but the sidekick is drawn in the knight costume: " + J(dw));
+    ok(dw.hat === "khelm" && dw.fit === "f_armor" && dw.hold === "sword" && dw.hold2 === "shield", "but the hero helper is drawn in the knight costume: " + J(dw));
     ok((await get(`buddies.k1.owned.includes("khelm")||buddies.k1.owned.includes("f_armor")`)) === false, "the helmet and armor are not unlocked");
 
     // 2. Hands full (sword + shield from the costume): a new toy asks first, and changes nothing yet
@@ -117,7 +117,7 @@ async function run(){
     await tap("ball");
     ok(!(await ev(`!!layer.querySelector(".handsfull")`)) && !(await get(`buddies.k1.wear.hold||null`)), "tapping a worn toy just puts it away");
 
-    // 6. Older saves that merged the costume into the sidekick get their own things back
+    // 6. Older saves that merged the costume into the hero helper get their own things back
     await ev(`settings.heroStyle={k1:"ninja"}; buddies.k1.wear={face:"nmask",fit:"f_gi",hat:"cap"}; buddies.k1.look.ears="none"; buddies.k1.base={look:{ears:"bear"},wear:{hat:"cap"}}; delete buddies.k1.costumeFixed; fixCostumes(); true`);
     const mig = await get(`({wear:buddies.k1.wear, ears:buddies.k1.look.ears, base:!!buddies.k1.base})`);
     ok(J(mig.wear) === J({hat:"cap"}) && mig.ears === "bear" && !mig.base, "an older saved costume is unpicked back into the kid's own look: " + J(mig));

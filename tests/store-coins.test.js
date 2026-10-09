@@ -1,4 +1,4 @@
-// Sidekick store rules and the coin economy.
+// Hero helper store rules and the coin economy.
 //
 // Wearing: one hat, one face, one neck, one outfit, one place, and two hands that hold two toys OR one toy and one
 // pet (never two pets). The older item gives way. Older avatars that wear too much are fixed on load. Everything a
