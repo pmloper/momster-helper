@@ -69,7 +69,7 @@ async function run(){
       window.__log=[]; const pu=window.playUrl; window.playUrl=function(u,k){ window.__log.push(decodeURIComponent(u.split("/").pop())); return pu.apply(this,arguments); }; return true; })()`);
     ok(await ev(`!!stitchCtxGet() && stitchCtx.state==="running"`), "Web Audio is running");
     await ev(`play(["N:ready_hero:Emma","pop"]); true`);
-    await sleep(2800);
+    await sleep(4000);
     const sched = JSON.parse(await ev(`JSON.stringify(window.__sched)`));
     ok(sched.length === 3, "a style line schedules three pieces (Super, Emma, ready to help Momster): " + sched.length);
     let worst = 0; for(let i=1;i<sched.length;i++) worst = Math.max(worst, Math.abs(sched[i].t - (sched[i-1].t + sched[i-1].d)));

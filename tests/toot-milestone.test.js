@@ -69,11 +69,12 @@ async function run(){
     ok(keys.includes("BJ:10 family toots!") && keys.includes("BJ:The dog is taking the blame.") && keys.indexOf("BJ:10 family toots!") < keys.indexOf("BJ:The dog is taking the blame."), "it says the count, then the funny line: " + keys.join(" , "));
     const haveClips = JSON.parse(await ev(`JSON.stringify(["10 family toots!","The dog is taking the blame."].map(t=>!!voiceFile(textKey(t))))`));
     ok(haveClips.every(Boolean), "both pieces have a clip");
-    // The kid keeps tooting while the card is up: the villain does not talk over it
+    // The kid taps the toot button again while the card is up: that tap only closes the card (no toot, no villain line talking over it)
     await ev(`window.__k.length=0; true`);
-    for(let i=0;i<3;i++){ await ev(`document.querySelector('[data-a="toot"]').click(); true`); await sleep(900); }
+    await ev(`document.querySelector('[data-a="toot"]').click(); true`); await sleep(1200);
     const after = JSON.parse(await ev(`JSON.stringify(window.__k.map(x=>JSON.parse(x)).flat())`));
-    ok(!after.some(k=>String(k).startsWith("V:")) && !after.some(k=>/^N:blame/.test(String(k))), "no villain line interrupts the card while it is up: " + after.join(" , "));
+    ok(!(await ev(`!!document.querySelector(".cheer.tapcard")`)), "a tap outside the card closes it");
+    ok(!after.some(k=>String(k).startsWith("V:")), "and that tap did not make the villain talk over the card: " + after.join(" , "));
   } catch(e){ fails++; console.log("EXCEPTION "+(e && e.stack || e)); }
   finally { try { ws.close(); } catch(e){} try { proc.kill(); } catch(e){} try { server.close(); } catch(e){} }
   console.log(fails ? "\nFAILED: "+fails+" check(s)" : "\nALL PASS");

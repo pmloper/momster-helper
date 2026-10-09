@@ -1096,7 +1096,7 @@ nlead_princess,momster,name lead-in,Princess,NEW,yes (kid name),"plays before a 
 nlead_knight,momster,name lead-in,Knight,NEW,yes (kid name),"plays before a kid's name: ""Knight <name>, ready to help Momster!""",,momster
 nlead_ninja,momster,name lead-in,Ninja,NEW,yes (kid name),"plays before a kid's name: ""Ninja <name>, ready to help Momster!""",,momster
 ntail_ready,momster,name tail,ready to help Momster!,NEW,yes (kid name),plays after a kid's name in the hero-style lines,,momster
-t_your-hands-are-full-put-one-away-to-hold_46951e37,momster,screen text,Your hands are full! Put one away to hold this.,NEW,yes,hands-full popup in the sidekick shop,,momster
+t_your-hands-are-full-put-one-away-to-hold_46951e37,momster,screen text,Your hands are full! Put one away to hold this.,NEW,yes,hands-full popup in the hero helper shop,,momster
 t_nice-hustle-all-done-without-being-asked_bde71da7,momster,app line,Nice hustle! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
 t_look-at-that-all-done-without-being-aske_f9d0a992,momster,app line,Look at that! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
 t_boom-all-done-without-being-asked-twice_cfbd6c40,momster,app line,Boom! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
@@ -1109,3 +1109,6 @@ t_50-family-toots_141f5886,momster,toot milestone,50 family toots!,NEW,yes,plays
 t_100-family-toots_d4eedb2a,momster,toot milestone,100 family toots!,NEW,yes,plays with the toot milestone banner (before the funny line),,momster
 t_200-family-toots_7bbeb227,momster,toot milestone,200 family toots!,NEW,yes,plays with the toot milestone banner (before the funny line),,momster
 t_500-family-toots_d45132d6,momster,toot milestone,500 family toots!,NEW,yes,plays with the toot milestone banner (before the funny line),,momster
+t_you-earned-a-coin_315f69b0,momster,app line,You earned a coin!,NEW,yes,card after finishing a routine (1 coin),,momster
+t_you-earned-2-coins_c796f206,momster,app line,You earned 2 coins!,NEW,yes,card after finishing a routine once the villain is beaten (2 coins),,momster
+t_joke-time-tap-the-card-to-hear-a-joke_79b2f450,momster,app line,Joke time! Tap the card to hear a joke!,NEW,yes,joke card after finishing a routine,,momster

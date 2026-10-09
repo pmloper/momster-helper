@@ -169,6 +169,9 @@ button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
 .sheet h2{margin:0 0 2px;font-size:clamp(19px,3.4vh,30px);line-height:1.1}
 .sheet p{margin:0 0 10px;color:var(--soft);font-size:18px}
 .rewards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+#csmSheet .rewards{grid-template-columns:repeat(2,minmax(0,1fr))}   /* two voices, side by side, on every screen size */
+#csmSheet .rewards .rw{min-height:116px;justify-content:center;padding:10px 6px;text-align:center}
+#csmSheet .rw b{font-size:clamp(36px,6vh,48px)}
 @media (orientation:portrait), (max-width:700px){.rewards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .rw{border:3px solid color-mix(in srgb,var(--ink) 18%,transparent);border-radius:22px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;
   font-size:clamp(14px,2.3vh,19px);font-weight:700;line-height:1.05;text-align:center}
@@ -1384,7 +1387,10 @@ function buddySvg(look, wear, opts){
   const vampCape = wear.neck==="vcape" ? `<path d="M58 ${cy-30} Q100 ${cy-16} 142 ${cy-30} L190 ${cy+62} Q176 ${cy+50} 162 ${cy+64} Q148 ${cy+52} 132 ${cy+68} Q116 ${cy+56} 100 ${cy+70} Q84 ${cy+56} 68 ${cy+68} Q52 ${cy+52} 38 ${cy+64} Q24 ${cy+50} 10 ${cy+62}Z" fill="#1A1A2E"/><path d="M66 ${cy-22} Q100 ${cy-10} 134 ${cy-22} L176 ${cy+56} Q166 ${cy+48} 156 ${cy+58} Q144 ${cy+48} 130 ${cy+62} Q116 ${cy+52} 100 ${cy+64} Q84 ${cy+52} 70 ${cy+62} Q56 ${cy+48} 44 ${cy+58} Q34 ${cy+48} 24 ${cy+56}Z" fill="#C1121F"/><path d="M84 ${cy-26} L26 ${top-6} Q40 ${top+30} 44 ${cy+4} Z M116 ${cy-26} L174 ${top-6} Q160 ${top+30} 156 ${cy+4} Z" fill="#1A1A2E"/><path d="M80 ${cy-24} L36 ${top+4} Q46 ${top+30} 50 ${cy-4} Z M120 ${cy-24} L164 ${top+4} Q154 ${top+30} 150 ${cy-4} Z" fill="#C1121F"/>` : "";
   const capeBack = vampCape + (capeCol ? `<defs><linearGradient id="${id}r" x1="0" x2="1"><stop offset="0" stop-color="#FF6B6B"/><stop offset=".25" stop-color="#FFB347"/><stop offset=".5" stop-color="#FFE066"/><stop offset=".75" stop-color="#7ED98B"/><stop offset="1" stop-color="#7CC6FE"/></linearGradient></defs>
     <path d="M58 ${cy-28} Q100 ${cy-14} 142 ${cy-28} L184 ${cy+62} Q100 ${cy+80} 16 ${cy+62}Z" fill="${capeCol}"/><path d="M58 ${cy-28} Q100 ${cy-14} 142 ${cy-28} L150 ${cy-10} Q100 ${cy+2} 50 ${cy-10}Z" fill="#000" opacity=".15"/>${wear.neck==="pcape"?[[30,cy+40],[170,cy+40],[42,cy+10],[158,cy+10]].map(([x,y])=>`<text x="${x}" y="${y}" font-size="14" text-anchor="middle">✨</text>`).join(""):""}${""}` : "");
-  const em=(key,x,y,s)=>{ const it=wear[key]&&itemById(wear[key]); if(!it) return ""; if(it[5]) return draw[it[5]]||"";
+  // The sword is drawn, not an emoji: the emoji is centered on the hand, so it was held by the blade. The grip is at the hand, blade up.
+  const sword=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s/46})" stroke-linejoin="round"><path d="M-5.5 -11 L-5.5 -38 L0 -50 L5.5 -38 L5.5 -11 Z" fill="#DDE3EE" stroke="#6B7690" stroke-width="2"/><path d="M0 -13 L0 -40" stroke="#fff" stroke-width="2" opacity=".75"/>
+    <rect x="-15" y="-12" width="30" height="7" rx="3.5" fill="#F4C430" stroke="#9A7A10" stroke-width="2"/><rect x="-4.5" y="-6" width="9" height="19" rx="3.5" fill="#8B5A2B" stroke="#4A2F14" stroke-width="2"/><circle cx="0" cy="16" r="5" fill="#F4C430" stroke="#9A7A10" stroke-width="2"/></g>`;
+  const em=(key,x,y,s)=>{ const it=wear[key]&&itemById(wear[key]); if(!it) return ""; if(it[5]) return draw[it[5]]||""; if(it[1]==="sword") return sword(x,y,s);
     return `<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" dominant-baseline="central">${it[2]}</text>`; };
   let bg="";
   if(wear.bg && !opts.noBg){ const T=(x,y,s,e)=>`<text x="${x}" y="${y}" font-size="${s}" text-anchor="middle" dominant-baseline="central">${e}</text>`;
@@ -1744,7 +1750,9 @@ const CAT_COIN = 1, CAT_COIN_AFTER_VILLAIN = 2, VILLAIN_COINS = 10, STARTER_COIN
 function coinAward(k, key, n){ const b=buddies[k]; if(!b) return 0; b.coinAwards=b.coinAwards||{}; if(b.coinAwards[key]!=null) return 0; b.coinAwards[key]=n; saveBuddy(k); return n; }
 function coinPop(n, label){ document.querySelectorAll(".coinpop").forEach(x=>x.remove()); const c=document.createElement("div"); c.className="coinpop"; c.textContent="+"+n+" 🪙"+(label?"  "+label:""); document.body.appendChild(c); setTimeout(()=>c.remove(),2800); }
 // A category pays once per kid per day. wasDefeated is whether the villain was already beaten before this finish.
-function awardCategory(k, cat, day, wasDefeated, label){ const n=coinAward(k, "cat:"+day+":"+cat, wasDefeated?CAT_COIN_AFTER_VILLAIN:CAT_COIN); if(n) setTimeout(()=>coinPop(n,label), 1800); return n; }
+// The coin shows as a card in line with the other end-of-routine cards (it used to flash by while another card was still up and get missed).
+function awardCategory(k, cat, day, wasDefeated, label){ const n=coinAward(k, "cat:"+day+":"+cat, wasDefeated?CAT_COIN_AFTER_VILLAIN:CAT_COIN);
+  if(n) setTimeout(()=>cheer("🪙", "+"+n+" 🪙 "+(n===1?"coin":"coins")+"! "+label, ["coin", n===1?"BJ:You earned a coin!":"BJ:You earned 2 coins!"]), 2200); return n; }
 const dowOfDay = day => new Date(day+"T12:00:00").getDay();
 function catComplete(k, cat, day){ const done=((weeks[k]||{}).done||{})[day]||[];
   if(cat==="pk") return done.some(x=>/^pk_/.test(x) && x!=="pk_unselected");
@@ -1842,7 +1850,13 @@ function cheer(big,text,keys,confetti,auto){ let c=null; popup(()=>{ if(confetti
   c.firstChild.textContent=big; c.children[1].textContent=text; document.body.appendChild(c);
   if(auto) setTimeout(()=>c.remove(),2400); else c.addEventListener("click",()=>c.remove());
   if(keys) play(keys); }, 2400, auto ? null : ()=>!!(c && c.isConnected)); }
+// After a routine the joke is offered on a card: the kid taps the card to hear it (tapping anywhere else just closes it).
+function jokeOffer(){ let c=null; popup(()=>{ c=document.createElement("div"); c.className="cheer tapcard jokecard";
+  c.innerHTML='<div class="big">🤣</div><div>Joke time!</div><div class="tapnote">Tap here to hear a joke</div>';
+  c.addEventListener("click",()=>{ c.remove(); play(["jokeintro", pickJoke()]); }); document.body.appendChild(c); play(["BJ:Joke time! Tap the card to hear a joke!"]); }, 0, ()=>!!(c && c.isConnected)); }
 // Non-readers mode: read UI text out loud.
+// A tap anywhere that is not on a "tap to continue" card closes it (and does nothing else).
+document.addEventListener("click", e=>{ const c=document.querySelector(".cheer.tapcard"); if(!c || c.contains(e.target)) return; e.preventDefault(); e.stopPropagation(); c.remove(); }, true);
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
 // Non-reader mode: play the generated clip for each written line (silent if a clip does not exist yet).
@@ -2974,7 +2988,7 @@ function panel(){
       ${(window._deferredInstall && !loadLocal("installedHint"))?`<button class="srow link" data-a="pwaInstall"><span class="sl">📲 Install Momster Helper<small>Real app icon on your home screen. Works offline.</small></span><span class="chev">›</span></button>`:""}
       ${cloudRow()}
       <button class="srow link" data-a="famOpen"><span class="sl">👨‍👩‍👧 Family setup<small>Add a kid · edit kids, jobs and prizes</small></span><span class="chev">›</span></button>
-      <div class="srow"><span class="sl">Weekly star goal<small>${possibleThisWeek()} possible${(()=>{ const p=possibleThisWeek(), rec=Math.max(5,Math.round(p*0.8/5)*5); return g===rec?" · ✓ just right":" · Recommended: "+rec; })()}</small></span>
+      <div class="srow"><span class="sl">Weekly star goal<small>${possibleThisWeek()} possible${(()=>{ const p=possibleThisWeek(), rec=p>=DEFAULT_GOAL ? DEFAULT_GOAL : Math.max(5,Math.round(p*0.8/5)*5); return g===rec?" · ✓ just right":" · Recommended: "+rec; })()}</small></span>
         <span class="seg"><button data-a="goal" data-d="-5">−</button><b class="segv">${g}</b><button data-a="goal" data-d="5">+</button></span></div>
       <div class="srow"><span class="sl">🏁 Morning Race<small>${raceOn()?"On: kids race the clock to leave on time":"Off: no race clock or banners. Your times are kept."}</small></span>${sw(raceOn(),"raceToggle")}</div>
       <div class="srow stack"><span class="sl">Leave-by times<small>Family times, plus an optional time for each kid</small></span>
@@ -3351,7 +3365,7 @@ function tapJob(k, id){ settleCoins(k);
         dmgPop(Math.max(1,dmgR)); },650); const sk = r.id==="bt" ? streak(k) : 0, fire = [3,5,7,10,14].includes(sk);
     setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r),["raceWin"]); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r),["streak"]); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐",[r.doneSnd||"alldone", praiseSpoken(k)]); }, 1400);
     play(["fanfare","bonus"]);
-    if(!eggReady(k)) setTimeout(()=>popup(()=>play(["jokeintro", pickJoke()]), 5500), 4200); }
+    if(!eggReady(k)) setTimeout(jokeOffer, 4200); }
   else { render(); let hit = Math.max(1,teamDamage()-dmgB);
     const ms = mysteryLeft(k)>0 && Math.random()<0.12;
     if(ms){ mysteryUse(k); hit += 5; }
