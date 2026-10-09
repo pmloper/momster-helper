@@ -60,7 +60,7 @@
   },
   "voices": {
     "momster": {
-      "voice_id": "",
+      "voice_id": "iukn3a1vSSNFmdi5NZS4",
       "description": "Momster, the helper: warm, upbeat, a little silly. Same voice as the tutorial lines.",
       "settings": {
         "stability": 0.3
