@@ -12,6 +12,12 @@
 //   dead-air               more than 0.6 s of quiet inside or at the edges after trimming
 //   words-differ           (with --transcribe) the transcript matches the text by less than 85%
 // Needs ffmpeg and ffprobe on the PATH. --transcribe also needs ELEVENLABS_API_KEY (and honours ELEVENLABS_BASE_URL).
+import { spawnSync } from 'node:child_process';
+// Behind an HTTPS proxy (as in cloud sessions) Node's fetch only uses it when NODE_USE_ENV_PROXY=1 is set at start-up, so restart once with it.
+if ((process.env.HTTPS_PROXY || process.env.https_proxy) && !process.env.NODE_USE_ENV_PROXY && !process.env.MH_PROXY_RESTARTED && process.argv[1]) {
+  const r = spawnSync(process.execPath, ['--no-warnings', ...process.argv.slice(1)], { stdio: 'inherit', env: { ...process.env, NODE_USE_ENV_PROXY: '1', MH_PROXY_RESTARTED: '1' } });
+  process.exit(r.status === null ? 1 : r.status);
+}
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFile } from 'node:child_process';

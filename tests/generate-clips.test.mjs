@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
     const parsed = body ? JSON.parse(body) : null; requests.push({ method: req.method, url: req.url, headers: req.headers, body: parsed });
     const b = behaviour(parsed, requests.length);
     res.writeHead(b.status, { 'content-type': b.status === 200 ? 'audio/mpeg' : 'application/json', 'request-id': 'req_' + requests.length, ...(b.headers || {}) });
-    res.end(b.status === 200 ? Buffer.from('ID3-fake-audio-' + (parsed ? parsed.text.length : 0)) : JSON.stringify({ detail: 'nope' }));
+    res.end(b.status === 200 ? Buffer.from('ID3-fake-audio-' + (parsed ? parsed.text.length : 0)) : JSON.stringify({ detail: b.detail || 'nope' }));
   });
 });
 await new Promise(r => server.listen(0, '127.0.0.1', r));
@@ -117,6 +117,10 @@ ok(r.code === 0 && requests.length === 3 && walk(path.join(w, 'audio/_candidates
 w = workdir(); requests.length = 0; behaviour = () => ({ status: 401 });
 r = await run(w, ['--voice', 'momster', '--limit', '20', '--takes', '1', '--max-chars', '9000', '--concurrency', '1'], withKey);
 ok(r.code === 1 && requests.length === 1 && /check the key/.test(r.out), 'a bad key (401) stops the whole run after one request');
+behaviour = () => ({ status: 401, detail: 'Only one of xi-api-key and authorization headers must be provided. Received both headers.' });
+w = workdir(); requests.length = 0;
+r = await run(w, ['--voice', 'momster', '--limit', '3', '--takes', '1', '--max-chars', '9000', '--concurrency', '1'], withKey);
+ok(r.code === 1 && requests.length === 1 && /Network secrets/.test(r.out), 'if a proxy adds its own Authorization header the error says how to fix the environment');
 behaviour = () => ({ status: 200 });
 w = workdir(); requests.length = 0;
 r = await run(w, ['--voice', 'momster', '--limit', '50', '--takes', '1', '--max-chars', '60', '--concurrency', '1'], withKey);

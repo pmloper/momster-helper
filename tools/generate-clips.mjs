@@ -18,6 +18,12 @@
 // The key comes from the ELEVENLABS_API_KEY environment variable (ELEVEN_LABS_API, ELEVEN_LABS_API_KEY and XI_API_KEY also work) and is never printed or written. ELEVENLABS_BASE_URL overrides
 // https://api.elevenlabs.io (used by the tests). Candidates land in <out>/<voice>/<key>/take<N>.mp3 with a meta.json beside them;
 // nothing is copied into audio/<voice>/ until tools/promote-clips.mjs does it after review.
+import { spawnSync } from 'node:child_process';
+// Behind an HTTPS proxy (as in cloud sessions) Node's fetch only uses it when NODE_USE_ENV_PROXY=1 is set at start-up, so restart once with it.
+if ((process.env.HTTPS_PROXY || process.env.https_proxy) && !process.env.NODE_USE_ENV_PROXY && !process.env.MH_PROXY_RESTARTED && process.argv[1]) {
+  const r = spawnSync(process.execPath, ['--no-warnings', ...process.argv.slice(1)], { stdio: 'inherit', env: { ...process.env, NODE_USE_ENV_PROXY: '1', MH_PROXY_RESTARTED: '1' } });
+  process.exit(r.status === null ? 1 : r.status);
+}
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -81,6 +87,7 @@ async function synth({ base, apiKey, voiceId, body, format }) {
     if (res.ok) return { audio: Buffer.from(await res.arrayBuffer()), requestId: res.headers.get('request-id') || res.headers.get('x-request-id') || '' };
     if (res.status === 429 || res.status >= 500) { const ra = Number(res.headers.get('retry-after')); await sleep(ra > 0 ? ra * 1000 : 1000 * 2 ** attempt); continue; }
     const detail = (await res.text().catch(() => '')).slice(0, 200);
+    if (res.status === 401 && /Received both headers/.test(detail)) throw Object.assign(new Error('a proxy is adding its own Authorization header next to the xi-api-key. Remove the ElevenLabs entry under Network secrets / API credentials in the environment settings and keep only the environment variable'), { status: 401 });
     const err = new Error(`ElevenLabs answered ${res.status}: ${detail}`); err.status = res.status; throw err;
   }
   throw Object.assign(new Error('gave up after repeated rate-limit or server errors'), { status: 0 });
