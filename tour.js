@@ -7,7 +7,8 @@
 if(window.MomsterTour) return;
 
 const ART = {wave:"art/momster/wave.webp", stand:"art/momster/stand.webp", point:"art/momster/point.webp", thumbs:"art/momster/thumbs.webp", cheer:"art/momster/cheer.webp"};
-const AUDIO = n => "audio/momster/tour_"+n+".mp3";
+// The tutorial speaks in the family's chosen Momster voice when that voice has the clip, otherwise voice 1.
+const AUDIO = n => { try{ const k="tour_"+n, d=curVoice(); if(d!=="momster" && AUDIO_INDEX[d] && AUDIO_INDEX[d].has(k)) return "audio/"+d+"/"+k+".mp3"; }catch(e){} return "audio/momster/tour_"+n+".mp3"; };
 const BONUS = '.tab[data-r="bn"]', SIREN = {any:[".top .siren", ".top .hdTools"]}, TILE = ".tiles .tile", WHO = ".top .who", HQ = '.botnav [data-a="hq"]';
 
 /* One entry per audio file. Each chunk is [startSeconds, caption, pose, highlight, view, action].

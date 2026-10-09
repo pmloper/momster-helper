@@ -144,7 +144,7 @@ j_socks,momster,job,Match the socks.,existing,yes,,,momster
 j_clothes,momster,job,Put away your clean clothes.,existing,yes,,,momster
 j_room,momster,job,Room rescue! Clothes in the hamper. Books on the shelf. Stuffies on the bed.,existing,yes,,,momster
 j_camo,momster,job,Feed the pet.,existing,yes,,,momster
-intro,momster,character intro,Hi! I'm <character name>! Pick me!,NEW,yes,"record once in EACH character folder (audio/squeaky/intro.mp3 ...) with that character's own name, and once in momster/",,momster
+intro,momster,character intro,Hi! I'm Momster! Pick me!,NEW,yes,plays when a family previews Momster voice 1 or 2 in the Sound sheet,,momster
 m_troll,momster,villain name,Grumpy Tiara Troll,NEW,yes,spoken when the villain appears; key is the villain id,,momster
 m_booger,momster,villain name,Baron von Booger,NEW,yes,spoken when the villain appears; key is the villain id,,momster
 m_stink,momster,villain name,Sir Toots-a-Lot,NEW,yes,spoken when the villain appears; key is the villain id,,momster

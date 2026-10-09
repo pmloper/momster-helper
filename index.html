@@ -1117,10 +1117,10 @@ const URLS = {};
 function toUrl(b64){ try{ const bin=atob(b64), arr=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
   return URL.createObjectURL(new Blob([arr],{type:"audio/mpeg"})); }catch(e){ return "data:audio/mpeg;base64,"+b64; } }
 function getUrl(set,k){ const c=CLIPS[set]; if(!c||!c[k]) return null; URLS[set]=URLS[set]||{}; return URLS[set][k] || (URLS[set][k]=toUrl(c[k])); }
-const CHARS = [["squeaky","🐿️","Squeaky"],["fairy","🧚","Sparkle Fairy"],["dino","🦖","Dino"],["bear","🐻","Big Bear"],["robo","🤖","Robo"],["ghost","👻","Silly Ghost"]];
+// Momster's voice is one family-wide choice: voice 1, voice 2 or (later) the family's own recorded voice. Villains have fixed voices of their own.
+const MOMSTER_VOICES = ["momster","momster2"];
 function enVoices(){ try{ return speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); }catch(e){ return []; } }
-const rawChoice = kid => ((settings.kidVoice||{})[kid||view.kid||soundKid||FIRST_KID]) || DEFAULT_VOICE_DIR;
-function curVoice(kid){ kid=kid||view.kid||soundKid||FIRST_KID; const v=rawChoice(kid); return CHARS.some(c=>c[0]===v) ? v : DEFAULT_VOICE_DIR; }
+function curVoice(){ const v=settings && settings.voice; return MOMSTER_VOICES.includes(v) ? v : DEFAULT_VOICE_DIR; }
 /* Spoken lines are lazy-loaded files: audio/<voice>/<key>.mp3, listed in audio/manifest.json (see audio/README.md).
    Only the short sound effects are embedded in this page. */
 let soundKid = null;   // the kid whose voice the sound sheet edits when it is opened from the home screen (no kid selected)
@@ -1131,9 +1131,12 @@ function loadAudioIndex(){ try{ fetch(AUDIO_DIR+"manifest.json",{cache:"no-cache
   Object.keys((m&&m.names)||{}).forEach(t=>{ if(Array.isArray(m.names[t])) nx[t]=new Set(m.names[t]); }); AUDIO_INDEX=ix; NAME_INDEX=nx; }).catch(()=>{}); }catch(e){} }
 const nameFile = (t, n) => { const sl=nameSlug(n); return sl && NAME_INDEX[t] && NAME_INDEX[t].has(sl) ? AUDIO_DIR+"names/"+t+"/"+sl+".mp3" : null; };
 loadAudioIndex();
-// The kid's chosen character voice wins; everyone else gets the default Momster voice. Null means no file, so the app falls back to the device voice.
-function voiceFile(k){ const cv=curVoice(), dirs=CHARS.some(c=>c[0]===cv) ? [cv,DEFAULT_VOICE_DIR] : [DEFAULT_VOICE_DIR];
+// The family's chosen Momster voice wins; a line it doesn't have yet falls back to voice 1. Null means no file, so nothing plays.
+function voiceFile(k){ const cv=curVoice(), dirs=cv===DEFAULT_VOICE_DIR ? [DEFAULT_VOICE_DIR] : [cv,DEFAULT_VOICE_DIR];
   for(const d of dirs){ if(AUDIO_INDEX[d] && AUDIO_INDEX[d].has(k)) return AUDIO_DIR+d+"/"+encodeURIComponent(k)+".mp3"; } return null; }
+// Villains speak in their own fixed voices: audio/villains/<villain id>/<line key>.mp3. A line a villain doesn't have a clip for plays nothing.
+const villainFile = (id, k) => { const d="villains/"+id; return AUDIO_INDEX[d] && AUDIO_INDEX[d].has(k) ? AUDIO_DIR+d+"/"+encodeURIComponent(k)+".mp3" : null; };
+const villainKey = (m, text) => "V:"+m[0]+":"+text;   // play([villainKey(monster(), line)]) = that villain says that line
 const clipUrl = k => getUrl("sfx",k) || voiceFile(k);
 let queue=[], soundOk=null, ttsOk=false, ttsVoice=null;
 const VOICE = {};           // recorded clips: key -> object URL
@@ -1158,6 +1161,7 @@ function nextClip(){
     return enVoices().length ? speakName(nameLineText(t,n), nextClip) : nextClip(); }
   // Any other written line plays its generated clip, or nothing if the clip does not exist yet.
   if(k.startsWith("BJ:")){ const f=voiceFile(textKey(k.slice(3))); return f ? playUrl(f,k) : nextClip(); }
+  if(k.startsWith("V:")){ const i=k.indexOf(":",2), f=villainFile(k.slice(2,i), textKey(k.slice(i+1))); return f ? playUrl(f,k) : nextClip(); }
   if(k.startsWith("momster_")){ const u=MOMSTER_CLIPS[k]||voiceFile(k); return u ? playUrl(u) : nextClip(); }
   if(VOICE[k]) return playUrl(VOICE[k],k);
   const u=clipUrl(k); if(u) return playUrl(u,k);
@@ -1518,7 +1522,7 @@ function subscribe(){
     if(canon(d)!==canon(FAMILY_SET?FAMILY:null)) cloudAdoptFamily(d); }, e=>console.warn(e)));
   unsubs.push(db.doc("teams/"+WEEK).onSnapshot(s=>{ team = s.exists ? {given:!!s.data().given} : {given:false}; render(); }, e=>console.warn(e)));
   unsubs.push(db.doc("settings/main").onSnapshot(s=>{
-    if(s.exists){ const d=s.data(); settings = {pin:d.pinHash?undefined:(d.pin||DEFAULT_PIN), pinHash:d.pinHash||undefined, pinSalt:d.pinSalt||undefined, goal:d.goal||DEFAULT_GOAL, kidVoice:Object.assign({},d.kidVoice||{}), bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true, setupDone:!!d.setupDone}; if(!settings.pinHash){ upgradePin(); writeDoc("settings/main", JSON.parse(JSON.stringify(settings))); } saveLocal("settings",settings); render(); }
+    if(s.exists){ const d=s.data(); settings = {pin:d.pinHash?undefined:(d.pin||DEFAULT_PIN), pinHash:d.pinHash||undefined, pinSalt:d.pinSalt||undefined, goal:d.goal||DEFAULT_GOAL, voice:MOMSTER_VOICES.includes(d.voice)?d.voice:"momster", bonusJobs:Array.isArray(d.bonusJobs)?JSON.parse(JSON.stringify(d.bonusJobs)):null, launched:d.launched||null, raceEnd:d.raceEnd||null, driveEnd:d.driveEnd||null, driveDate:d.driveDate||null, walkEnd:d.walkEnd||null, busEnd:d.busEnd||null, kidEnds:d.kidEnds&&typeof d.kidEnds==='object'?JSON.parse(JSON.stringify(d.kidEnds)):null, raceOff:d.raceOff===true, rideMode:d.rideMode||null, rideDate:d.rideDate||null, teamPrize:d.teamPrize?Object.assign({},d.teamPrize):null, avatars:Object.assign({},d.avatars||{}), heroStyle:Object.assign({},d.heroStyle||{}), event:d.event?Object.assign({},d.event):null, toots:d.toots===false?false:true, setupDone:!!d.setupDone}; if(!settings.pinHash){ upgradePin(); writeDoc("settings/main", JSON.parse(JSON.stringify(settings))); } saveLocal("settings",settings); render(); }
   }, e=>console.warn(e)));
   subscribeVoices();
 }
@@ -1891,9 +1895,8 @@ function bossTap(el){ const m=monster(), left=monsterLeft()>0, lines=left?(TAUNT
   el.classList.remove("poked"); void el.offsetWidth; el.classList.add("poked"); clearTimeout(el._pk); el._pk=setTimeout(()=>el.classList.remove("poked"),750);
   const old=el.querySelector(".taunt"); if(old) old.remove();
   const b=document.createElement("span"); b.className="taunt"; b.textContent=line; el.appendChild(b); setTimeout(()=>b.remove(),2600);
-  play(["BJ:"+line]);
   for(let i=0;i<5;i++){ const c=document.createElement("span"); c.className="crumb"; c.textContent=m[3]; c.style.setProperty("--dx",(Math.random()*120-60)+"px"); c.style.setProperty("--dy",(-30-Math.random()*50)+"px"); c.style.animationDelay=(i*40)+"ms"; el.appendChild(c); setTimeout(()=>c.remove(),1100); }
-  play(["boing","BJ:"+line]); }
+  play(["boing",villainKey(m,line)]); }
 document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="bossTap"]'); if(t) bossTap(t); });
 document.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".kidTime")){ e.preventDefault(); e.target.click(); } });
 function checkMonster(){ if(monsterLeft()>0) return false; let won=false;
@@ -2050,7 +2053,7 @@ function tootAttack(el){ const boss=document.querySelector(".boss .bface"); if(!
     .concat(others.length?["I blame "+others[Math.floor(Math.random()*others.length)]+"!"]:[])
     .concat(["The dog did it! I saw him!","That one smelled like JUSTICE!"]);
   setTimeout(()=>{ const old=boss.querySelector(".taunt"); if(old) old.remove(); const line=L[Math.floor(Math.random()*L.length)]; const t=document.createElement("span"); t.className="taunt"; t.textContent="🤢 "+line;
-    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); { const bl=/^I blame (.+)!$/.exec(line); play([bl?nameKey("blame",bl[1]):"BJ:"+line]); } setTimeout(()=>t.remove(),2600); }, 700); }
+    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); { const bl=/^I blame (.+)!$/.exec(line); play([bl?nameKey("blame",bl[1]):villainKey(monster(),line)]); } setTimeout(()=>t.remove(),2600); }, 700); }
 function sideSilly(el){ const r=Math.floor(Math.random()*6); el.classList.remove("silly"); void el.offsetWidth; el.classList.add("silly");
   const puff=(e)=>{ const p=document.createElement("span"); p.className="spuff"; p.textContent=e; el.appendChild(p); setTimeout(()=>p.remove(),1100); };
   if(r===0){ puff("💨"); if(tootsOn()) toot(); play(["BJ:Oops! Excuse me!"]); }
@@ -2765,27 +2768,28 @@ function rewardSheet(k){
     <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id||weeks[k].reward2===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div>
     <p class="hint" style="text-align:center;margin-top:8px">${p1? "Prize: "+(p1.t||"") : "Pick your prize!"}</p></div></div>`;
 }
-const VOICE_CHOICES = () => [[DEFAULT_VOICE_DIR,"💪","Momster"]].concat(CHARS);
+const VOICE_CHOICES = () => [["momster","💪","Momster voice 1"],["momster2","🌟","Momster voice 2"]];
+const VOICE_CUSTOM_SOON = `<div class="rw" style="opacity:.55;cursor:default" aria-disabled="true" title="Coming soon"><b>🎙️</b>Record your own<small style="display:block;font-size:12px">Coming soon</small></div>`;
 function voiceSheet(k){
-  const cur=curVoice(k);
+  const cur=curVoice();
   const btn=([id,e,n])=>`<button class="rw ${cur===id?"on":""}" data-a="vc" data-v="${id}"><b>${e}</b>${esc(n)}</button>`;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet">
     <div class="ghead"><h2>${av(k)} Pick your helper voice!</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div><p>Tap a voice to hear it, then tap Yes to pick it.</p>
-    <div class="rewards">${VOICE_CHOICES().map(btn).join("")}</div></div></div>`;
+    <div class="rewards">${VOICE_CHOICES().map(btn).join("")}${VOICE_CUSTOM_SOON}</div></div></div>`;
 }
 function combinedSoundSheet(k, fromHome){
-  const cur=curVoice(k);
+  const cur=curVoice();
   const vbtn=([id,e,n])=>`<button class="rw ${cur===id?"on":""}" data-a="vc" data-v="${id}"><b>${e}</b>${esc(n)}</button>`;
   layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet" id="csmSheet" style="max-width:420px">
     <div class="ghead"><h2>🔊 Sound & voice</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div>
-    <p>Adjust how loud things are, then pick a voice for ${esc(KIDS[k].name)}.</p>
+    <p>Adjust how loud things are, then pick Momster's voice.</p>
     <div class="grp-t" style="margin-top:6px">🗣️ Talking (reads jobs out loud)</div>
     <div class="row" style="justify-content:center;margin:8px 0">${[[0,"🔇","Off"],[0.4,"🔉","Quiet"],[1,"🔊","Loud"]].map(([v,e,n])=>`<button class="rw ${voiceLvl===v?"on":""}" style="min-width:96px" data-a="vlvl" data-v="${v}"><b>${e}</b>${n}</button>`).join("")}</div>
     <div class="grp-t">🎵 Sound effects &amp; music</div>
     <div class="row" style="justify-content:center;margin:8px 0">${[[0,"🔇","Off"],[0.4,"🔉","Quiet"],[1,"🔊","Loud"]].map(([v,e,n])=>`<button class="rw ${soundLevel===v?"on":""}" style="min-width:96px" data-a="vol" data-v="${v}"><b>${e}</b>${n}</button>`).join("")}</div>
-    ${fromHome && Object.keys(KIDS).length>1 ? `<div class="grp-t">🎭 Voice for</div><div class="row" style="justify-content:center;gap:8px;margin:6px 0">${Object.keys(KIDS).map(x=>`<button class="chip big ${x===k?"go":""}" data-a="soundKid" data-k="${x}" style="--kc:${KIDS[x].color}">${esc(KIDS[x].name)}</button>`).join("")}</div>` : `<div class="grp-t">🎭 Voice for ${esc(KIDS[k].name)}</div>`}
-    <p style="margin:4px 0 6px">Tap a voice to hear it, then tap Yes to pick it.</p>
-    <div class="rewards">${VOICE_CHOICES().map(vbtn).join("")}</div>
+    <div class="grp-t">🎭 Momster's voice</div>
+    <p style="margin:4px 0 6px">Tap a voice to hear it, then tap it again to pick it.</p>
+    <div class="rewards">${VOICE_CHOICES().map(vbtn).join("")}${VOICE_CUSTOM_SOON}</div>
     <div id="vcConfirm" style="display:none;margin:12px 0 4px"></div>
   </div></div>`;
 }
@@ -3143,12 +3147,11 @@ document.addEventListener("click", e=>{
     case "recs": recSheet(); break;
     case "joke": play(["jokeintro", pickJoke()]); break;
     case "voiceSheet": voiceSheet(k); play(["intro"]); break;
-    case "vc": { const id=t.dataset.v, kv=k||soundKid;
+    case "vc": { const id=t.dataset.v;
       const allVoiceTiles=document.querySelectorAll('.rw[data-a="vc"]');
-      if(t.dataset.armed){ settings.kidVoice=Object.assign({},settings.kidVoice,{[kv]:id}); saveSettings(); close(); soundKid=kv; render(); play(["fanfare",KIDS[kv].hi,"great"]); soundKid=null; }
+      if(t.dataset.armed){ settings.voice=id; saveSettings(); close(); render(); play(["fanfare","great"]); }
       else { allVoiceTiles.forEach(b=>{b.classList.remove("on"); delete b.dataset.armed;}); t.classList.add("on"); t.dataset.armed="1";
-        const prev=(settings.kidVoice||{})[kv]; settings.kidVoice=Object.assign({},settings.kidVoice,{[kv]:id}); play(["intro"]);
-        settings.kidVoice=Object.assign({},settings.kidVoice,{[kv]:prev}); if(!prev) delete settings.kidVoice[kv]; } } break;
+        const prev=settings.voice; settings.voice=id; play(["intro"]); settings.voice=prev; if(!prev) delete settings.voice; } } break;
     case "rec": if(rec){ rec.stop(); } else startRec(t.dataset.k); break;
     case "upl": uplKey=t.dataset.k; fileIn.click(); break;
     case "hear": play([t.dataset.k]); break;

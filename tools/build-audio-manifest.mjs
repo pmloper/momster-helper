@@ -12,6 +12,10 @@ const dirs = dir => fs.readdirSync(dir, { withFileTypes: true }).filter(d => d.i
 const manifest = {};
 for (const voice of dirs(root)) {
   if (voice === 'names') continue;
+  if (voice === 'villains') {   // audio/villains/<villain id>/<key>.mp3  ->  manifest["villains/<villain id>"]
+    for (const v of dirs(path.join(root, voice))) { const keys = mp3s(path.join(root, voice, v)); if (keys.length) manifest['villains/' + v] = keys; }
+    continue;
+  }
   const keys = mp3s(path.join(root, voice));
   if (keys.length) manifest[voice] = keys;
 }

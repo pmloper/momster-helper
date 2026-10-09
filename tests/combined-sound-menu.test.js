@@ -128,7 +128,7 @@ function startServer(rootDir, port) {
     const text=sheet.textContent;
     const hasTalking=/Talking|reads jobs/i.test(text);
     const hasSFX=/Sound effects|music/i.test(text);
-    const hasVoiceSection=/helper voice|Robot characters|Fun voices|More real voices|Voice for/i.test(text);
+    const hasVoiceSection=/helper voice|Momster's voice|Voice for/i.test(text);
     const rwButtons=[...sheet.querySelectorAll('.rw')];
     const vlvlCount=sheet.querySelectorAll('[data-a="vlvl"]').length;
     const volCount=sheet.querySelectorAll('[data-a="vol"]').length;

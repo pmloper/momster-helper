@@ -3,8 +3,9 @@
 Each spoken line is one MP3 at `audio/<voice>/<lineKey>.mp3`. The app fetches a clip the first time it is needed
 (and the service worker caches it for offline use). Only the short sound effects are embedded in `index.html`.
 
-- `momster/` is the default voice every kid hears.
-- Character voices (`squeaky`, `fairy`, `dino`, `bear`, `robo`, `ghost`) are optional. If a kid picks one and a clip exists there, it plays; otherwise the app falls back to `momster/`.
+- `momster/` is Momster voice 1, the default. `momster2/` is Momster voice 2: the same line keys, a different voice. A family picks one in the Sound sheet; a line voice 2 doesn't have yet falls back to voice 1.
+- Each villain has a fixed voice of their own in `villains/<villain id>/` (`m_sock`, `m_crumb`, `m_dust`, `m_toy`, `m_slime`, `m_troll`, `m_booger`, `m_stink`). A villain never plays a clip from another folder.
+- The old character voices (`squeaky`, `fairy`, `dino`, `bear`, `robo`, `ghost`) are retired.
 - If no clip exists for a line, the app plays nothing for it. `node tools/missing-clips.mjs` lists what is still missing.
 - The device voice is only used to read a kid's name that has no generated clip yet (see Kid names).
 - `<lineKey>` is the `key` column in `audio/lines.csv` (generate the `text` column). Keys that start with `t_` are derived from the exact sentence, so the app finds the clip for any written line, including ones a family writes themselves.

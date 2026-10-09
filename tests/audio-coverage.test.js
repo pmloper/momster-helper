@@ -92,9 +92,9 @@ async function run(){
       add("special mission", BJ("Pick your special mission for today."));
       EVENTS.forEach(e=>{ add("surprise mission", BJ("Surprise mission! "+e[2]+". "+e[3]+".")); add("surprise mission announce", BJ("Emergency! "+e[2]+" "+e[3]+"!")); });
       for(let n=1;n<=9;n++) add("silly twist","s"+n); TWISTS.slice(9).forEach(t=>add("silly twist",BJ("Do it "+t+"!")));
-      Object.values(TAUNTS).flat().forEach(t=>add("villain taunt",BJ(t))); Object.values(VJOKES).flat().forEach(t=>add("villain joke",BJ(t)));
-      MOODS.forEach(m=>m[1].forEach(t=>add("villain mood",BJ(t)))); KO_LINES.forEach(t=>add("villain defeated",BJ(t)));
-      add("villain line",BJ("Grrr! Mess forever!"));
+      Object.entries(TAUNTS).forEach(([id,l])=>l.forEach(t=>add("villain taunt","V:"+id+":"+t))); Object.entries(VJOKES).forEach(([id,l])=>l.forEach(t=>add("villain joke","V:"+id+":"+t)));
+      MOODS.forEach(m=>m[1].forEach(t=>add("villain mood","V:any:"+t))); KO_LINES.forEach(t=>add("villain defeated","V:any:"+t));
+      add("villain line","V:any:Grrr! Mess forever!");
       MONSTERS.forEach(m=>{ add("villain name", m[0]); add("villain intro", BJ(villainIntroText(m))); });
       N_LINES.forEach(t=>add("cheer",BJ(t))); JOKES.forEach(j=>{ add("joke of the day setup",BJ(j[0])); add("joke of the day punchline",BJ(j[1])); });
       for(let i=1;i<=17;i++) add("joke","k"+i); for(let i=1;i<=8;i++) add("joke","hk"+i); for(let i=1;i<=12;i++) add("cheer","c"+i);
@@ -104,7 +104,8 @@ async function run(){
       ITEMS.forEach(it=>add("shop item",BJ(it[3])));
       ["Walking today!","Bus today!","Driving today!"].forEach(t=>add("ride picker",BJ(t)));
       ["momster_cheer","momster_almost","momster_win"].forEach(x=>add("Momster line",x));
-      return E.map(e=>{ const r=e.raw; return {src:e.src, raw:r, id: r.startsWith("BJ:") ? textKey(r.slice(3)) : r, text: r.startsWith("BJ:") ? r.slice(3) : null}; }); })()`);
+      const split=r=>{ if(r.startsWith("BJ:")) return [null,r.slice(3)]; if(r.startsWith("V:")){ const i=r.indexOf(":",2); return [r.slice(2,i), r.slice(i+1)]; } return [null,null]; };
+      return E.map(e=>{ const r=e.raw, [v,t]=split(r); return {src:e.src, raw:r, id: t!==null ? textKey(t) : r, text:t, villain:v}; }); })()`);
     // plain keys that are sound effects, not spoken lines
     const sfx = new Set(await ev(`Object.keys(CLIPS.sfx).concat([...SFX])`));
     // ---- 1b. the same question asked of the running app: drive real flows with the speaker stubbed out and record every request ----
@@ -132,7 +133,7 @@ async function run(){
       await run("village intro",async()=>{ view.kid=null; render(); villainIntro(); layer.innerHTML=""; });
       await sleep(5200);
       window.play=realPlay; layer.innerHTML=""; document.querySelectorAll(".cheer,.dmgpop-ov,.party").forEach(x=>x.remove());
-      return {req:REQ.map(k=>({raw:k,id:k.indexOf("BJ:")===0?textKey(k.slice(3)):k,text:k.indexOf("BJ:")===0?k.slice(3):null})), errs};
+      return {req:REQ.map(k=>{ let v=null, t=null; if(k.indexOf("BJ:")===0) t=k.slice(3); else if(k.indexOf("V:")===0){ const i=k.indexOf(":",2); v=k.slice(2,i); t=k.slice(i+1); } return {raw:k,id:t!==null?textKey(t):k,text:t,villain:v}; }), errs};
     })()`);
     ok(traced && traced.req.length > 100, "the traced run asked for "+(traced?traced.req.length:0)+" clips ("+(traced&&traced.errs.length?traced.errs.length+" scenario errors: "+traced.errs.slice(0,3).join("; "):"no scenario errors")+")");
     const tracedMissing = new Map(), nameTpl = new Set();
@@ -155,7 +156,7 @@ async function run(){
     const tootBody = (srcAll.match(/const L=\[[\s\S]*?setTimeout\(\(\)=>\{ const old=boss/)||[""])[0];
     const tootLines = (tootBody.match(/"[^"\n]+"/g)||[]).map(x=>x.slice(1,-1)).filter(t=>/[a-z]/i.test(t) && t.length>3 && !/^I blame |^const |boss$/.test(t));
     ok(tootLines.length===10, "found the villain's ten toot reactions in the source ("+tootLines.length+")");
-    const tootKeys = JSON.parse(await ev(`JSON.stringify(${JSON.stringify([...new Set(tootLines)])}.map(t=>({src:"toot reaction",raw:"BJ:"+t,id:textKey(t),text:t})))`));
+    const tootKeys = JSON.parse(await ev(`JSON.stringify(${JSON.stringify([...new Set(tootLines)])}.map(t=>({src:"toot reaction",raw:"V:any:"+t,id:textKey(t),text:t,villain:"any"})))`));
     const all = found.concat(litKeys, tootKeys);
 
     // lines that contain a changing number or name: recorded another way, listed here on purpose
@@ -169,6 +170,13 @@ async function run(){
     const dynamicIds = a => /^BJ:(\d+ more to go!|Minus |Every chore you finish)/.test(a.raw) || /\d/.test(a.raw) && /more to go|health left/.test(a.raw);
     const missing = new Map();
     for(const a of all){ if(dynamicIds(a)) continue; if(!a.text && sfx.has(a.raw)) continue; if(csvKeys.has(a.id)) continue; if(!missing.has(a.id)) missing.set(a.id, a); }
+    // every line a villain says must name that villain (or "villains:any") in the speaker column
+    const speakerOf = new Map(csvRows.filter(r=>r[0]).map(r=>[r[0], r[8]||"momster"]));
+    const wrongSpeaker = [];
+    for(const a of all.concat(traced?traced.req:[])){ if(!a.villain) continue; const sp=speakerOf.get(a.id); if(!sp) continue;
+      const okSp = a.villain==="any" ? sp==="villains:any" : (sp===a.villain || sp==="villains:any");
+      if(!okSp) wrongSpeaker.push((a.text||a.raw).slice(0,50)+" is said by "+a.villain+" but the list says "+sp); }
+    ok(wrongSpeaker.length===0, "every villain line names the right speaker in lines.csv"+(wrongSpeaker.length?": "+wrongSpeaker.slice(0,3).join("; "):""));
     const total = new Set(all.filter(a=>a.text||!sfx.has(a.raw)).map(a=>a.id)).size;
     console.log("INFO "+total+" distinct lines the app can speak; "+csvKeys.size+" rows in audio/lines.csv");
     const bySrc = {}; [...missing.values()].forEach(a=>{ (bySrc[a.src]=bySrc[a.src]||[]).push(a); });

@@ -1,7 +1,11 @@
-// Lists lines in audio/lines.csv that have no clip yet in the default voice folder (audio/momster/).
-//   node tools/missing-clips.mjs            -> summary by category
-//   node tools/missing-clips.mjs --list     -> every missing key with its text
-// Rebuild the manifest first:  node tools/build-audio-manifest.mjs
+// Lists the clips that still have to be generated, per voice folder, from audio/lines.csv and audio/manifest.json.
+//   node tools/missing-clips.mjs                 -> how many clips each voice still needs, by category
+//   node tools/missing-clips.mjs --list          -> every missing clip with its text
+//   node tools/missing-clips.mjs --voice villains/m_sock --list
+//   node tools/missing-clips.mjs --all           -> also count labels and text that is shown but not played yet
+// Voices: momster (voice 1), momster2 (voice 2), and villains/<villain id> (each villain's own voice).
+// A line with speaker "momster" is needed in both Momster voices; a villain's own line only in that villain's folder;
+// a "villains:any" line in every villain's folder. Rebuild the manifest first:  node tools/build-audio-manifest.mjs
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -16,10 +20,29 @@ const parse = text => { // minimal CSV parser (quoted fields, doubled quotes)
 const [head, ...rows] = parse(fs.readFileSync(path.join(process.cwd(), 'audio/lines.csv'), 'utf8'));
 const ix = Object.fromEntries(head.map((h, i) => [h, i]));
 const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'audio/manifest.json'), 'utf8'));
-const have = new Set(manifest.momster || []);
-const missing = rows.filter(r => r[ix.key] && !have.has(r[ix.key]) && r[ix.played_in_app].startsWith('yes'));
-const byCat = {};
-for (const r of missing) byCat[r[ix.category]] = (byCat[r[ix.category]] || 0) + 1;
-console.log(`${missing.length} lines played by the app have no clip in audio/momster/`);
-for (const [c, n] of Object.entries(byCat).sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(4)}  ${c}`);
-if (process.argv.includes('--list')) for (const r of missing) console.log(`${r[ix.key]}\t${r[ix.text]}`);
+const VILLAINS = ['m_sock', 'm_crumb', 'm_dust', 'm_toy', 'm_slime', 'm_troll', 'm_booger', 'm_stink'];
+const MOMSTER = ['momster', 'momster2'];
+const only = process.argv.includes('--voice') ? process.argv[process.argv.indexOf('--voice') + 1] : null;
+const all = process.argv.includes('--all');
+
+const need = {};   // voice folder -> [{key, text, category}]
+for (const r of rows) {
+  if (!r[ix.key]) continue;
+  if (!all && !(r[ix.played_in_app] || '').startsWith('yes')) continue;
+  const sp = r[ix.speaker] || 'momster';
+  const voices = sp === 'momster' ? MOMSTER : sp === 'villains:any' ? VILLAINS.map(v => 'villains/' + v) : ['villains/' + sp];
+  for (const v of voices) (need[v] = need[v] || []).push({ key: r[ix.key], text: r[ix.text], category: r[ix.category] });
+}
+let grand = 0;
+for (const v of [...MOMSTER, ...VILLAINS.map(x => 'villains/' + x)]) {
+  if (only && only !== v) continue;
+  const have = new Set(manifest[v] || []);
+  const todo = (need[v] || []).filter(l => !have.has(l.key));
+  grand += todo.length;
+  console.log(`${v.padEnd(18)} needs ${String((need[v] || []).length).padStart(4)} clips, has ${String((need[v] || []).length - todo.length).padStart(4)}, missing ${String(todo.length).padStart(4)}`);
+  if (only || process.argv.includes('--list')) {
+    if (!process.argv.includes('--list')) { const byCat = {}; for (const l of todo) byCat[l.category] = (byCat[l.category] || 0) + 1; for (const [c, n] of Object.entries(byCat).sort((a, b) => b[1] - a[1])) console.log(`  ${String(n).padStart(4)}  ${c}`); }
+    else for (const l of todo) console.log(`  ${l.key}\t${l.text}`);
+  }
+}
+console.log(`total missing: ${grand}`);
