@@ -73,9 +73,10 @@ export async function main() {
     const id = `${it.voice}/${it.key}/take${it.take}`;
     const have = fs.existsSync(it.norm) && report[id] && !flag('redo') && (!wantText || report[id].heard !== undefined);
     if (have) continue;
-    const dB = '-50dB', trim = `silenceremove=start_periods=1:start_threshold=${dB}:start_silence=0.04`;
+    // Pieces that are stitched into one sentence (a kid's name and its lead-in and tail) keep almost no silence, so they run on from each other.
+    const stitched = /^(nm_|nlead_|ntail_)/.test(it.key), dB = '-50dB', trim = `silenceremove=start_periods=1:start_threshold=${dB}:start_silence=${stitched ? 0.008 : 0.04}`;
     if (!fs.existsSync(it.norm) || flag('redo')) {
-      const r = await sh('ffmpeg', ['-y', '-v', 'error', '-i', it.file, '-af', `${trim},areverse,${trim},areverse,loudnorm=I=-16:TP=-1.5:LRA=11,apad=pad_dur=0.12`, '-ar', '44100', '-ac', '1', '-b:a', '96k', it.norm]);
+      const r = await sh('ffmpeg', ['-y', '-v', 'error', '-i', it.file, '-af', `${trim},areverse,${trim},areverse,loudnorm=I=-16:TP=-1.5:LRA=11,apad=pad_dur=${stitched ? 0.01 : 0.12}`, '-ar', '44100', '-ac', '1', '-b:a', '48k', it.norm]);
       if (!r.ok) { console.error(`  could not process ${id}: ${r.stderr.split('\n')[0]}`); fail++; continue; }
     }
     const dur = await duration(it.norm), chars = (it.meta.say || it.meta.text || '').length, flags = [];

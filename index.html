@@ -1135,7 +1135,7 @@ let soundKid = null;   // the kid whose voice the sound sheet edits when it is o
 const AUDIO_DIR = "audio/", DEFAULT_VOICE_DIR = "momster";
 let AUDIO_INDEX = {}, AUDIO_READY = false;   // voice folder -> Set of line keys with a file; true once the list has loaded
 function loadAudioIndex(){ try{ fetch(AUDIO_DIR+"manifest.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{}).then(m=>{
-  const ix={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); }); AUDIO_INDEX=ix; AUDIO_READY=true; try{ nameVoicesEnsure(); }catch(e){} }).catch(()=>{}); }catch(e){} }
+  const ix={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); }); AUDIO_INDEX=ix; AUDIO_READY=true; try{ nameVoicesEnsure(); stitchWarm(); }catch(e){} }).catch(()=>{}); }catch(e){} }
 // A kid's name is stitched from three clips: a lead-in, the name on its own, and sometimes a tail ("Super" + Emma + "ready to help Momster!").
 // Only when every piece has a clip; otherwise the device voice reads the whole sentence (see nextClip).
 const NAME_PARTS = { hi:["nlead_hi"], justme:["nlead_justme"], blame:["nlead_blame"],
@@ -1199,7 +1199,7 @@ function nextClip(){
   const k=queue.shift(); if(!k) return;
   // Kid-name sentence: generated clip, else the device voice reads the whole sentence.
   if(k.startsWith("N:")){ const i=k.indexOf(":",2), t=k.slice(2,i), n=k.slice(i+1), parts=nameParts(t,n);
-    if(parts){ queue.unshift(...parts); return nextClip(); }
+    if(parts) return playStitched(parts);
     return enVoices().length ? speakName(nameLineText(t,n), nextClip) : nextClip(); }
   if(k.startsWith("NP:")){ const f=voiceFile(k.slice(3)); return f ? playUrl(f,k) : nextClip(); }
   // Any other written line plays its generated clip, or nothing if the clip does not exist yet.
@@ -1209,6 +1209,28 @@ function nextClip(){
   if(VOICE[k]) return playUrl(VOICE[k],k);
   const u=clipUrl(k); if(u) return playUrl(u,k);
   nextClip(); }
+/* A kid's name sentence is played through Web Audio instead of the single player: the pieces are decoded ahead of time and scheduled
+   end to end on the audio clock, so there is no gap between "Hi", the name and the tail. Without Web Audio (or before the first tap
+   unlocks it) the pieces play one after another through the normal player. */
+let stitchCtx=null, stitchSrc=[], stitchTok=0; const stitchBuf=new Map();
+function stitchCtxGet(){ try{ if(!stitchCtx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null; stitchCtx=new AC(); }
+  if(stitchCtx.state==="suspended") stitchCtx.resume(); return stitchCtx; }catch(e){ return null; } }
+function stitchLoad(url){ if(!stitchBuf.has(url)){ const ctx=stitchCtx||stitchCtxGet();
+  stitchBuf.set(url, fetch(url).then(r=>{ if(!r.ok) throw new Error("clip "+r.status); return r.arrayBuffer(); }).then(b=>new Promise((ok,no)=>{ const p=ctx.decodeAudioData(b,ok,no); if(p&&p.catch) p.catch(no); })).catch(e=>{ stitchBuf.delete(url); throw e; })); }
+  return stitchBuf.get(url); }
+function stopStitch(){ stitchTok++; stitchSrc.forEach(x=>{ try{ x.onended=null; x.stop(); }catch(e){} }); stitchSrc=[]; }
+function playStitched(parts){ const ctx=stitchCtxGet();
+  const slow=()=>{ queue.unshift(...parts); nextClip(); };
+  if(!ctx || ctx.state!=="running") return slow();
+  const tok=++stitchTok;
+  Promise.all(parts.map(p=>stitchLoad(voiceFile(p.slice(3))))).then(bufs=>{ if(tok!==stitchTok) return;
+    const g=ctx.createGain(); g.gain.value=soundLevel; g.connect(ctx.destination); let t=ctx.currentTime+0.02; const srcs=[];
+    bufs.forEach(b=>{ const x=ctx.createBufferSource(); x.buffer=b; x.connect(g); x.start(t); t+=b.duration; srcs.push(x); });
+    stitchSrc=srcs; srcs[srcs.length-1].onended=()=>{ if(tok===stitchTok){ stitchSrc=[]; nextClip(); } };
+  }).catch(()=>{ if(tok===stitchTok) slow(); }); }
+// Get every kid's name pieces ready, so the first "Hi <name>!" has nothing left to download.
+function stitchWarm(){ try{ if(!AUDIO_READY || !stitchCtxGet()) return;
+  FAMILY.kids.forEach(c=>Object.keys(NAME_PARTS).forEach(t=>{ const ks=nameParts(t,(c.name||"").trim()); if(ks) ks.forEach(k=>{ const u=voiceFile(k.slice(3)); if(u) stitchLoad(u).catch(()=>{}); }); })); }catch(e){} }
 const QUIET_KEYS = new Set(["ding","pop","coin","sparkle","magic"]); // chimes at ~55% so they don't blast
 function playUrl(u,k){ player.src=u; player.volume=QUIET_KEYS.has(k)? soundLevel*0.55 : soundLevel; const p=player.play();
   if(p&&p.then) p.then(()=>{soundOk=true;}).catch(err=>{ soundOk=false; console.warn("audio blocked",err); nextClip(); }); }
@@ -1219,9 +1241,9 @@ const keepWhenQuiet = k => SFX.has(k) || k==="music" || k==="jokeintro" || /^h?k
 const isTalkKey = k => typeof k==="string" && (k.startsWith("BJ:") || !SFX.has(k) && !/^h?k\d+$/.test(k) && k!=="music" && k!=="jokeintro");
 let soundLevel = (()=>{ const v=loadLocal("vol"); return (v===0||v===0.4||v===1) ? v : 1; })();
 const volIcon = () => (soundLevel===0 && voiceLvl===0) ? "🔇" : (soundLevel===0 ? "🎵" : (voiceLvl===0 ? "🤐" : "🔊"));
-function play(keys){ if(voiceLvl===0) keys=(keys||[]).filter(k=>k&&!isTalkKey(k)); if(soundLevel===0){ queue=[]; try{ player.pause(); speechSynthesis.cancel(); }catch(e){} return; } try{ if(ttsOk) speechSynthesis.cancel(); }catch(e){} player.pause(); queue=keys.filter(Boolean); nextClip(); }
+function play(keys){ stopStitch(); if(voiceLvl===0) keys=(keys||[]).filter(k=>k&&!isTalkKey(k)); if(soundLevel===0){ queue=[]; try{ player.pause(); speechSynthesis.cancel(); }catch(e){} return; } try{ if(ttsOk) speechSynthesis.cancel(); }catch(e){} player.pause(); queue=keys.filter(Boolean); nextClip(); }
 let unlocked=false;
-function unlock(){ if(unlocked) return; unlocked=true; player.src=getUrl("sfx","silent"); const p=player.play(); if(p&&p.catch) p.catch(()=>{unlocked=false;});
+function unlock(){ try{ stitchCtxGet(); stitchWarm(); }catch(e){} if(unlocked) return; unlocked=true; player.src=getUrl("sfx","silent"); const p=player.play(); if(p&&p.catch) p.catch(()=>{unlocked=false;});
   try{ if(window.speechSynthesis && window.SpeechSynthesisUtterance){ const u=new SpeechSynthesisUtterance(" "); u.volume=0;
     u.onstart=()=>{ ttsVoice=pickVoice(); ttsOk=!!ttsVoice; }; speechSynthesis.speak(u); } }catch(e){} }
 try{ speechSynthesis.getVoices(); speechSynthesis.addEventListener("voiceschanged",()=>{ ttsVoice=pickVoice(); ttsOk=!!ttsVoice; _presetCache=null; render(); if(document.getElementById("csmSheet")&&view.kid) combinedSoundSheet(view.kid); }); }catch(e){}

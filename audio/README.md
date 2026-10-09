@@ -58,3 +58,7 @@ Everything below runs from the repo root. The ElevenLabs key is only ever read f
 8. `node tools/missing-clips.mjs` shows what is still outstanding. `node tests/audio-coverage.test.js` (via the test runner) fails if the app asks for a line that is not in `lines.csv`.
 
 `audio/_candidates/` is ignored by git; only promoted clips are committed. Respellings go in `audio/speak-overrides.json`; the line's own text and clip name never change.
+
+## File size
+
+Shipped clips are mono MP3 at 48 kbps (speech does not need more, and it keeps the app and the upload small). `tools/check-clips.mjs` makes the levelled review copies at that rate, so promoted clips match. A clip changed by hand should be re-encoded the same way: `ffmpeg -i in.mp3 -ac 1 -ar 44100 -b:a 48k out.mp3`.
