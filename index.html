@@ -1133,9 +1133,9 @@ function curVoice(){ const v=settings && settings.voice; return MOMSTER_VOICES.i
    Only the short sound effects are embedded in this page. */
 let soundKid = null;   // the kid whose voice the sound sheet edits when it is opened from the home screen (no kid selected)
 const AUDIO_DIR = "audio/", DEFAULT_VOICE_DIR = "momster";
-let AUDIO_INDEX = {};   // voice folder -> Set of line keys with a file
+let AUDIO_INDEX = {}, AUDIO_READY = false;   // voice folder -> Set of line keys with a file; true once the list has loaded
 function loadAudioIndex(){ try{ fetch(AUDIO_DIR+"manifest.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{}).then(m=>{
-  const ix={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); }); AUDIO_INDEX=ix; }).catch(()=>{}); }catch(e){} }
+  const ix={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); }); AUDIO_INDEX=ix; AUDIO_READY=true; try{ nameVoicesEnsure(); }catch(e){} }).catch(()=>{}); }catch(e){} }
 // A kid's name is stitched from three clips: a lead-in, the name on its own, and sometimes a tail ("Super" + Emma + "ready to help Momster!").
 // Only when every piece has a clip; otherwise the device voice reads the whole sentence (see nextClip).
 const NAME_PARTS = { hi:["nlead_hi"], justme:["nlead_justme"], blame:["nlead_blame"],
@@ -1143,9 +1143,38 @@ const NAME_PARTS = { hi:["nlead_hi"], justme:["nlead_justme"], blame:["nlead_bla
 function nameParts(t, n){ const p=NAME_PARTS[t], sl=nameSlug(n); if(!p || !sl) return null;
   const keys=[p[0], "nm_"+sl].concat(p[1]?[p[1]]:[]);
   return keys.every(x=>voiceFile(x)) ? keys.map(x=>"NP:"+x) : null; }
+/* Names that are not in the shipped list are generated in Momster's voice once the family is signed in (convex/voice.ts), and a parent can
+   spell how a name sounds ("Sho-VAWN"). NV.clips holds this family's generated clips, key -> {url, text, respell}. */
+const NV = { clips:(function(){ try{ return JSON.parse(localStorage.getItem("starjobs_nameclips")||"{}")||{}; }catch(e){ return {}; } })(), asked:{}, unsub:null };
+const nvKey = n => "nm_"+nameSlug(n);
+const nvShipped = key => !!(AUDIO_INDEX[DEFAULT_VOICE_DIR] && AUDIO_INDEX[DEFAULT_VOICE_DIR].has(key));
+function nvSave(){ try{ localStorage.setItem("starjobs_nameclips", JSON.stringify(NV.clips)); }catch(e){} }
+function nvStart(){ const C=window.MomsterCloud; if(!C || !C.configured || !C.signedIn || NV.unsub) return;
+  try{ NV.unsub=C.client.onUpdate(C.api.voice.myNameClips, {}, rows=>{ const m={}; (rows||[]).forEach(r=>{ m[r.key]={url:r.url, text:r.text, respell:r.respell}; }); NV.clips=m; nvSave(); nameVoicesEnsure(); }); }catch(e){ console.warn("name voices", e); } }
+function nvStop(){ try{ if(NV.unsub) NV.unsub(); }catch(e){} NV.unsub=null; }
+// Ask for a clip for every kid name that needs one (not shipped, or spelled differently from what was generated), and drop clips nobody uses.
+function nameVoicesEnsure(){ const C=window.MomsterCloud; if(!C || !C.configured || !C.signedIn || !AUDIO_READY) return;
+  const want=new Set();
+  FAMILY.kids.forEach(c=>{ const name=(c.name||"").trim(), say=(c.say||"").trim(); if(!name || !nameSlug(name)) return; const key=nvKey(name); want.add(key);
+    const have=NV.clips[key], need = say ? !(have && (have.respell||"")===say && have.text===name) : (!nvShipped(key) && !have);
+    const tag=key+"|"+say; if(!need || NV.asked[tag]) return; NV.asked[tag]=true;
+    C.client.action(C.api.voice.requestName, say?{name, respell:say}:{name}).then(r=>{ if(!r || !r.ok) console.warn("name voice:", r && r.error); }).catch(e=>{ delete NV.asked[tag]; console.warn("name voice", e); }); });
+  Object.keys(NV.clips).forEach(key=>{ const c=NV.clips[key]; if(!want.has(key) || (!FAMILY.kids.some(k=>nvKey((k.name||"").trim())===key && (k.say||"").trim()) && nvShipped(key))){
+    C.client.mutation(C.api.voice.removeName, {name:c.text}).catch(()=>{}); } }); }
+// The "Hear it" button in the family editor: generate this name with the spelling in the box, then say "Hi <name>!".
+async function nvHear(i){ famRead(); const c=famDraft[i], name=(c&&c.name||"").trim(), say=(c&&c.say||"").trim(); if(!name){ toast("Type a name first"); return; }
+  const C=window.MomsterCloud;
+  if(!say && nvShipped(nvKey(name))){ play([nameKey("hi",name)]); return; }       // Momster already knows this one
+  if(!C || !C.configured || !C.signedIn){ toast("Sign in under Grown-ups > Sync to teach Momster a new name."); play([nameKey("hi",name)]); return; }
+  toast("Teaching Momster... one moment");
+  try{ const r=await C.client.action(C.api.voice.requestName, say?{name, respell:say}:{name});
+    if(!r || !r.ok){ toast(r && r.error ? r.error : "That did not work. Try again."); return; }
+    NV.clips[r.key]={url:r.url, text:name, respell:say||null}; nvSave(); play([nameKey("hi",name)]);
+  }catch(e){ toast("Could not reach Momster's voice. Try again in a bit."); } }
 loadAudioIndex();
 // Momster's voice (a family's own recording will come first here later). Null means no file, so nothing plays.
-function voiceFile(k){ const cv=curVoice(), dirs=cv===DEFAULT_VOICE_DIR ? [DEFAULT_VOICE_DIR] : [cv,DEFAULT_VOICE_DIR];
+function voiceFile(k){ if(NV.clips[k] && NV.clips[k].url) return NV.clips[k].url;   // a name this family generated (or respelled) wins over the shipped one
+  const cv=curVoice(), dirs=cv===DEFAULT_VOICE_DIR ? [DEFAULT_VOICE_DIR] : [cv,DEFAULT_VOICE_DIR];
   for(const d of dirs){ if(AUDIO_INDEX[d] && AUDIO_INDEX[d].has(k)) return AUDIO_DIR+d+"/"+encodeURIComponent(k)+".mp3"; } return null; }
 // Villains speak in their own fixed voices: audio/villains/<villain id>/<line key>.mp3. A line a villain doesn't have a clip for plays nothing.
 const villainFile = (id, k) => { const d="villains/"+id; return AUDIO_INDEX[d] && AUDIO_INDEX[d].has(k) ? AUDIO_DIR+d+"/"+encodeURIComponent(k)+".mp3" : null; };
@@ -1592,10 +1621,10 @@ function cloudAttach(){
     else if(FAMILY_SET){ try{ await d.bulkSet(cloudLocalDocs()); toast("Synced! Your stars are saved online."); }catch(e){ console.warn("first sync failed", e); cloudBusy=false; toast("Couldn't sync yet. Try again in a moment."); return; } }
     Store.rawSet(CLOUD_LINKED,"1");
     try{ await flushDirty(d); }catch(e){ console.warn("could not upload offline changes yet", e); cloudBusy=false; setTimeout(cloudAttach, 15000); return; }
-    db=d; cloudBusy=false; subscribe(); render(); if(document.getElementById("gPanel")) panel();
+    db=d; cloudBusy=false; subscribe(); nvStart(); render(); if(document.getElementById("gPanel")) panel();
   });
 }
-function cloudDetach(){ unsubs.forEach(u=>{ try{ u(); }catch(e){} }); unsubs=[]; db=null; cloudBusy=false; try{ window.MomsterCloud.closeDb(); }catch(e){} }
+function cloudDetach(){ nvStop(); unsubs.forEach(u=>{ try{ u(); }catch(e){} }); unsubs=[]; db=null; cloudBusy=false; try{ window.MomsterCloud.closeDb(); }catch(e){} }
 function cloudInit(){
   const C=window.MomsterCloud; if(!C || !C.configured) return;
   C.onAuthChange(ok=>{ if(ok) cloudAttach(); else { cloudDetach(); render(); } });
@@ -3328,6 +3357,7 @@ function applyKids(){
     if(!buddies[k]){ buddies[k]=Object.assign(BLANK_BUDDY(), loadLocal("buddy_"+k)||{}); buddies[k].wear=normalizeWear(buddies[k].wear); }
     if(!buddies[k].made) buddies[k].look=Object.assign({},DEFAULT_LOOK,{color:KIDS[k].color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"});
   });
+  try{ nameVoicesEnsure(); }catch(e){}
 }
 function saveFamily(){ Store.set("starjobs_family", FAMILY); cloudWrite("family/main", FAMILY); }
 function famRead(){ document.querySelectorAll("[data-fk]").forEach(el=>{ const c=famDraft[+el.dataset.fk]; if(c) c[el.dataset.f]=el.value; }); }
@@ -3336,6 +3366,8 @@ function famSheet(first){
   const rows=famDraft.map((c,i)=>`<div class="grp" style="--k:${c.color}"><div class="srow stack">
       <div class="tpgrid"><span class="fpal">${buddySvg(Object.assign({},DEFAULT_LOOK,{color:c.color, body:"monster", ears:"none", eyes:"googly", mouth:"fangs"}),{},{noBg:true})}</span>
         <label class="fld"><span>Name</span><input class="in tx" data-fk="${i}" data-f="name" value="${esc(c.name||"")}" maxlength="16" placeholder="Kid's name"></label></div>
+      <div class="row say"><label class="fld" style="flex:1"><span>Say it like (optional)</span><input class="in tx" data-fk="${i}" data-f="say" value="${esc(c.say||"")}" maxlength="40" placeholder="e.g. Sho-VAWN"></label>
+        <button class="chip" data-a="nvHear" data-i="${i}" aria-label="Hear how Momster says this name">▶ Hear</button></div>
       <div class="kcolors">${KID_COLORS.map(col=>`<button class="kc ${c.color===col?"on":""}" style="background:${col}" data-a="famColor" data-i="${i}" data-c="${col}" aria-label="color"></button>`).join("")}
         ${famDraft.length>1?`<button class="btn ghost sm" data-a="famDel" data-i="${i}" style="margin-left:auto">Remove</button>`:""}</div></div></div>`).join("");
   paintSheet("famSheet","",`<div class="ov"${first?"":' data-a="closeOv"'}><div class="sheet gsheet" id="famSheet">
@@ -3386,10 +3418,11 @@ document.addEventListener("click", e=>{
   const t=e.target.closest("[data-a]"); if(!t) return; const a=t.dataset.a, i=+t.dataset.i;
   switch(a){
     case "famOpen": famDraft=null; famSheet(false); break;
+    case "nvHear": nvHear(+t.dataset.i); break;
     case "famColor": famRead(); famDraft[i].color=t.dataset.c; famSheet(!FAMILY_SET); break;
     case "famAdd": famRead(); { const used=famDraft.map(c=>c.color); famDraft.push({id:"k"+Date.now().toString(36), name:"", av:["🐱","🐶","🦊","🐼","🦁","🐸"][famDraft.length%6], color:KID_COLORS.find(c=>!used.includes(c))||KID_COLORS[0]}); } famSheet(!FAMILY_SET); break;
     case "famDel": famRead(); famDraft.splice(i,1); famSheet(!FAMILY_SET); break;
-    case "famSave": famRead(); { const firstRun=!FAMILY_SET; const kids=famDraft.map(c=>({id:c.id, name:(c.name||"").trim(), av:(c.av||"").trim()||"⭐", color:c.color})).filter(c=>c.name);
+    case "famSave": famRead(); { const firstRun=!FAMILY_SET; const kids=famDraft.map(c=>({id:c.id, name:(c.name||"").trim(), av:(c.av||"").trim()||"⭐", color:c.color, say:(c.say||"").trim()||undefined})).filter(c=>c.name);
       if(!kids.length){ const n=document.getElementById("famNote"); if(n){ n.style.color="#E5484D"; n.textContent="Add at least one name"; } break; }
       FAMILY.kids=kids; saveFamily(); applyKids(); FAMILY_SET=true; famDraft=null; view.kid=null; close(); render(); play(["fanfare"]); if(firstRun){ pinMode="first"; pinSheet(); } } break;
     case "cloudIn": cloudSheet(1, t.dataset.e||(window.MomsterCloud&&window.MomsterCloud.email)||""); break;

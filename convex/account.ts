@@ -31,6 +31,7 @@ export const deleteFamily = mutation({
     for (const c of await ctx.db.query("voiceClips").withIndex("by_family_key", q => q.eq("familyId", familyId)).take(CHUNK)) {
       await ctx.storage.delete(c.storageId); await ctx.db.delete(c._id); removed++;
     }
+    await drop(await ctx.db.query("voiceUsage").withIndex("by_family_at", q => q.eq("familyId", familyId)).take(CHUNK));
     await drop(await ctx.db.query("allowedEmails").withIndex("by_family", q => q.eq("familyId", familyId)).take(CHUNK));
     if (removed > 0) return { done: false };
 

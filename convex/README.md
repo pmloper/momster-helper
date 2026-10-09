@@ -62,3 +62,16 @@ used: `family/main`, `settings/main`, `weeks/<weekStart>_<kidId>`, `buddies/<kid
 - Delete my online data: owner-only `account.deleteFamily` removes the family's documents, members and sign-ins.
 - Known limits: last write wins per document (two devices editing the same kid's week while both offline: the later upload wins);
   recorded voice clips are synced but are legacy.
+
+## Name voices (`voice.ts`, `voiceLogic.ts`)
+
+A kid name that is not in the shipped list (`audio/common-names.txt`) is generated in Momster's voice when a signed-in family saves it,
+and a parent can give a "say it like" spelling. The app asks with `voice.requestName`, listens with `voice.myNameClips`, and drops unused
+clips with `voice.removeName`. Clips are stored in Convex file storage (`voiceClips`, key `nm_<slug>`); every attempt is a row in `voiceUsage`.
+
+- Set in the Convex dashboard (never commit): `ELEVENLABS_API_KEY` (a restricted key: text-to-speech only, with a monthly credit cap).
+  Optional: `ELEVENLABS_VOICE_ID` (default is the shipped Momster voice), `ELEVENLABS_MODEL_ID` (default `eleven_v4`), `VOICE_DISABLED=1` (kill switch).
+- Limits (`voiceLogic.ts`): 24 custom names per family, 15 generations per family per day, 3,000 per day for everyone. The limit is checked and
+  the attempt recorded before any money is spent. Names are letters only, up to 24 characters.
+- Check a deployment's setup: `npx convex run voice:selfTest` (says one word, reports the key and status; no personal data).
+- Deleting a family also deletes its clips and usage rows.

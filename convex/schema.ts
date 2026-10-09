@@ -147,13 +147,25 @@ export default defineSchema({
     count: v.number(),
   }).index("by_key", ["key"]),
 
-  // Generated clips for text a family wrote (custom jobs, prizes, missions).
-  // `key` is textKey(text) from index.html, so the app finds the clip by the same name as the shipped ones.
+  // Generated clips for text a family wrote (custom jobs, prizes, missions) and for kid names that are not in the shipped list.
+  // `key` is textKey(text) from index.html (or nm_<slug> for a name), so the app finds the clip by the same name as the shipped ones.
   voiceClips: defineTable({
     familyId: v.id("families"),
     key: v.string(),
     voice: v.string(),
     text: v.string(),
+    respell: v.optional(v.string()),   // how it was said, if the parent gave a pronunciation
     storageId: v.id("_storage"),
-  }).index("by_family_key", ["familyId", "key", "voice"]),
+    createdAt: v.optional(v.number()),
+  }).index("by_family_key", ["familyId", "key", "voice"]).index("by_family", ["familyId"]),
+
+  // One row per attempt to generate a voice clip: who, what, how many characters, and whether it worked (spending ledger).
+  voiceUsage: defineTable({
+    familyId: v.id("families"),
+    kind: v.string(),            // "name"
+    chars: v.number(),
+    at: v.number(),
+    ok: v.boolean(),
+    note: v.optional(v.string()),
+  }).index("by_family_at", ["familyId", "at"]).index("by_at", ["at"]),
 });

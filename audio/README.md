@@ -32,7 +32,9 @@ Common names ship with the app (`audio/common-names.txt`, about 250):
 2. Generate, check, review and promote them like any other line (`--category "kid name"`).
 3. A name that comes out wrong is fixed with a respelling in `speak-overrides.json` under its `nm_<slug>` key.
 
-Names that are not in the list are generated on demand once a family enters them (needs Convex; not built yet).
+Names that are not in the list are generated on demand once a signed-in family saves them (`convex/voice.ts`, see `convex/README.md`).
+In the family editor a parent can also type how a name sounds ("Sho-VAWN") and tap Hear. That clip is stored per family and wins over the shipped one; clearing the spelling (or removing the kid) drops it.
+Signed-out families, and names with no Latin letters, hear the device voice for the sentence.
 
 ## Momster's tutorial
 
