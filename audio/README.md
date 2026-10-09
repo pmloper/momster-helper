@@ -27,3 +27,7 @@ A name with no clip is read by the device voice (whole sentence).
 ## Momster's tutorial
 
 `momster/tour_1.mp3` to `tour_10.mp3` are the ten lines of the narrated tutorial (`tour.js`, texts in `lines.csv`). They always play, whatever sound option a family picked. The caption timings and highlights are the `STEPS` table at the top of `tour.js`; if you re-record a clip, re-check its pause times there. Pose pictures live in `art/momster/`.
+
+## Who says each line
+
+`lines.csv` has a `speaker` column: `momster`, a villain id (`m_sock`, `m_crumb`, `m_dust`, `m_toy`, `m_slime`, `m_troll`, `m_booger`, `m_stink`) for lines only that villain says, or `villains:any` for lines every villain can say. A `villains:any` line is recorded once per villain, in that villain's voice. Villain clips are meant to live in `audio/villains/<villain id>/<key>.mp3`.

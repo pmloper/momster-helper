@@ -1,671 +1,671 @@
-key,voice_folder,category,text,status,played_in_app,note,exact_app_text
-pickprize,momster,general,Pick your prize for this week!,existing,yes,,
-great,momster,general,Great job!,existing,yes,,
-alldone,momster,general,All done! Great job!,existing,yes,,
-tv,momster,general,TV time unlocked!,existing,yes,,
-jarfull,momster,general,Wow! Your star jar is full! Go tell a grown-up!,existing,yes,,
-j_dress,momster,job,Get dressed.,existing,yes,,
-j_bfast,momster,job,Eat breakfast.,existing,yes,,
-j_teeth,momster,job,Brush teeth.,existing,yes,,
-j_shoes,momster,job,Shoes on.,existing,yes,,
-j_bed,momster,job,Make your bed.,existing,yes,,
-j_hook,momster,job,Hang your backpack!,existing,yes,,
-j_folder,momster,job,Give the folder!,existing,yes,,
-j_snack,momster,job,Snack to the sink!,existing,yes,,
-j_toys,momster,job,Toys in bins.,existing,yes,,
-j_plate,momster,job,Plate to the sink.,existing,yes,,
-j_pack,momster,job,Pack your backpack.,existing,yes,,
-j_pjs,momster,job,Pajamas on.,existing,yes,,
-more1,momster,jobs left,One more.,existing,yes,,
-more2,momster,jobs left,Two more.,existing,yes,,
-more3,momster,jobs left,Three more.,existing,yes,,
-more4,momster,jobs left,Four more.,existing,yes,,
-more5,momster,jobs left,Five more.,existing,yes,,
-already,momster,already-done,Already done! Star!,existing,yes,,
-yourjobs,momster,general,Your jobs.,existing,yes,,
-r_am,momster,routine,Morning jobs.,existing,yes,,
-r_pm,momster,routine,After school jobs.,existing,yes,,
-r_bt,momster,routine,Bedtime jobs.,existing,yes,,
-r_none,momster,routine,No jobs here today!,existing,yes,,
-tapagain,momster,general,Tap again to pick it.,existing,yes,,
-picked,momster,general,You picked it! Let's fill your star jar!,existing,yes,,
-w_movie,momster,prize,Family movie night.,existing,yes,,
-w_dessert,momster,prize,Special dessert.,existing,yes,,
-w_dinner,momster,prize,Pick a dinner.,existing,yes,,
-w_park,momster,prize,Park trip.,existing,yes,,
-w_switch,momster,prize,Extra 20 minutes of Switch.,existing,yes,,
-w_late,momster,prize,Stay up 15 minutes late.,existing,yes,,
-w_bake,momster,prize,Bake cookies together.,existing,yes,,
-w_game,momster,prize,Family game night.,existing,yes,,
-w_date,momster,prize,Special time with Mom or Dad.,existing,yes,,
-w_target,momster,prize,$5 Target gift card!,existing,yes,,
-taken,momster,general,Star taken back.,existing,yes,,
-test,momster,general,Hi! Sound is working.,existing,yes,,
-eggearn,momster,general,You earned a mystery egg! Tap it to crack it open!,existing,yes,,
-eggtap,momster,general,Tap tap tap!,existing,yes,,
-eggopen,momster,general,Whoa! A rare treasure!,existing,yes,,
-pow1,momster,battle pop,Pow!,existing,yes,,
-pow2,momster,battle pop,Splat!,existing,yes,,
-pow3,momster,battle pop,"Take that, monster!",existing,yes,,
-pow4,momster,battle pop,Bonk!,existing,yes,,
-monsterhi,momster,general,Uh oh! A mess monster is here! Do your jobs to beat it!,existing,yes,,
-monsterwin,momster,general,You beat the monster! Hooray! Bonus coins for everyone!,existing,yes,,
-m_sock,momster,villain name,The Stinky Sock Goblin!,existing,yes,,
-m_crumb,momster,villain name,The Crumb Gobbler!,existing,yes,,
-m_dust,momster,villain name,The Dust Bunny Boss!,existing,yes,,
-m_toy,momster,villain name,The Toy Tornado!,existing,yes,,
-m_slime,momster,villain name,The Sludge Slime!,existing,yes,,
-sticker,momster,general,New sticker for your sticker book!,existing,yes,,
-dance,momster,general,Dance party!,existing,yes,,
-goodnight,momster,general,Time for bed! Good night!,existing,yes,,
-sillyintro,momster,general,Silly challenge!,existing,yes,,
-s1,momster,silly twist,Do it while hopping like a frog!,existing,yes,,
-s2,momster,silly twist,Do it with a robot voice!,existing,yes,,
-s3,momster,silly twist,Do it in slow motion!,existing,yes,,
-s4,momster,silly twist,Do it while humming a song!,existing,yes,,
-s5,momster,silly twist,Do it super fast like a cheetah!,existing,yes,,
-s6,momster,silly twist,Do it while waddling like a penguin!,existing,yes,,
-s7,momster,silly twist,Do it with your silliest face!,existing,yes,,
-s8,momster,silly twist,Do it tip toeing like a ninja!,existing,yes,,
-s9,momster,silly twist,"Wiggle your booty first, then do it!",existing,yes,,
-hk1,momster,joke,Why didn't the skeleton cross the road? He didn't have the guts!,existing,yes,,
-hk2,momster,joke,What do ghosts eat for dessert? I scream!,existing,yes,,
-hk3,momster,joke,What's a ghost's favorite fruit? Boo berries!,existing,yes,,
-hk4,momster,joke,What do you call a witch at the beach? A sand witch!,existing,yes,,
-hk5,momster,joke,What room does a ghost not need? A living room!,existing,yes,,
-hk6,momster,joke,Why did the vampire need mouthwash? He had bat breath!,existing,yes,,
-hk7,momster,joke,What do you get when you cross a vampire and a snowman? Frostbite!,existing,yes,,
-hk8,momster,joke,Why are ghosts bad at lying? You can see right through them!,existing,yes,,
-buddyhi,momster,general,Let's make your monster pal!,existing,yes,,
-shop,momster,general,Buddy shop! Pick something cool!,existing,yes,,
-tapbuy,momster,general,Tap again to buy it!,existing,yes,,
-bought,momster,general,You got it! Looking fancy!,existing,yes,,
-needcoins,momster,general,Not enough coins yet! Do more jobs to get more!,existing,yes,,
-wear,momster,general,"Ooh, fancy!",existing,yes,,
-coin,momster,general,Cha ching!,existing,yes,,
-racego,momster,general,Beat the clock! Go go go!,existing,yes,,
-raceWin,momster,general,You beat the clock! Bonus star!,existing,yes,,
-teamwin,momster,general,Team power! Everyone filled their star jars! Family prize time!,existing,yes,,
-streak,momster,general,You're on fire! Fire streak!,existing,yes,,
-r_bonus,momster,routine,Bonus jobs! Extra stars!,existing,yes,,
-bonusask,momster,general,Go do it! Then ask a grown up to check!,existing,yes,,
-bonusok,momster,general,Bonus stars! You're a superstar!,existing,yes,,
-bonusmax,momster,general,That's all the bonus jobs for today! Come back tomorrow!,existing,yes,,
-bonusno,momster,general,Not yet! Give it another try!,existing,yes,,
-bonuswait,momster,general,Waiting for a grown up to check!,existing,yes,,
-bj_sweep,momster,helper/bonus job,Sweep the kitchen.,existing,yes,,
-bj_glass,momster,helper/bonus job,Wipe the glass door.,existing,yes,,
-bj_car,momster,helper/bonus job,Clean out the car.,existing,yes,,
-bj_walk,momster,helper/bonus job,Help walk the dog.,existing,yes,,
-bj_towels,momster,helper/bonus job,Fold the towels.,existing,yes,,
-bj_yard,momster,helper/bonus job,Pick up the yard.,existing,yes,,
-bj_sink,momster,helper/bonus job,Wipe the bathroom sink.,existing,yes,,
-bj_books,momster,helper/bonus job,Tidy the bookshelf.,existing,yes,,
-j_shoesdoor,momster,job,Shoes by the door.,existing,yes,,
-j_hamper,momster,job,Dirty clothes in the hamper.,existing,yes,,
-j_dinner,momster,job,Help make dinner! Chef hats on!,existing,yes,,
-jokeintro,momster,general,Joke time!,existing,yes,,
-c1,momster,cheer,Great job! You're toot-ally awesome!,existing,yes,,
-c2,momster,cheer,Nailed it! High five! Now go wash that hand.,existing,yes,,
-c3,momster,cheer,Boom! Star for you!,existing,yes,,
-c4,momster,cheer,Woo hoo! Even your butt is proud of you!,existing,yes,,
-c5,momster,cheer,Great job! That deserves a victory toot!,existing,yes,,
-c6,momster,cheer,You did it! Your stinky socks are cheering!,existing,yes,,
-c7,momster,cheer,Stinkin' awesome!,existing,yes,,
-c8,momster,cheer,Ka-pow! You're a job ninja!,existing,yes,,
-c9,momster,cheer,Yes! Dance party! Wiggle your booty!,existing,yes,,
-c10,momster,cheer,"Holy moly, guacamole!",existing,yes,,
-c11,momster,cheer,"Excellent! Smell ya later, mess!",existing,yes,,
-c12,momster,cheer,Wowza! You're cooler than a penguin's popsicle!,existing,yes,,
-a1,momster,already-done,"Already done! Nice try, stinky pants!",existing,yes,,
-a2,momster,already-done,"You already did that one, silly sausage!",existing,yes,,
-a3,momster,already-done,"Done already! Did you forget, noodle brain?",existing,yes,,
-k1,momster,joke,Why did the cookie go to the doctor? Because it felt crummy!,existing,yes,,
-k2,momster,joke,What do you call a dinosaur that farts? A blast from the past!,existing,yes,,
-k3,momster,joke,Why don't eggs tell jokes? They'd crack each other up!,existing,yes,,
-k4,momster,joke,What did one toilet say to the other toilet? You look a little flushed!,existing,yes,,
-k5,momster,joke,Why did the teddy bear say no to dessert? Because she was stuffed!,existing,yes,,
-k6,momster,joke,What's brown and sticky? A stick!,existing,yes,,
-k7,momster,joke,Why did the banana go to the doctor? It wasn't peeling well!,existing,yes,,
-k8,momster,joke,What do you call a bear with no teeth? A gummy bear!,existing,yes,,
-k9,momster,joke,Why can't you hear a pterodactyl go to the bathroom? Because the P is silent!,existing,yes,,
-k10,momster,joke,What do you call a cow with no legs? Ground beef!,existing,yes,,
-k11,momster,joke,Why didn't the skeleton go to the party? He had no body to go with!,existing,yes,,
-k12,momster,joke,What do you call a sleeping dinosaur? A dino snore!,existing,yes,,
-k13,momster,joke,Why did the toilet paper roll down the hill? To get to the bottom!,existing,yes,,
-k14,momster,joke,What's invisible and smells like carrots? Bunny farts!,existing,yes,,
-k15,momster,joke,Why did the kid bring a ladder to school? She wanted to go to high school!,existing,yes,,
-k16,momster,joke,What do you call a pig that does karate? A pork chop!,existing,yes,,
-k17,momster,joke,Why did the bee get married? He found his honey!,existing,yes,,
-r_hp,momster,routine,Helper job! Double stars!,existing,yes,,
-j_spoons,momster,job,Put away the silverware.,existing,yes,,
-j_table,momster,job,Set the table.,existing,yes,,
-j_socks,momster,job,Match the socks.,existing,yes,,
-j_clothes,momster,job,Put away your clean clothes.,existing,yes,,
-j_room,momster,job,Room rescue! Clothes in the hamper. Books on the shelf. Stuffies on the bed.,existing,yes,,
-j_camo,momster,job,Feed the pet.,existing,yes,,
-intro,momster,character intro,Hi! I'm <character name>! Pick me!,NEW,yes,"record once in EACH character folder (audio/squeaky/intro.mp3 ...) with that character's own name, and once in momster/",
-m_troll,momster,villain name,Grumpy Tiara Troll,NEW,yes,spoken when the villain appears; key is the villain id,
-m_booger,momster,villain name,Baron von Booger,NEW,yes,spoken when the villain appears; key is the villain id,
-m_stink,momster,villain name,Sir Toots-a-Lot,NEW,yes,spoken when the villain appears; key is the villain id,
-momster_cheer,momster,Momster line,Nice hit! Keep going!,NEW,yes,,
-momster_almost,momster,Momster line,Almost had him!,NEW,yes,,
-momster_win,momster,Momster line,"You did it, sweetie!",NEW,yes,,
-t_do-it-like-a-t-rex-with-tiny-arms_1dcfbdc9,momster,silly twist,Do it like a T-rex with tiny arms!,NEW,yes,twists 1-9 already have clips,
-t_do-it-like-grandpa-standing-up_1d7df4ef,momster,silly twist,Do it like grandpa standing up!,NEW,yes,twists 1-9 already have clips,
-t_do-it-like-an-opera-singer_f79c1993,momster,silly twist,Do it like an opera singer!,NEW,yes,twists 1-9 already have clips,
-t_nice-hustle-the-couch-cushions-fear-you_48ba58b1,momster,cheer,Nice hustle! The couch cushions fear you now!,NEW,yes,20% of the time after a job,
-t_boom-that-job-is-toast_7d7cfc5b,momster,cheer,Boom! That job is TOAST!,NEW,yes,20% of the time after a job,
-t_somebody-call-the-cleaners-oh-wait-that_4d4dabbd,momster,cheer,"Somebody call the cleaners! Oh wait, that's you!",NEW,yes,20% of the time after a job,
-t_ooh-satisfying-like-popping-bubble-wrap_784a0c7c,momster,cheer,"Ooh, satisfying! Like popping bubble wrap!",NEW,yes,20% of the time after a job,
-t_the-mess-never-stood-a-chance_1014fef1,momster,cheer,The mess never stood a chance!,NEW,yes,20% of the time after a job,
-t_warning-extreme-tidiness-detected_f9ffa09b,momster,cheer,Warning: extreme tidiness detected!,NEW,yes,20% of the time after a job,
-t_even-the-boogers-are-impressed_b7af202a,momster,cheer,Even the boogers are impressed!,NEW,yes,20% of the time after a job,
-t_boom-shakalaka-star-time_9800c562,momster,cheer,Boom shakalaka! Star time!,NEW,yes,20% of the time after a job,
-t_you-re-on-fire-quick-stop-drop-and-wiggl_4e93238b,momster,cheer,"You're on fire! Quick: stop, drop, and wiggle!",NEW,yes,20% of the time after a job,
-t_that-s-how-it-s-done-rockstar_2d8c5703,momster,cheer,"That's how it's DONE, rockstar!",NEW,yes,20% of the time after a job,
-t_my-hero-do-a-victory-wiggle_8b6e44e4,momster,cheer,My hero! Do a victory wiggle!,NEW,yes,20% of the time after a job,
-t_the-germs-are-moving-out_8dbb74cd,momster,cheer,The germs are moving out!,NEW,yes,20% of the time after a job,
-t_pee-yew-smell-my-socks_09c560b7,momster,villain taunt,Pee-yew! Smell my socks!,NEW,yes,plays when the kid pokes the villain,
-t_your-socks-are-mine-now_7ca3f657,momster,villain taunt,Your socks are MINE now!,NEW,yes,plays when the kid pokes the villain,
-t_i-hid-one-sock-good-luck_0a5dc3a8,momster,villain taunt,I hid one sock. Good luck!,NEW,yes,plays when the kid pokes the villain,
-t_two-socks-never-heard-of-her_17d974b2,momster,villain taunt,Two socks? Never heard of her!,NEW,yes,plays when the kid pokes the villain,
-t_nom-nom-crumbs-everywhere_a00e978b,momster,villain taunt,Nom nom! Crumbs everywhere!,NEW,yes,plays when the kid pokes the villain,
-t_is-that-a-cookie-mine_d5cc9978,momster,villain taunt,Is that a cookie? MINE!,NEW,yes,plays when the kid pokes the villain,
-t_i-love-a-messy-table_dd5b9783,momster,villain taunt,I love a messy table!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-on-a-crumbs-only-diet_644093fe,momster,villain taunt,I'm on a crumbs-only diet!,NEW,yes,plays when the kid pokes the villain,
-t_achoo-i-love-dust_63e4561a,momster,villain taunt,Achoo! I love dust!,NEW,yes,plays when the kid pokes the villain,
-t_i-live-under-your-bed_08b70497,momster,villain taunt,I live under your bed!,NEW,yes,plays when the kid pokes the villain,
-t_dust-bunnies-forever_ba945399,momster,villain taunt,Dust bunnies forever!,NEW,yes,plays when the kid pokes the villain,
-t_my-dust-bunnies-have-names_57a1235c,momster,villain taunt,My dust bunnies have NAMES!,NEW,yes,plays when the kid pokes the villain,
-t_wheee-toys-on-the-floor_9a2b5eb8,momster,villain taunt,Wheee! Toys on the floor!,NEW,yes,plays when the kid pokes the villain,
-t_i-spin-toys-everywhere_95e0fe00,momster,villain taunt,I spin toys EVERYWHERE!,NEW,yes,plays when the kid pokes the villain,
-t_bet-you-can-t-clean-me-up_d3bca13b,momster,villain taunt,Bet you can't clean me up!,NEW,yes,plays when the kid pokes the villain,
-t_tidy-toys-are-a-myth-like-bedtimes_b584179a,momster,villain taunt,"Tidy toys are a myth, like bedtimes!",NEW,yes,plays when the kid pokes the villain,
-t_blub-blub-sticky-sticky_b2327b6d,momster,villain taunt,Blub blub! Sticky sticky!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-slimy-and-proud_66e722ce,momster,villain taunt,I'm slimy and proud!,NEW,yes,plays when the kid pokes the villain,
-t_ooze-you-gonna-call_085f26bd,momster,villain taunt,Ooze you gonna call?,NEW,yes,plays when the kid pokes the villain,
-t_sticky-is-my-cardio_70cf3895,momster,villain taunt,Sticky is my cardio!,NEW,yes,plays when the kid pokes the villain,
-t_the-tiara-is-mine-grumble-grumble_456e50b2,momster,villain taunt,The tiara is MINE! Grumble grumble!,NEW,yes,plays when the kid pokes the villain,
-t_no-princess-can-catch-me_7c790431,momster,villain taunt,No princess can catch me!,NEW,yes,plays when the kid pokes the villain,
-t_trolls-don-t-do-bedtime_38afa0c9,momster,villain taunt,Trolls don't do bedtime!,NEW,yes,plays when the kid pokes the villain,
-t_grumble-grumble-that-s-troll-for-help_774f976b,momster,villain taunt,Grumble grumble! That's troll for help!,NEW,yes,plays when the kid pokes the villain,
-t_pick-a-winner-pick-me_9e3dd3f3,momster,villain taunt,Pick a winner! Pick ME!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-stuffed-up-with-power_0ffde9d8,momster,villain taunt,I'm stuffed up with POWER!,NEW,yes,plays when the kid pokes the villain,
-t_green-is-my-favorite-color-and-my-person_651e77c9,momster,villain taunt,Green is my favorite color. And my personality!,NEW,yes,plays when the kid pokes the villain,
-t_don-t-point-that-finger-at-me_89568e2f,momster,villain taunt,Don't point that finger at me!,NEW,yes,plays when the kid pokes the villain,
-t_silent-but-deadly-my-special-move_64927973,momster,villain taunt,Silent but deadly: my SPECIAL move!,NEW,yes,plays when the kid pokes the villain,
-t_whoever-smelt-it-dealt-it_4ebd2e31,momster,villain taunt,"Whoever smelt it, DEALT it!",NEW,yes,plays when the kid pokes the villain,
-t_i-blame-the-dog-i-always-blame-the-dog_6c3e64e0,momster,villain taunt,I blame the dog! I ALWAYS blame the dog!,NEW,yes,plays when the kid pokes the villain,
-t_you-cannot-defeat-what-you-cannot-inhale_674d68f0,momster,villain taunt,You cannot defeat what you cannot inhale!,NEW,yes,plays when the kid pokes the villain,
-t_what-do-you-call-a-sock-with-a-hole-holy_6e879d02,momster,villain joke,What do you call a sock with a hole? HOLY sock! Hee hee!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-not-a-thief-i-m-a-sock-cerer_09a47c41,momster,villain joke,"I'm not a thief, I'm a sock-cerer!",NEW,yes,plays when the kid pokes the villain,
-t_why-won-t-i-share-my-cookies-i-m-a-littl_63244b54,momster,villain joke,Why won't I share my cookies? I'm a little CRUMBY! Har har!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-not-messy-i-m-saving-snacks-for-late_f8c1e9ac,momster,villain joke,"I'm not messy, I'm saving snacks for later!",NEW,yes,plays when the kid pokes the villain,
-t_what-s-a-troll-s-favorite-bedtime-never_9e0439e8,momster,villain joke,What's a troll's favorite bedtime? NEVER! Grumble grumble!,NEW,yes,plays when the kid pokes the villain,
-t_why-do-i-love-tiaras-they-make-me-look-t_c6fddc42,momster,villain joke,Why do I love tiaras? They make me look TROLL-tastic!,NEW,yes,plays when the kid pokes the villain,
-t_why-am-i-always-sleepy-i-m-dust-hausted_7c568d64,momster,villain joke,Why am I always sleepy? I'm DUST-hausted! Achoo!,NEW,yes,plays when the kid pokes the villain,
-t_what-s-my-favorite-dance-the-dust-step_83922336,momster,villain joke,What's my favorite dance? The DUST-step!,NEW,yes,plays when the kid pokes the villain,
-t_what-s-a-tornado-s-favorite-game-twister_fea216aa,momster,villain joke,What's a tornado's favorite game? TWISTER! Wheee!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-not-messy-i-m-just-a-little-spin-sat_6a3d37e1,momster,villain joke,"I'm not messy, I'm just a little spin-sational!",NEW,yes,plays when the kid pokes the villain,
-t_what-s-a-slime-s-favorite-drink-ooze-jui_e80049f1,momster,villain joke,What's a slime's favorite drink? OOZE juice! Blub!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-not-gross-i-m-goo-geous_c9b4ac1a,momster,villain joke,"I'm not gross, I'm GOO-geous!",NEW,yes,plays when the kid pokes the villain,
-t_why-did-the-booger-go-to-school-to-get-p_60d9cc2f,momster,villain joke,Why did the booger go to school? To get PICKED first!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-not-gross-i-m-a-snot-ural-wonder_45d3307a,momster,villain joke,"I'm not gross, I'm a snot-ural wonder!",NEW,yes,plays when the kid pokes the villain,
-t_what-do-you-call-a-gassy-knight-sir-toot_a2e8705b,momster,villain joke,What do you call a gassy knight? SIR TOOTS-A-LOT! That's me!,NEW,yes,plays when the kid pokes the villain,
-t_my-armor-doesn-t-stink-okay-it-does-badl_7c01caed,momster,villain joke,"My armor doesn't stink! Okay, it does. BADLY!",NEW,yes,plays when the kid pokes the villain,
-t_ha-this-house-is-mine-now_1987d917,momster,villain mood,HA! This house is MINE now!,NEW,yes,plays when the kid pokes the villain,
-t_you-ll-never-clean-me-up_211380b4,momster,villain mood,You'll NEVER clean me up!,NEW,yes,plays when the kid pokes the villain,
-t_mess-forever-mwa-ha-ha_4b1f1fa1,momster,villain mood,Mess forever! Mwa-ha-ha!,NEW,yes,plays when the kid pokes the villain,
-t_i-smell-fear-and-something-worse-phew_8da35e83,momster,villain mood,I smell fear. And something worse. Phew!,NEW,yes,plays when the kid pokes the villain,
-t_you-cleaned-one-thing-big-deal_3c59de2c,momster,villain mood,You cleaned ONE thing. Big deal.,NEW,yes,plays when the kid pokes the villain,
-t_is-that-all-you-ve-got-heroes_fd1565cd,momster,villain mood,"Is that all you've got, heroes?",NEW,yes,plays when the kid pokes the villain,
-t_i-m-not-scared-of-you_483277da,momster,villain mood,I'm not scared of you!,NEW,yes,plays when the kid pokes the villain,
-t_your-mom-said-you-re-sweet-she-lied_770a2b58,momster,villain mood,Your mom said you're sweet. She LIED!,NEW,yes,plays when the kid pokes the villain,
-t_wait-why-are-you-actually-good-at-this_8275cc74,momster,villain mood,Wait... why are you actually GOOD at this?!,NEW,yes,plays when the kid pokes the villain,
-t_stop-it-you-re-making-it-tidy_d8a145ef,momster,villain mood,Stop it! You're making it TIDY!,NEW,yes,plays when the kid pokes the villain,
-t_uh-oh-they-re-teaming-up_f45cb5f7,momster,villain mood,Uh oh. They're teaming up...,NEW,yes,plays when the kid pokes the villain,
-t_okay-okay-that-one-impressed-me-a-little_cdc4a0a7,momster,villain mood,Okay okay. That one impressed me a little.,NEW,yes,plays when the kid pokes the villain,
-t_please-stop-cleaning-i-have-a-family_64750c76,momster,villain mood,PLEASE stop cleaning! I have a family!,NEW,yes,plays when the kid pokes the villain,
-t_noooo-not-the-folding_11434f0e,momster,villain mood,Noooo! Not the folding!,NEW,yes,plays when the kid pokes the villain,
-t_i-m-melting-into-a-clean-room_3173d586,momster,villain mood,I'm melting... into a clean room!,NEW,yes,plays when the kid pokes the villain,
-t_tell-my-mess-i-loved-her_de08d245,momster,villain mood,Tell my mess... I loved her!,NEW,yes,plays when the kid pokes the villain,
-t_okay-okay-you-win_01a4e72b,momster,villain defeated,"Okay okay, you win!",NEW,yes,plays when the kid pokes a defeated villain,
-t_my-mess-it-s-gone_55d7d22e,momster,villain defeated,My mess... it's gone!,NEW,yes,plays when the kid pokes a defeated villain,
-t_i-ll-be-back-next-week_976ad48d,momster,villain defeated,I'll be back next week!,NEW,yes,plays when the kid pokes a defeated villain,
-t_tell-my-mess-i-loved-her_7c29667f,momster,villain defeated,Tell my mess I loved her!,NEW,yes,plays when the kid pokes a defeated villain,
-t_i-m-going-to-be-a-mess-at-grandma-s-hous_ae76c4ab,momster,villain defeated,I'm going to be a mess at GRANDMA'S house!,NEW,yes,plays when the kid pokes a defeated villain,
-t_fine-take-the-tiara-it-itched-anyway_b46cfcdb,momster,villain defeated,Fine! Take the tiara. It itched anyway!,NEW,yes,plays when the kid pokes a defeated villain,
-t_grrr-mess-forever_814e7265,momster,villain line,Grrr! Mess forever!,NEW,yes,fallback taunt,
-t_i-ll-be-back-next-week-with-more-mess_130ae7aa,momster,villain line,I'll be back next week... with MORE mess!,NEW,yes,,
-t_nooo-not-the-folding_87eaedd3,momster,villain defeated,Nooo! Not the folding!,NEW,NO (shown only),trophy shelf quote,
-t_i-ll-be-back-maybe_1103f07d,momster,villain defeated,I'll be back... maybe.,NEW,NO (shown only),trophy shelf quote,
-t_curse-you-momster-helper_98890dda,momster,villain defeated,"Curse you, Momster Helper!",NEW,NO (shown only),trophy shelf quote,
-t_my-beautiful-mess_a00a4b4f,momster,villain defeated,My beautiful mess!,NEW,NO (shown only),trophy shelf quote,
-t_i-m-telling-my-mom_39a85505,momster,villain defeated,I'm telling my mom!,NEW,NO (shown only),trophy shelf quote,
-t_okay-okay-i-give-up_2ad1551f,momster,villain defeated,"Okay okay, I give up!",NEW,NO (shown only),trophy shelf quote,
-t_un-flush-believable_92854858,momster,villain defeated,Un-flush-believable!,NEW,NO (shown only),trophy shelf quote,
-t_you-win-this-round-snot-noses_c086e0f8,momster,villain defeated,"You win this round, snot-noses!",NEW,NO (shown only),trophy shelf quote,
-t_the-cleaning-it-burns_ce03de89,momster,villain defeated,The cleaning... it BURNS!,NEW,NO (shown only),trophy shelf quote,
-t_my-landlord-will-hear-about-this_0352768d,momster,villain defeated,My landlord will hear about this!,NEW,NO (shown only),trophy shelf quote,
-t_i-fought-the-law-and-the-law-was-tidy_1ef3aaf8,momster,villain defeated,"I fought the law, and the law was TIDY!",NEW,NO (shown only),trophy shelf quote,
-t_why-did-the-broom-get-a-promotion_8b8687f5,momster,joke of the day (setup),Why did the broom get a promotion?,NEW,yes,,
-t_it-swept-the-competition_ff80794c,momster,joke of the day (punchline),It swept the competition!,NEW,yes,,
-t_what-did-the-sock-say-to-the-washing-mac_5568c04f,momster,joke of the day (setup),What did the sock say to the washing machine?,NEW,yes,,
-t_you-spin-me-right-round_64b900ff,momster,joke of the day (punchline),You spin me right round!,NEW,yes,,
-t_why-did-the-cookie-go-to-the-doctor_fc12e7af,momster,joke of the day (setup),Why did the cookie go to the doctor?,NEW,yes,,
-t_it-was-feeling-crumby_161b2a94,momster,joke of the day (punchline),It was feeling crumby!,NEW,yes,,
-t_what-do-you-call-a-messy-superhero_52222c17,momster,joke of the day (setup),What do you call a messy superhero?,NEW,yes,,
-t_captain-clutter_1675c241,momster,joke of the day (punchline),Captain Clutter!,NEW,yes,,
-t_what-did-one-plate-say-to-the-other_daab9b14,momster,joke of the day (setup),What did one plate say to the other?,NEW,yes,,
-t_dinner-s-on-me_3d6f60c5,momster,joke of the day (punchline),Dinner's on me!,NEW,yes,,
-t_what-does-a-toothbrush-say-before-a-race_bd003c0e,momster,joke of the day (setup),What does a toothbrush say before a race?,NEW,yes,,
-t_ready-set-brush_ff4a5c1f,momster,joke of the day (punchline),"Ready, set, BRUSH!",NEW,yes,,
-t_what-kind-of-shoes-do-ninjas-wear_e1011662,momster,joke of the day (setup),What kind of shoes do ninjas wear?,NEW,yes,,
-t_sneakers_c5c4cd34,momster,joke of the day (punchline),Sneakers!,NEW,yes,,
-t_how-does-a-princess-clean-her-castle_dbbfbd53,momster,joke of the day (setup),How does a princess clean her castle?,NEW,yes,,
-t_with-a-royal-flush_6717fc4a,momster,joke of the day (punchline),With a royal flush!,NEW,yes,,
-t_what-do-you-call-a-dinosaur-that-cleans_4b90a3f9,momster,joke of the day (setup),What do you call a dinosaur that cleans?,NEW,yes,,
-t_a-tidy-rannosaurus-rex_c921784e,momster,joke of the day (punchline),A Tidy-rannosaurus Rex!,NEW,yes,,
-t_what-did-the-sock-say-after-the-dryer_1bcc0b3c,momster,joke of the day (setup),What did the sock say after the dryer?,NEW,yes,,
-t_where-s-my-other-half_cf32752f,momster,joke of the day (punchline),Where's my other half?!,NEW,yes,,
-t_why-don-t-messes-ever-win-races_80dd54d8,momster,joke of the day (setup),Why don't messes ever win races?,NEW,yes,,
-t_they-always-fall-behind_bfbdd006,momster,joke of the day (punchline),They always fall behind!,NEW,yes,,
-t_what-do-you-call-a-sleeping-dinosaur_b2dc0de3,momster,joke of the day (setup),What do you call a sleeping dinosaur?,NEW,yes,,
-t_a-dino-snore_8779c951,momster,joke of the day (punchline),A dino-snore!,NEW,yes,,
-t_why-can-t-you-trust-stairs_bed015a6,momster,joke of the day (setup),Why can't you trust stairs?,NEW,yes,,
-t_they-re-always-up-to-something_12532ccf,momster,joke of the day (punchline),They're always up to something!,NEW,yes,,
-t_why-did-the-pillow-go-to-the-doctor_973c745c,momster,joke of the day (setup),Why did the pillow go to the doctor?,NEW,yes,,
-t_it-was-feeling-down_22e85e16,momster,joke of the day (punchline),It was feeling down!,NEW,yes,,
-t_what-do-you-call-a-superhero-who-s-bad-a_e52aee21,momster,joke of the day (setup),What do you call a superhero who's bad at cleaning?,NEW,yes,,
-t_captain-oops_7e0a4ae1,momster,joke of the day (punchline),Captain Oops!,NEW,yes,,
-t_why-did-the-toilet-paper-roll-down-the-h_63db2a14,momster,joke of the day (setup),Why did the toilet paper roll down the hill?,NEW,yes,,
-t_to-get-to-the-bottom_75907530,momster,joke of the day (punchline),To get to the bottom!,NEW,yes,,
-t_what-did-one-toilet-say-to-the-other_68fd2a55,momster,joke of the day (setup),What did one toilet say to the other?,NEW,yes,,
-t_you-look-a-little-flushed_84ecf9d2,momster,joke of the day (punchline),You look a little flushed!,NEW,yes,,
-t_why-did-the-toot-get-in-trouble_b03154f6,momster,joke of the day (setup),Why did the toot get in trouble?,NEW,yes,,
-t_it-was-talking-behind-your-back_641df462,momster,joke of the day (punchline),It was talking behind your back!,NEW,yes,,
-t_what-s-invisible-and-smells-like-bananas_650297eb,momster,joke of the day (setup),What's invisible and smells like bananas?,NEW,yes,,
-t_monkey-toots_2755a36e,momster,joke of the day (punchline),Monkey toots!,NEW,yes,,
-t_why-do-dragons-sleep-all-day_87df80d5,momster,joke of the day (setup),Why do dragons sleep all day?,NEW,yes,,
-t_so-they-can-fight-knights_851ac5a4,momster,joke of the day (punchline),So they can fight knights!,NEW,yes,,
-t_what-do-you-call-a-bear-with-no-teeth_e8ce496a,momster,joke of the day (setup),What do you call a bear with no teeth?,NEW,yes,,
-t_a-gummy-bear_0c16bb10,momster,joke of the day (punchline),A gummy bear!,NEW,yes,,
-t_why-was-the-broom-late_db336c9f,momster,joke of the day (setup),Why was the broom late?,NEW,yes,,
-t_it-over-swept_8cb26931,momster,joke of the day (punchline),It over-swept!,NEW,yes,,
-t_what-s-a-tornado-s-favorite-game_ecf84840,momster,joke of the day (setup),What's a tornado's favorite game?,NEW,yes,,
-t_twister_d200c082,momster,joke of the day (punchline),Twister!,NEW,yes,,
-t_why-did-the-knight-clean-his-room_a0864da1,momster,joke of the day (setup),Why did the knight clean his room?,NEW,yes,,
-t_his-mom-said-to-armor-ganize-it_c6e49d80,momster,joke of the day (punchline),His mom said to armor-ganize it!,NEW,yes,,
-t_what-do-you-call-a-pile-of-kittens_b0eb0d00,momster,joke of the day (setup),What do you call a pile of kittens?,NEW,yes,,
-t_a-meow-ntain_48a73c26,momster,joke of the day (punchline),A meow-ntain!,NEW,yes,,
-t_why-did-the-banana-go-to-the-doctor_bcb1ef7c,momster,joke of the day (setup),Why did the banana go to the doctor?,NEW,yes,,
-t_it-wasn-t-peeling-well_342f3c67,momster,joke of the day (punchline),It wasn't peeling well!,NEW,yes,,
-t_what-do-you-call-cheese-that-isn-t-yours_5efd2ac7,momster,joke of the day (setup),What do you call cheese that isn't yours?,NEW,yes,,
-t_nacho-cheese_a76ba8c8,momster,joke of the day (punchline),Nacho cheese!,NEW,yes,,
-t_why-did-the-teddy-bear-say-no-to-dessert_0c3c8de5,momster,joke of the day (setup),Why did the teddy bear say no to dessert?,NEW,yes,,
-t_it-was-already-stuffed_43c97ba9,momster,joke of the day (punchline),It was already stuffed!,NEW,yes,,
-t_what-s-a-ninja-s-favorite-chore_de55853a,momster,joke of the day (setup),What's a ninja's favorite chore?,NEW,yes,,
-t_karate-chopping-the-veggies_1050bf42,momster,joke of the day (punchline),Karate-chopping the veggies!,NEW,yes,,
-t_why-did-the-cow-wear-a-bell_10a74d0e,momster,joke of the day (setup),Why did the cow wear a bell?,NEW,yes,,
-t_because-its-horns-didn-t-work_9d69c0af,momster,joke of the day (punchline),Because its horns didn't work!,NEW,yes,,
-t_why-don-t-scientists-trust-atoms_4fa5040f,momster,joke of the day (setup),Why don't scientists trust atoms?,NEW,yes,,
-t_they-make-up-everything_81ee8b00,momster,joke of the day (punchline),They make up everything!,NEW,yes,,
-t_what-did-the-ocean-say-to-the-beach_74fc1cba,momster,joke of the day (setup),What did the ocean say to the beach?,NEW,yes,,
-t_nothing-it-just-waved_9c171ee5,momster,joke of the day (punchline),Nothing. It just waved!,NEW,yes,,
-t_why-did-the-scarecrow-win-an-award_d35d86d1,momster,joke of the day (setup),Why did the scarecrow win an award?,NEW,yes,,
-t_he-was-outstanding-in-his-field_0772e1fd,momster,joke of the day (punchline),He was outstanding in his field!,NEW,yes,,
-t_what-do-you-call-a-fish-with-no-eyes_f2ea9ea0,momster,joke of the day (setup),What do you call a fish with no eyes?,NEW,yes,,
-t_a-fsh_3378402c,momster,joke of the day (punchline),A fsh!,NEW,yes,,
-t_i-m-reading-a-book-about-anti-gravity_28c3a8f6,momster,joke of the day (setup),I'm reading a book about anti-gravity.,NEW,yes,,
-t_it-s-impossible-to-put-down_bd8386b6,momster,joke of the day (punchline),It's impossible to put down!,NEW,yes,,
-t_what-do-you-call-a-belt-made-of-watches_71508717,momster,joke of the day (setup),What do you call a belt made of watches?,NEW,yes,,
-t_a-waist-of-time_57086cad,momster,joke of the day (punchline),A waist of time!,NEW,yes,,
-t_why-did-the-math-book-look-sad_6d5e5400,momster,joke of the day (setup),Why did the math book look sad?,NEW,yes,,
-t_it-had-too-many-problems_c536e5bc,momster,joke of the day (punchline),It had too many problems.,NEW,yes,,
-t_what-s-red-and-bad-for-your-teeth_5d6739d5,momster,joke of the day (setup),What's red and bad for your teeth?,NEW,yes,,
-t_a-brick_b6752bf8,momster,joke of the day (punchline),A brick!,NEW,yes,,
-t_why-did-the-bicycle-fall-over_2300b870,momster,joke of the day (setup),Why did the bicycle fall over?,NEW,yes,,
-t_it-was-two-tired_a84c273f,momster,joke of the day (punchline),It was two-tired!,NEW,yes,,
-t_what-do-you-call-a-sleeping-bull_1a3f74f1,momster,joke of the day (setup),What do you call a sleeping bull?,NEW,yes,,
-t_a-bulldozer_6c11b094,momster,joke of the day (punchline),A bulldozer!,NEW,yes,,
-t_why-did-the-golfer-bring-two-pairs-of-pa_f968c079,momster,joke of the day (setup),Why did the golfer bring two pairs of pants?,NEW,yes,,
-t_in-case-he-got-a-hole-in-one_5164a8dc,momster,joke of the day (punchline),In case he got a hole in one!,NEW,yes,,
-t_what-did-the-janitor-yell-when-he-jumped_cfc78ef1,momster,joke of the day (setup),What did the janitor yell when he jumped out of the closet?,NEW,yes,,
-t_supplies_7ebe99b5,momster,joke of the day (punchline),SUPPLIES!,NEW,yes,,
-t_why-are-elevator-jokes-so-good_8b5ffeb9,momster,joke of the day (setup),Why are elevator jokes so good?,NEW,yes,,
-t_they-work-on-so-many-levels_2d762aca,momster,joke of the day (punchline),They work on so many levels!,NEW,yes,,
-t_what-did-the-fish-say-when-it-swam-into_c8dc1f87,momster,joke of the day (setup),What did the fish say when it swam into a wall?,NEW,yes,,
-t_dam_f3906ae0,momster,joke of the day (punchline),Dam!,NEW,yes,,
-t_why-can-t-a-nose-be-12-inches-long_91337179,momster,joke of the day (setup),Why can't a nose be 12 inches long?,NEW,yes,,
-t_because-then-it-would-be-a-foot_ea76f7f3,momster,joke of the day (punchline),Because then it would be a foot!,NEW,yes,,
-t_what-do-you-call-a-pony-with-a-cough_f1143974,momster,joke of the day (setup),What do you call a pony with a cough?,NEW,yes,,
-t_a-little-hoarse_2a0a4959,momster,joke of the day (punchline),A little hoarse!,NEW,yes,,
-t_what-time-do-you-go-to-the-dentist_7644f72e,momster,joke of the day (setup),What time do you go to the dentist?,NEW,yes,,
-t_tooth-hurty_9b4c93c3,momster,joke of the day (punchline),Tooth-hurty!,NEW,yes,,
-t_what-do-you-call-a-dog-that-does-magic_b4684282,momster,joke of the day (setup),What do you call a dog that does magic?,NEW,yes,,
-t_a-labracadabrador_f7838318,momster,joke of the day (punchline),A labracadabrador!,NEW,yes,,
-t_why-do-bees-have-sticky-hair_01e067f7,momster,joke of the day (setup),Why do bees have sticky hair?,NEW,yes,,
-t_they-use-honeycombs_a4e3f84a,momster,joke of the day (punchline),They use honeycombs!,NEW,yes,,
-t_why-did-the-kid-stare-at-the-orange-juic_d626b261,momster,joke of the day (setup),Why did the kid stare at the orange juice?,NEW,yes,,
-t_because-it-said-concentrate_03dc6908,momster,joke of the day (punchline),Because it said CONCENTRATE!,NEW,yes,,
-t_what-do-you-call-a-gassy-dinosaur_a39d205b,momster,joke of the day (setup),What do you call a gassy dinosaur?,NEW,yes,,
-t_a-toot-a-rex_cecbb7b9,momster,joke of the day (punchline),A toot-a-rex!,NEW,yes,,
-t_why-did-the-toot-flunk-school_07a17354,momster,joke of the day (setup),Why did the toot flunk school?,NEW,yes,,
-t_it-just-couldn-t-pass_a131e82c,momster,joke of the day (punchline),It just couldn't pass!,NEW,yes,,
-t_why-did-the-burp-say-sorry_0a1a3af5,momster,joke of the day (setup),Why did the burp say sorry?,NEW,yes,,
-t_it-didn-t-mean-to-let-it-rip_f372b748,momster,joke of the day (punchline),It didn't mean to let it rip!,NEW,yes,,
-t_where-does-a-skunk-sit-in-church_84cb00df,momster,joke of the day (setup),Where does a skunk sit in church?,NEW,yes,,
-t_in-its-own-pew_974e69c7,momster,joke of the day (punchline),In its own pew!,NEW,yes,,
-t_urgent-message-a-villain-has-invaded-the_72f8fbb2,momster,villain intro,Urgent message! A villain has invaded the house: Stinky Sock Goblin. Stole one sock from every pair in the house! Weak to laundry & socks jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Stinky Sock Goblin. Stole one sock from every pair in the house! Weak to 🧺 laundry & socks jobs: double damage!
-t_urgent-message-a-villain-has-invaded-the_d2035cc6,momster,villain intro,"Urgent message! A villain has invaded the house: Captain Crumbs. Sails the Sea of Snacks, dropping crumbs on every couch! Weak to kitchen jobs jobs: double damage!",NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,"Urgent message! A villain has invaded the house: Captain Crumbs. Sails the Sea of Snacks, dropping crumbs on every couch! Weak to 🍽️ kitchen jobs jobs: double damage!"
-t_urgent-message-a-villain-has-invaded-the_eff977e3,momster,villain intro,Urgent message! A villain has invaded the house: Grumpy Tiara Troll. Stole the royal tiara and hid it under the mess! Weak to getting-ready jobs jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Grumpy Tiara Troll. Stole the royal tiara and hid it under the mess! Weak to 🎒 getting-ready jobs jobs: double damage!
-t_urgent-message-a-villain-has-invaded-the_02b1c066,momster,villain intro,Urgent message! A villain has invaded the house: Dust Bunny Boss. Lives under the bed and sneezes dust everywhere! Weak to bed & room jobs jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Dust Bunny Boss. Lives under the bed and sneezes dust everywhere! Weak to 🛏️ bed & room jobs jobs: double damage!
-t_urgent-message-a-villain-has-invaded-the_b7e67d8e,momster,villain intro,Urgent message! A villain has invaded the house: Toy Tornado. Spins every toy right out of its bin! Weak to toy jobs jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Toy Tornado. Spins every toy right out of its bin! Weak to 🧸 toy jobs jobs: double damage!
-t_urgent-message-a-villain-has-invaded-the_46fe2d17,momster,villain intro,Urgent message! A villain has invaded the house: Sludge Slime. Oozes onto teeth and sinks. Blub blub! Weak to brushing & wiping jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Sludge Slime. Oozes onto teeth and sinks. Blub blub! Weak to 🪥 brushing & wiping jobs: double damage!
-t_urgent-message-a-villain-has-invaded-the_9ee889e5,momster,villain intro,Urgent message! A villain has invaded the house: Baron von Booger. Escaped from a giant nose. Wipes boogers on the couch cushions! Weak to wiping & brushing jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Baron von Booger. Escaped from a giant nose. Wipes boogers on the couch cushions! Weak to 🧼 wiping & brushing jobs: double damage!
-t_urgent-message-a-villain-has-invaded-the_fb8810b1,momster,villain intro,Urgent message! A villain has invaded the house: Sir Toots-a-Lot. A gassy knight in stinky armor. Blames the dog for everything! Weak to laundry & airing out jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Sir Toots-a-Lot. A gassy knight in stinky armor. Blames the dog for everything! Weak to 🧺 laundry & airing out jobs: double damage!
-t_surprise-mission-the-great-crumb-inciden_8eee6dcf,momster,surprise mission,Surprise mission! THE GREAT CRUMB INCIDENT!. Wipe the table and sweep up crumbs.,NEW,yes (non-reader mode),,
-t_surprise-mission-the-sock-has-awakened-f_774cf66b,momster,surprise mission,Surprise mission! THE SOCK HAS AWAKENED!. Find stray socks and put them in the hamper.,NEW,yes (non-reader mode),,
-t_surprise-mission-toy-avalanche-5-minute_ca8891aa,momster,surprise mission,Surprise mission! TOY AVALANCHE!. 5-minute toy pickup race.,NEW,yes (non-reader mode),,
-t_surprise-mission-shoe-pile-panic-line-up_dc08e19b,momster,surprise mission,Surprise mission! SHOE PILE PANIC!. Line up all the shoes by the door.,NEW,yes (non-reader mode),,
-t_surprise-mission-couch-chaos-fix-the-pil_75cd4c4d,momster,surprise mission,Surprise mission! COUCH CHAOS!. Fix the pillows and fold the blankets.,NEW,yes (non-reader mode),,
-t_your-special-mission-water-the-plants_7b8d855b,momster,special mission,Your special mission: Water the plants.,NEW,yes (non-reader mode),,
-t_water-the-plants_f1c0fcfb,momster,special mission,Water the plants.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-sort-the-sock-mount_eca8da61,momster,special mission,Your special mission: Sort the sock mountain.,NEW,yes (non-reader mode),,
-t_sort-the-sock-mountain_be12cb81,momster,special mission,Sort the sock mountain.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-wipe-the-table_c2820551,momster,special mission,Your special mission: Wipe the table.,NEW,yes (non-reader mode),,
-t_wipe-the-table_d996d571,momster,special mission,Wipe the table.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-put-stray-toys-in-t_52c40f25,momster,special mission,Your special mission: Put stray toys in the bin.,NEW,yes (non-reader mode),,
-t_put-stray-toys-in-the-bin_f48844c5,momster,special mission,Put stray toys in the bin.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-get-the-mail_e9259faf,momster,special mission,Your special mission: Get the mail.,NEW,yes (non-reader mode),,
-t_get-the-mail_fa903a4f,momster,special mission,Get the mail.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-fluff-the-couch-cus_a128527d,momster,special mission,Your special mission: Fluff the couch cushions.,NEW,yes (non-reader mode),,
-t_fluff-the-couch-cushions_7f832b1d,momster,special mission,Fluff the couch cushions.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-polish-the-bathroom_487cab98,momster,special mission,Your special mission: Polish the bathroom mirror.,NEW,yes (non-reader mode),,
-t_polish-the-bathroom-mirror_baead3b8,momster,special mission,Polish the bathroom mirror.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_your-special-mission-dust-one-shelf_f39078d5,momster,special mission,Your special mission: Dust one shelf.,NEW,yes (non-reader mode),,
-t_dust-one-shelf_a7c3d4f5,momster,special mission,Dust one shelf.,NEW,yes (non-reader mode),"name only, after choosing and on completion",
-t_pick-your-special-mission-for-today_fb9bb13a,momster,special mission,Pick your special mission for today.,NEW,yes (non-reader mode),,
-t_brush-your-hair_8c6ce704,momster,optional job,Brush your hair.,NEW,yes,family job list; plays when tapped,
-t_take-your-vitamin_6f13d793,momster,optional job,Take your vitamin.,NEW,yes,family job list; plays when tapped,
-t_pack-your-lunch-box_6ed85ef0,momster,optional job,Pack your lunch box.,NEW,yes,family job list; plays when tapped,
-t_read-for-15-minutes_41b66b35,momster,optional job,Read for 15 minutes.,NEW,yes,family job list; plays when tapped,
-t_practice-your-instrument_7e4be68e,momster,optional job,Practice your instrument.,NEW,yes,family job list; plays when tapped,
-t_do-your-homework_69a05ab7,momster,optional job,Do your homework.,NEW,yes,family job list; plays when tapped,
-t_play-outside-for-30-minutes_9077bda3,momster,optional job,Play outside for 30 minutes.,NEW,yes,family job list; plays when tapped,
-t_floss-your-teeth_a1fc40a3,momster,optional job,Floss your teeth.,NEW,yes,family job list; plays when tapped,
-t_pick-a-bedtime-story_fb02aaaa,momster,optional job,Pick a bedtime story.,NEW,yes,family job list; plays when tapped,
-t_lay-out-tomorrow-s-clothes_1b7c31c4,momster,optional job,Lay out tomorrow's clothes.,NEW,yes,family job list; plays when tapped,
-t_drink-some-water_9b360032,momster,optional job,Drink some water.,NEW,yes,family job list; plays when tapped,
-t_level-up-you-are-now-rookie-helpers_ab30392d,momster,level up,Level up! You are now Rookie Helpers!,NEW,yes,,
-t_level-up-you-are-now-junior-helpers_7e01c207,momster,level up,Level up! You are now Junior Helpers!,NEW,yes,,
-t_level-up-you-are-now-super-helpers_ecdff655,momster,level up,Level up! You are now Super Helpers!,NEW,yes,,
-t_level-up-you-are-now-mega-helpers_c883c57a,momster,level up,Level up! You are now Mega Helpers!,NEW,yes,,
-t_level-up-you-are-now-ultra-helpers_56fd41de,momster,level up,Level up! You are now Ultra Helpers!,NEW,yes,,
-t_level-up-you-are-now-momster-s-mvp_f72725ff,momster,level up,Level up! You are now Momster's MVP!,NEW,yes,,
-t_combo-attack-sunrise-smash_7b5bca50,momster,combo,Combo attack! Sunrise Smash!,NEW,yes,,
-t_combo-attack-backpack-blaster_24ce8518,momster,combo,Combo attack! Backpack Blaster!,NEW,yes,,
-t_combo-attack-moonbeam-double-doom_d325819d,momster,combo,Combo attack! Moonbeam Double Doom!,NEW,yes,,
-t_combo-attack-helper-hurricane_82179edc,momster,combo,Combo attack! Helper Hurricane!,NEW,yes,,
-t_oops-excuse-me_aa7ef76f,momster,app line,Oops! Excuse me!,NEW,yes,,
-t_hee-hee-that-tickles_02ce168b,momster,app line,Hee hee! That tickles!,NEW,yes,,
-t_burrrp-pardon-me_5e881e2e,momster,app line,BURRRP! Pardon me!,NEW,yes,,
-t_wheee_89130812,momster,app line,Wheee!,NEW,yes,,
-t_achoo-ugh-i-sneezed-on-your-job_7493b8da,momster,app line,ACHOO! Ugh. I sneezed on your job.,NEW,yes,,
-t_who-stepped-on-a-duck_b20f6f13,momster,app line,Who stepped on a duck?!,NEW,yes,,
-t_test-mode-nothing-you-do-gets-saved_fb42a972,momster,app line,Test mode! Nothing you do gets saved.,NEW,yes,,
-t_mission-report-look-what-the-momster-hel_bda0951e,momster,app line,Mission report! Look what the Momster Helpers did this week!,NEW,yes,,
-t_talking-is-on_2f7e6b0b,momster,app line,Talking is on!,NEW,yes,,
-t_ooh-good-choice_9aa08c16,momster,app line,"Ooh, good choice!",NEW,yes,,
-t_special-mission-complete-two-big-stars_3e0d2638,momster,app line,Special mission complete! Two big stars!,NEW,yes,,
-t_your-prize-is-a-surprise-fill-your-jar-t_0167fc11,momster,app line,Your prize is a surprise! Fill your jar to find out!,NEW,yes,,
-t_this-is-your-prize-this-week-ask-a-grown_a85e29ee,momster,app line,This is your prize this week! Ask a grown-up if you want to change it.,NEW,yes,,
-t_hi-sound-is-working_948a7a71,momster,app line,Hi! Sound is working.,NEW,yes,,
-t_the-dog-did-it-i-saw-him_0d676ce6,momster,toot reaction,The dog did it! I saw him!,NEW,yes,villain reacts after a toot,
-t_that-one-smelled-like-justice_66f38817,momster,toot reaction,That one smelled like JUSTICE!,NEW,yes,villain reacts after a toot,
-t_ewww-rude_b65f0387,momster,toot reaction,EWWW! Rude!,NEW,yes,villain reacts after a toot,
-t_p-u-who-did-that_233402e2,momster,toot reaction,P-U! Who did that?!,NEW,yes,villain reacts after a toot,
-t_my-nose-my-nose_39d02ecb,momster,toot reaction,My nose! MY NOSE!,NEW,yes,villain reacts after a toot,
-t_that-s-my-move_06ab2b40,momster,toot reaction,That's my move!,NEW,yes,villain reacts after a toot,
-t_gross-even-i-have-standards_bd2b36be,momster,toot reaction,Gross! Even I have standards!,NEW,yes,villain reacts after a toot,
-t_whoever-smelt-it-dealt-it_2bb7c011,momster,toot reaction,"Whoever smelt it, dealt it!",NEW,yes,villain reacts after a toot,
-t_that-should-be-illegal_bed1ed69,momster,toot reaction,That should be ILLEGAL!,NEW,yes,villain reacts after a toot,
-t_my-eyes-are-watering_a9d29ae9,momster,toot reaction,My eyes are WATERING!,NEW,yes,villain reacts after a toot,
-t_prize-done-keep-going_bd9ad54a,momster,app line,Prize done! Keep going!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_ask-a-grown-up-for-your-prize_daee4cd5,momster,app line,Ask a grown-up for your prize!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_walking-today_423998a8,momster,ride picker,Walking today!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_bus-today_56dbcb7f,momster,ride picker,Bus today!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_driving-today_d4026820,momster,ride picker,Driving today!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_top-rank-legends-forever_9eeff2b7,momster,level up,Top rank! Legends forever!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_ouch-that-stings_16e5611f,momster,battle,Ouch! That stings!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_ugh-they-re-strong_7daa6d46,momster,battle,Ugh! They're strong!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_mystery-hit-double-damage-lucky-you_dd10d9ff,momster,battle,Mystery hit! Double damage! Lucky you!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_combo-attack-landed_a62bb610,momster,combo,Combo attack landed!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_star-jar-full-you-saved-up-for-that-that_bbd37df8,momster,app line,Star jar full! You saved up for that. That's what I call stick-to-it!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_the-dog-is-taking-the-blame_8cd0fed0,momster,toot milestone,The dog is taking the blame.,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_the-epa-has-been-notified-twice_add27e9e,momster,toot milestone,The EPA has been notified. Twice.,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_the-dog-is-packing-its-bags_390484d4,momster,toot milestone,The dog is packing its bags.,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_that-one-hurts-the-villain-double_9f696dfe,momster,battle,That one hurts the villain double!,NEW,NO (shown only),text is on screen but no sound is wired yet,
-t_morning_02e055cf,momster,routine name,Morning,NEW,NO (label),,
-t_after-school_203b34ff,momster,routine name,After school,NEW,NO (label),,
-t_bedtime_8774abad,momster,routine name,Bedtime,NEW,NO (label),,
-t_helper_6a61af4d,momster,routine name,Helper,NEW,NO (label),,
-t_first-star_c8d1c5cf,momster,sticker name,First star,NEW,NO (label),tap-to-hear needed,
-t_100-stars_e590895d,momster,sticker name,100 stars,NEW,NO (label),tap-to-hear needed,
-t_500-stars_63e62a39,momster,sticker name,500 stars,NEW,NO (label),tap-to-hear needed,
-t_full-jar_a6242c09,momster,sticker name,Full jar,NEW,NO (label),tap-to-hear needed,
-t_4-full-jars_ff767eda,momster,sticker name,4 full jars,NEW,NO (label),tap-to-hear needed,
-t_beat-the-clock_fb40d8e0,momster,sticker name,Beat the clock,NEW,NO (label),tap-to-hear needed,
-t_5-races_750d38f2,momster,sticker name,5 races,NEW,NO (label),tap-to-hear needed,
-t_20-races_85499729,momster,sticker name,20 races,NEW,NO (label),tap-to-hear needed,
-t_3-nights_f31fae81,momster,sticker name,3 nights,NEW,NO (label),tap-to-hear needed,
-t_7-nights_91f71345,momster,sticker name,7 nights,NEW,NO (label),tap-to-hear needed,
-t_14-nights_7f31b667,momster,sticker name,14 nights,NEW,NO (label),tap-to-hear needed,
-t_first-egg_1036c9c8,momster,sticker name,First egg,NEW,NO (label),tap-to-hear needed,
-t_10-eggs_c20be33e,momster,sticker name,10 eggs,NEW,NO (label),tap-to-hear needed,
-t_villain-buster_3bd38091,momster,sticker name,Villain buster,NEW,NO (label),tap-to-hear needed,
-t_4-villains-busted_31e01728,momster,sticker name,4 villains busted,NEW,NO (label),tap-to-hear needed,
-t_first-buy_d53e8801,momster,sticker name,First buy,NEW,NO (label),tap-to-hear needed,
-t_10-items_ff4b41d0,momster,sticker name,10 items,NEW,NO (label),tap-to-hear needed,
-t_dragon_73654acd,momster,sticker name,Dragon!,NEW,NO (label),tap-to-hear needed,
-t_unicorn_03f97362,momster,sticker name,Unicorn!,NEW,NO (label),tap-to-hear needed,
-t_5-bonus-jobs_23de36fd,momster,sticker name,5 bonus jobs,NEW,NO (label),tap-to-hear needed,
-t_little-chef_6e9f3543,momster,sticker name,Little chef,NEW,NO (label),tap-to-hear needed,
-t_made-a-sidekick_6fc711c4,momster,sticker name,Made a sidekick,NEW,NO (label),tap-to-hear needed,
-t_dance-party_b73fe758,momster,sticker name,Dance party,NEW,NO (label),tap-to-hear needed,
-t_rookie-helpers_b5c17be3,momster,rank name,Rookie Helpers,NEW,NO (label),,
-t_junior-helpers_7b4d8211,momster,rank name,Junior Helpers,NEW,NO (label),,
-t_super-helpers_186dd1c5,momster,rank name,Super Helpers,NEW,NO (label),,
-t_mega-helpers_c6c1db5e,momster,rank name,Mega Helpers,NEW,NO (label),,
-t_ultra-helpers_53b34d88,momster,rank name,Ultra Helpers,NEW,NO (label),,
-t_momster-s-mvp_64aa2a0b,momster,rank name,Momster's MVP,NEW,NO (label),,
-t_duke-of-dawn_71fbd50f,momster,hero award,Duke of Dawn,NEW,NO (label),,
-t_backpack-boss_f54b5860,momster,hero award,Backpack Boss,NEW,NO (label),,
-t_pajama-champion_f0bddf88,momster,hero award,Pajama Champion,NEW,NO (label),,
-t_helper-hero_85ca4343,momster,hero award,Helper Hero,NEW,NO (label),,
-t_bonus-beast_17cb8203,momster,hero award,Bonus Beast,NEW,NO (label),,
-t_super_9d397374,momster,hero style,Super,NEW,NO (label),,
-t_princess_a8192ad6,momster,hero style,Princess,NEW,NO (label),,
-t_knight_cd17325c,momster,hero style,Knight,NEW,NO (label),,
-t_ninja_a0402c4b,momster,hero style,Ninja,NEW,NO (label),,
-t_squeaky_124c0f8a,momster,character name,Squeaky,NEW,NO (label),,
-t_sparkle-fairy_c4e83794,momster,character name,Sparkle Fairy,NEW,NO (label),,
-t_dino_aa72d75d,momster,character name,Dino,NEW,NO (label),,
-t_big-bear_caac5589,momster,character name,Big Bear,NEW,NO (label),,
-t_robo_96451f91,momster,character name,Robo,NEW,NO (label),,
-t_silly-ghost_ea0f2be7,momster,character name,Silly Ghost,NEW,NO (label),,
-t_balloon_5781edbc,momster,shop item,Balloon,NEW,NO (label),tap-to-hear needed,
-t_sunflower_c971259a,momster,shop item,Sunflower,NEW,NO (label),tap-to-hear needed,
-t_carrot_e6637c92,momster,shop item,Carrot,NEW,NO (label),tap-to-hear needed,
-t_banana_c6e3dc70,momster,shop item,Banana,NEW,NO (label),tap-to-hear needed,
-t_ice-cream_90852ebe,momster,shop item,Ice cream,NEW,NO (label),tap-to-hear needed,
-t_soccer-ball_b371376b,momster,shop item,Soccer ball,NEW,NO (label),tap-to-hear needed,
-t_lollipop_d999d0aa,momster,shop item,Lollipop,NEW,NO (label),tap-to-hear needed,
-t_popcorn_9a55e2aa,momster,shop item,Popcorn,NEW,NO (label),tap-to-hear needed,
-t_juice-box_32937eca,momster,shop item,Juice box,NEW,NO (label),tap-to-hear needed,
-t_pizza-slice_e732353f,momster,shop item,Pizza slice,NEW,NO (label),tap-to-hear needed,
-t_toilet-paper_df0a480a,momster,shop item,Toilet paper,NEW,NO (label),tap-to-hear needed,
-t_bone_42720baf,momster,shop item,Bone,NEW,NO (label),tap-to-hear needed,
-t_teddy_f3cfd871,momster,shop item,Teddy,NEW,NO (label),tap-to-hear needed,
-t_kite_42db7936,momster,shop item,Kite,NEW,NO (label),tap-to-hear needed,
-t_books_d9d036b1,momster,shop item,Books,NEW,NO (label),tap-to-hear needed,
-t_magic-wand_e53a32d2,momster,shop item,Magic wand,NEW,NO (label),tap-to-hear needed,
-t_knight-shield_d16949d5,momster,shop item,Knight shield,NEW,NO (label),tap-to-hear needed,
-t_knight-sword_0ddf06fd,momster,shop item,Knight sword,NEW,NO (label),tap-to-hear needed,
-t_rose_906e6426,momster,shop item,Rose,NEW,NO (label),tap-to-hear needed,
-t_royal-mirror_0a9f46b3,momster,shop item,Royal mirror,NEW,NO (label),tap-to-hear needed,
-t_trophy_81d15d1f,momster,shop item,Trophy,NEW,NO (label),tap-to-hear needed,
-t_guitar_f53c5c2f,momster,shop item,Guitar,NEW,NO (label),tap-to-hear needed,
-t_ball-cap_0d077f4c,momster,shop item,Ball cap,NEW,NO (label),tap-to-hear needed,
-t_bow_d8cb838b,momster,shop item,Bow,NEW,NO (label),tap-to-hear needed,
-t_mushroom-hat_beeed312,momster,shop item,Mushroom hat,NEW,NO (label),tap-to-hear needed,
-t_sun-hat_c6a1853c,momster,shop item,Sun hat,NEW,NO (label),tap-to-hear needed,
-t_donut-hat_41efbbda,momster,shop item,Donut hat,NEW,NO (label),tap-to-hear needed,
-t_pumpkin-hat_777d2c2a,momster,shop item,Pumpkin hat,NEW,NO (label),tap-to-hear needed,
-t_smarty-hat_4544dd6c,momster,shop item,Smarty hat,NEW,NO (label),tap-to-hear needed,
-t_helmet_d6085f40,momster,shop item,Helmet,NEW,NO (label),tap-to-hear needed,
-t_cupcake-hat_2fbbba1e,momster,shop item,Cupcake hat,NEW,NO (label),tap-to-hear needed,
-t_pizza-hat_8f858c18,momster,shop item,Pizza hat,NEW,NO (label),tap-to-hear needed,
-t_octopus-hat_d0762c43,momster,shop item,Octopus hat,NEW,NO (label),tap-to-hear needed,
-t_top-hat_79ec6481,momster,shop item,Top hat,NEW,NO (label),tap-to-hear needed,
-t_halo_4feb09bf,momster,shop item,Halo,NEW,NO (label),tap-to-hear needed,
-t_unicorn-horn_6c8b0050,momster,shop item,Unicorn horn,NEW,NO (label),tap-to-hear needed,
-t_crown_c1595930,momster,shop item,Crown,NEW,NO (label),tap-to-hear needed,
-t_knight-helmet_07a6e241,momster,shop item,Knight helmet,NEW,NO (label),tap-to-hear needed,
-t_princess-tiara_3eacba85,momster,shop item,Princess tiara,NEW,NO (label),tap-to-hear needed,
-t_glasses_ef27a8db,momster,shop item,Glasses,NEW,NO (label),tap-to-hear needed,
-t_clown-nose_d163faa5,momster,shop item,Clown nose,NEW,NO (label),tap-to-hear needed,
-t_mustache_ccac198f,momster,shop item,Mustache,NEW,NO (label),tap-to-hear needed,
-t_sunglasses_045830e7,momster,shop item,Sunglasses,NEW,NO (label),tap-to-hear needed,
-t_goggles_2c9cee17,momster,shop item,Goggles,NEW,NO (label),tap-to-hear needed,
-t_snorkel_5763f49f,momster,shop item,Snorkel,NEW,NO (label),tap-to-hear needed,
-t_party-mask_62c8a0f9,momster,shop item,Party mask,NEW,NO (label),tap-to-hear needed,
-t_ninja-mask_e928e4ad,momster,shop item,Ninja mask,NEW,NO (label),tap-to-hear needed,
-t_hero-mask_07481a6f,momster,shop item,Hero mask,NEW,NO (label),tap-to-hear needed,
-t_fancy-tie_d9fedc04,momster,shop item,Fancy tie,NEW,NO (label),tap-to-hear needed,
-t_scarf_251c6f5e,momster,shop item,Scarf,NEW,NO (label),tap-to-hear needed,
-t_beads_b9c01292,momster,shop item,Beads,NEW,NO (label),tap-to-hear needed,
-t_gold-medal_a5fb2aa8,momster,shop item,Gold medal,NEW,NO (label),tap-to-hear needed,
-t_hero-cape_13a2112c,momster,shop item,Hero cape,NEW,NO (label),tap-to-hear needed,
-t_princess-cape_e9fac495,momster,shop item,Princess cape,NEW,NO (label),tap-to-hear needed,
-t_striped-tee_c7642082,momster,shop item,Striped tee,NEW,NO (label),tap-to-hear needed,
-t_star-pjs_4762da3e,momster,shop item,Star PJs,NEW,NO (label),tap-to-hear needed,
-t_overalls_144f2dcb,momster,shop item,Overalls,NEW,NO (label),tap-to-hear needed,
-t_team-jersey_a532e1ec,momster,shop item,Team jersey,NEW,NO (label),tap-to-hear needed,
-t_tutu_ff017115,momster,shop item,Tutu,NEW,NO (label),tap-to-hear needed,
-t_princess-gown_37db21f1,momster,shop item,Princess gown,NEW,NO (label),tap-to-hear needed,
-t_super-suit_7c116195,momster,shop item,Super suit,NEW,NO (label),tap-to-hear needed,
-t_knight-armor_fbada983,momster,shop item,Knight armor,NEW,NO (label),tap-to-hear needed,
-t_ninja-suit_c2979adc,momster,shop item,Ninja suit,NEW,NO (label),tap-to-hear needed,
-t_snail_333192ea,momster,shop item,Snail,NEW,NO (label),tap-to-hear needed,
-t_bee_b6b3491f,momster,shop item,Bee,NEW,NO (label),tap-to-hear needed,
-t_butterfly_5d4a9704,momster,shop item,Butterfly,NEW,NO (label),tap-to-hear needed,
-t_chick_9ecf59fb,momster,shop item,Chick,NEW,NO (label),tap-to-hear needed,
-t_turtle_2810323f,momster,shop item,Turtle,NEW,NO (label),tap-to-hear needed,
-t_frog_1e743f07,momster,shop item,Frog,NEW,NO (label),tap-to-hear needed,
-t_hedgehog_8317c3bc,momster,shop item,Hedgehog,NEW,NO (label),tap-to-hear needed,
-t_kitty_825b13a0,momster,shop item,Kitty,NEW,NO (label),tap-to-hear needed,
-t_puppy_02a9a7a5,momster,shop item,Puppy,NEW,NO (label),tap-to-hear needed,
-t_penguin_e1dc1e1f,momster,shop item,Penguin,NEW,NO (label),tap-to-hear needed,
-t_poop-pal_2d9f9222,momster,shop item,Poop pal,NEW,NO (label),tap-to-hear needed,
-t_tiny-dino_a4d31681,momster,shop item,Tiny dino,NEW,NO (label),tap-to-hear needed,
-t_swan_cf19b0cc,momster,shop item,Swan,NEW,NO (label),tap-to-hear needed,
-t_unicorn_4466e477,momster,shop item,Unicorn,NEW,NO (label),tap-to-hear needed,
-t_dragon_cc1ebe3e,momster,shop item,Dragon,NEW,NO (label),tap-to-hear needed,
-t_beach_c6aedde8,momster,shop item,Beach,NEW,NO (label),tap-to-hear needed,
-t_forest_953ca480,momster,shop item,Forest,NEW,NO (label),tap-to-hear needed,
-t_snow-day_185975c4,momster,shop item,Snow day,NEW,NO (label),tap-to-hear needed,
-t_outer-space_fd2c5182,momster,shop item,Outer space,NEW,NO (label),tap-to-hear needed,
-t_under-the-sea_14c0157d,momster,shop item,Under the sea,NEW,NO (label),tap-to-hear needed,
-t_candy-land_5c9d3f03,momster,shop item,Candy land,NEW,NO (label),tap-to-hear needed,
-t_castle_e0d61e79,momster,shop item,Castle,NEW,NO (label),tap-to-hear needed,
-t_royal-ballroom_734c6bca,momster,shop item,Royal ballroom,NEW,NO (label),tap-to-hear needed,
-t_volcano_b21f8d5d,momster,shop item,Volcano,NEW,NO (label),tap-to-hear needed,
-t_rainbow_5c15be49,momster,shop item,Rainbow,NEW,NO (label),tap-to-hear needed,
-t_star-hat_34b2f12c,momster,shop item,Star hat,NEW,NO (label),tap-to-hear needed,
-t_diamond_df593b47,momster,shop item,Diamond,NEW,NO (label),tap-to-hear needed,
-t_crystal-ball_f36d27ce,momster,shop item,Crystal ball,NEW,NO (label),tap-to-hear needed,
-t_tiny-planet_29f8992f,momster,shop item,Tiny planet,NEW,NO (label),tap-to-hear needed,
-t_comet_6acb19af,momster,shop item,Comet,NEW,NO (label),tap-to-hear needed,
-t_peacock_121a762d,momster,shop item,Peacock,NEW,NO (label),tap-to-hear needed,
-t_wise-owl_550abbf3,momster,shop item,Wise owl,NEW,NO (label),tap-to-hear needed,
-t_flamingo_54b4a4bc,momster,shop item,Flamingo,NEW,NO (label),tap-to-hear needed,
-t_sloth_f9bbf0fb,momster,shop item,Sloth,NEW,NO (label),tap-to-hear needed,
-t_shark_4d856ab2,momster,shop item,Shark,NEW,NO (label),tap-to-hear needed,
-t_ghost-pal_1753b08d,momster,shop item,Ghost pal,NEW,NO (label),tap-to-hear needed,
-t_rainbow-cape_cdbe443c,momster,shop item,Rainbow cape,NEW,NO (label),tap-to-hear needed,
-t_heart-glasses_d9cb245f,momster,shop item,Heart glasses,NEW,NO (label),tap-to-hear needed,
-t_northern-lights_c74c3694,momster,shop item,Northern lights,NEW,NO (label),tap-to-hear needed,
-t_disco-party_4ec40d7d,momster,shop item,Disco party,NEW,NO (label),tap-to-hear needed,
-t_skeleton-suit_16b3af37,momster,shop item,Skeleton suit,NEW,NO (label),tap-to-hear needed,
-t_witch-hat_1ac3671d,momster,shop item,Witch hat,NEW,NO (label),tap-to-hear needed,
-t_vampire-cape_8e3b1a10,momster,shop item,Vampire cape,NEW,NO (label),tap-to-hear needed,
-t_bat_d5bc7448,momster,shop item,Bat,NEW,NO (label),tap-to-hear needed,
-t_spider_db6aea28,momster,shop item,Spider,NEW,NO (label),tap-to-hear needed,
-t_jack-o-lantern_c38d8032,momster,shop item,Jack-o'-lantern,NEW,NO (label),tap-to-hear needed,
-t_haunted-house_9d6a5d6a,momster,shop item,Haunted house,NEW,NO (label),tap-to-hear needed,
-t_turkey_0bb24bef,momster,shop item,Turkey,NEW,NO (label),tap-to-hear needed,
-t_pie_cf479255,momster,shop item,Pie,NEW,NO (label),tap-to-hear needed,
-t_maple-leaf_435a49e6,momster,shop item,Maple leaf,NEW,NO (label),tap-to-hear needed,
-t_corn_548a9e73,momster,shop item,Corn,NEW,NO (label),tap-to-hear needed,
-t_fall-leaves_2dcaabe4,momster,shop item,Fall leaves,NEW,NO (label),tap-to-hear needed,
-t_holiday-sweater_cd1f57cc,momster,shop item,Holiday sweater,NEW,NO (label),tap-to-hear needed,
-t_santa-hat_0579b53b,momster,shop item,Santa hat,NEW,NO (label),tap-to-hear needed,
-t_present_d160028c,momster,shop item,Present,NEW,NO (label),tap-to-hear needed,
-t_tiny-tree_9c6475e9,momster,shop item,Tiny tree,NEW,NO (label),tap-to-hear needed,
-t_reindeer_8595a2eb,momster,shop item,Reindeer,NEW,NO (label),tap-to-hear needed,
-t_snowman_7a0f5fbe,momster,shop item,Snowman,NEW,NO (label),tap-to-hear needed,
-t_cozy-christmas_471cf27e,momster,shop item,Cozy Christmas,NEW,NO (label),tap-to-hear needed,
-t_this-week-s-villain_b4cc8c56,momster,screen text,This week's villain,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_finish-the-same-routine-together-for-a-c_a2761a20,momster,screen text,Finish the same routine together for a combo attack!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_let-s-help-momster_2b61588f,momster,screen text,Let's help Momster!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_choose-one-for-today-two-stars-when-you_a0e17d94,momster,screen text,Choose one for today. Two stars when you finish it.,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_coins-never-take-away-your-stars_2ba9b5bd,momster,screen text,Coins never take away your stars!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_build_95967543,momster,screen text,Build,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_faces_a79c251d,momster,screen text,Faces,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_neck_cc25a532,momster,screen text,Neck,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_outfits_a848978f,momster,screen text,Outfits,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_pets_35cb7c97,momster,screen text,Pets,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_places_a808d03d,momster,screen text,Places,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_stickers_1609e2dd,momster,screen text,Stickers,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_team-rank_18b9c1fa,momster,screen text,Team rank,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_team-prize_cb00b934,momster,screen text,Team prize,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_trophy-wall_d886eddd,momster,screen text,Trophy wall,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_jobs-done_70e598b3,momster,screen text,Jobs done,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_combo-attacks_a0fc1a28,momster,screen text,Combo attacks,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_weak-spot-hits_c80af917,momster,screen text,Weak spot hits,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_total-damage_d52bc0c6,momster,screen text,Total damage,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_family-toots_413a085a,momster,screen text,Family toots,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_dad-joke-of-the-day_edfcd32e,momster,screen text,Dad joke of the day!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_tell-me_da5e85a7,momster,screen text,Tell me!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_tell-it-again_5f04b936,momster,screen text,Tell it again!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_pick-your-hero-style_3831445b,momster,screen text,Pick your hero style!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_your-sidekick-gets-a-free-costume-to-mat_7f3be6c5,momster,screen text,Your sidekick gets a free costume to match. Switch anytime!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_just-me_173e9e23,momster,screen text,Just me.,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_pick-your-helper-voice_63e6711a,momster,screen text,Pick your helper voice!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_tap-a-voice-to-hear-it-then-tap-yes-to-p_dab1483b,momster,screen text,"Tap a voice to hear it, then tap Yes to pick it.",NEW,NO (label),on-screen text; tap-to-hear needed,
-t_tap-a-prize-to-choose-it-then-tap-yes-to_4be45a88,momster,screen text,"Tap a prize to choose it, then tap Yes to confirm.",NEW,NO (label),on-screen text; tap-to-hear needed,
-t_getting-to-school_d506c3c0,momster,screen text,Getting to school,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_walk_22ccd730,momster,screen text,Walk,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_bus_c4da6e99,momster,screen text,Bus,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_drive_f1aafc17,momster,screen text,Drive,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_yes_dc811cc3,momster,screen text,Yes!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_no_523d6bdc,momster,screen text,No.,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_got-it_c6d78a11,momster,screen text,Got it!,NEW,NO (label),on-screen text; tap-to-hear needed,
-t_pick-a-prize_5e3ad70f,momster,screen text,Pick a prize.,NEW,NO (label),on-screen text; tap-to-hear needed,
-tour_1,momster,tutorial,"Hi! I’m Momster. I’m so glad you’re here to help me chase away the pesky villains hanging around our house. When a villain stays too long, I can get pretty grumpy. But with your help, I can get back to my happiest mood: relaxed!",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_2,momster,tutorial,"Before we begin, let me show you how it works. Listen closely, because I have an awesome reward for you at the end.",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_3,momster,tutorial,"Each week, a different villain visits our house to cause chaos and spoil our fun. Every villain has a health bar. When that bar reaches zero, we win! Every task you finish takes away some of the villain’s health.",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_4,momster,tutorial,"Some tasks and combos do extra damage. First, tap your card to open your profile. Pick the prize you’d like to earn this week. Then you’ll see a Special Mission and a Surprise Mission. You can choose your Special Mission now or come back to it later.",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_5,momster,tutorial,"Your tasks are sorted into five groups: Morning, After School, Bedtime, Helper, and Bonus. Pick a group from the menu to see its tasks. When you finish one, tap its card to see how much damage you did to the villain.",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_6,momster,tutorial,"See a siren in the top-right corner? Tap it to check any Special or Surprise Missions you haven’t finished yet. You can find them in Bonus, too. They often do extra damage and come with extra rewards!",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_7,momster,tutorial,"For helping me, you’ll earn stars and coins. Each task card shows how many stars you can earn. You also get your very own sidekick! You can dress it up and it wears the treasures you find.",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_8,momster,tutorial,"Collect stars to unlock stickers and badges in Hero HQ. When you reach the weekly star goal your family set, you’ll defeat the villain! You’ll also get one coin each time you finish a task group, up to five coins a day. If you complete all the tasks in a day, you can also hatch a mystery egg, which awards you rare items for your sidekick or bonus coins! Defeat the weekly villain and you’ll get ten more coins.",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_9,momster,tutorial,"And don’t stop there: until the next villain arrives, you’ll earn double coins for your tasks. You can keep collecting stars for stickers, too. Spend your coins on clothes, accessories, toys, pets, and backgrounds for your sidekick. Make it yours!",generated,yes,plays whatever sound option is chosen (tour.js),
-tour_10,momster,tutorial,"You listened all the way through, so here’s that awesome reward I promised: 25 coins to get you started! Spend them on something for your sidekick, or save them for later. Now, let’s pick your first task and show that villain what we can do!",generated,yes,plays whatever sound option is chosen (tour.js),
-t_emergency-the-great-crumb-incident-wipe_5fd1b5dc,momster,surprise mission,Emergency! THE GREAT CRUMB INCIDENT! Wipe the table and sweep up crumbs!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,
-t_emergency-the-sock-has-awakened-find-str_6955ecfc,momster,surprise mission,Emergency! THE SOCK HAS AWAKENED! Find stray socks and put them in the hamper!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,
-t_emergency-toy-avalanche-5-minute-toy-pic_9da4b761,momster,surprise mission,Emergency! TOY AVALANCHE! 5-minute toy pickup race!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,
-t_emergency-shoe-pile-panic-line-up-all-th_99061852,momster,surprise mission,Emergency! SHOE PILE PANIC! Line up all the shoes by the door!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,
-t_emergency-couch-chaos-fix-the-pillows-an_a9f8cf08,momster,surprise mission,Emergency! COUCH CHAOS! Fix the pillows and fold the blankets!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,
+key,voice_folder,category,text,status,played_in_app,note,exact_app_text,speaker
+pickprize,momster,general,Pick your prize for this week!,existing,yes,,,momster
+great,momster,general,Great job!,existing,yes,,,momster
+alldone,momster,general,All done! Great job!,existing,yes,,,momster
+tv,momster,general,TV time unlocked!,existing,yes,,,momster
+jarfull,momster,general,Wow! Your star jar is full! Go tell a grown-up!,existing,yes,,,momster
+j_dress,momster,job,Get dressed.,existing,yes,,,momster
+j_bfast,momster,job,Eat breakfast.,existing,yes,,,momster
+j_teeth,momster,job,Brush teeth.,existing,yes,,,momster
+j_shoes,momster,job,Shoes on.,existing,yes,,,momster
+j_bed,momster,job,Make your bed.,existing,yes,,,momster
+j_hook,momster,job,Hang your backpack!,existing,yes,,,momster
+j_folder,momster,job,Give the folder!,existing,yes,,,momster
+j_snack,momster,job,Snack to the sink!,existing,yes,,,momster
+j_toys,momster,job,Toys in bins.,existing,yes,,,momster
+j_plate,momster,job,Plate to the sink.,existing,yes,,,momster
+j_pack,momster,job,Pack your backpack.,existing,yes,,,momster
+j_pjs,momster,job,Pajamas on.,existing,yes,,,momster
+more1,momster,jobs left,One more.,existing,yes,,,momster
+more2,momster,jobs left,Two more.,existing,yes,,,momster
+more3,momster,jobs left,Three more.,existing,yes,,,momster
+more4,momster,jobs left,Four more.,existing,yes,,,momster
+more5,momster,jobs left,Five more.,existing,yes,,,momster
+already,momster,already-done,Already done! Star!,existing,yes,,,momster
+yourjobs,momster,general,Your jobs.,existing,yes,,,momster
+r_am,momster,routine,Morning jobs.,existing,yes,,,momster
+r_pm,momster,routine,After school jobs.,existing,yes,,,momster
+r_bt,momster,routine,Bedtime jobs.,existing,yes,,,momster
+r_none,momster,routine,No jobs here today!,existing,yes,,,momster
+tapagain,momster,general,Tap again to pick it.,existing,yes,,,momster
+picked,momster,general,You picked it! Let's fill your star jar!,existing,yes,,,momster
+w_movie,momster,prize,Family movie night.,existing,yes,,,momster
+w_dessert,momster,prize,Special dessert.,existing,yes,,,momster
+w_dinner,momster,prize,Pick a dinner.,existing,yes,,,momster
+w_park,momster,prize,Park trip.,existing,yes,,,momster
+w_switch,momster,prize,Extra 20 minutes of Switch.,existing,yes,,,momster
+w_late,momster,prize,Stay up 15 minutes late.,existing,yes,,,momster
+w_bake,momster,prize,Bake cookies together.,existing,yes,,,momster
+w_game,momster,prize,Family game night.,existing,yes,,,momster
+w_date,momster,prize,Special time with Mom or Dad.,existing,yes,,,momster
+w_target,momster,prize,$5 Target gift card!,existing,yes,,,momster
+taken,momster,general,Star taken back.,existing,yes,,,momster
+test,momster,general,Hi! Sound is working.,existing,yes,,,momster
+eggearn,momster,general,You earned a mystery egg! Tap it to crack it open!,existing,yes,,,momster
+eggtap,momster,general,Tap tap tap!,existing,yes,,,momster
+eggopen,momster,general,Whoa! A rare treasure!,existing,yes,,,momster
+pow1,momster,battle pop,Pow!,existing,yes,,,momster
+pow2,momster,battle pop,Splat!,existing,yes,,,momster
+pow3,momster,battle pop,"Take that, monster!",existing,yes,,,momster
+pow4,momster,battle pop,Bonk!,existing,yes,,,momster
+monsterhi,momster,general,Uh oh! A mess monster is here! Do your jobs to beat it!,existing,yes,,,momster
+monsterwin,momster,general,You beat the monster! Hooray! Bonus coins for everyone!,existing,yes,,,momster
+m_sock,momster,villain name,The Stinky Sock Goblin!,existing,yes,,,momster
+m_crumb,momster,villain name,The Crumb Gobbler!,existing,yes,,,momster
+m_dust,momster,villain name,The Dust Bunny Boss!,existing,yes,,,momster
+m_toy,momster,villain name,The Toy Tornado!,existing,yes,,,momster
+m_slime,momster,villain name,The Sludge Slime!,existing,yes,,,momster
+sticker,momster,general,New sticker for your sticker book!,existing,yes,,,momster
+dance,momster,general,Dance party!,existing,yes,,,momster
+goodnight,momster,general,Time for bed! Good night!,existing,yes,,,momster
+sillyintro,momster,general,Silly challenge!,existing,yes,,,momster
+s1,momster,silly twist,Do it while hopping like a frog!,existing,yes,,,momster
+s2,momster,silly twist,Do it with a robot voice!,existing,yes,,,momster
+s3,momster,silly twist,Do it in slow motion!,existing,yes,,,momster
+s4,momster,silly twist,Do it while humming a song!,existing,yes,,,momster
+s5,momster,silly twist,Do it super fast like a cheetah!,existing,yes,,,momster
+s6,momster,silly twist,Do it while waddling like a penguin!,existing,yes,,,momster
+s7,momster,silly twist,Do it with your silliest face!,existing,yes,,,momster
+s8,momster,silly twist,Do it tip toeing like a ninja!,existing,yes,,,momster
+s9,momster,silly twist,"Wiggle your booty first, then do it!",existing,yes,,,momster
+hk1,momster,joke,Why didn't the skeleton cross the road? He didn't have the guts!,existing,yes,,,momster
+hk2,momster,joke,What do ghosts eat for dessert? I scream!,existing,yes,,,momster
+hk3,momster,joke,What's a ghost's favorite fruit? Boo berries!,existing,yes,,,momster
+hk4,momster,joke,What do you call a witch at the beach? A sand witch!,existing,yes,,,momster
+hk5,momster,joke,What room does a ghost not need? A living room!,existing,yes,,,momster
+hk6,momster,joke,Why did the vampire need mouthwash? He had bat breath!,existing,yes,,,momster
+hk7,momster,joke,What do you get when you cross a vampire and a snowman? Frostbite!,existing,yes,,,momster
+hk8,momster,joke,Why are ghosts bad at lying? You can see right through them!,existing,yes,,,momster
+buddyhi,momster,general,Let's make your monster pal!,existing,yes,,,momster
+shop,momster,general,Buddy shop! Pick something cool!,existing,yes,,,momster
+tapbuy,momster,general,Tap again to buy it!,existing,yes,,,momster
+bought,momster,general,You got it! Looking fancy!,existing,yes,,,momster
+needcoins,momster,general,Not enough coins yet! Do more jobs to get more!,existing,yes,,,momster
+wear,momster,general,"Ooh, fancy!",existing,yes,,,momster
+coin,momster,general,Cha ching!,existing,yes,,,momster
+racego,momster,general,Beat the clock! Go go go!,existing,yes,,,momster
+raceWin,momster,general,You beat the clock! Bonus star!,existing,yes,,,momster
+teamwin,momster,general,Team power! Everyone filled their star jars! Family prize time!,existing,yes,,,momster
+streak,momster,general,You're on fire! Fire streak!,existing,yes,,,momster
+r_bonus,momster,routine,Bonus jobs! Extra stars!,existing,yes,,,momster
+bonusask,momster,general,Go do it! Then ask a grown up to check!,existing,yes,,,momster
+bonusok,momster,general,Bonus stars! You're a superstar!,existing,yes,,,momster
+bonusmax,momster,general,That's all the bonus jobs for today! Come back tomorrow!,existing,yes,,,momster
+bonusno,momster,general,Not yet! Give it another try!,existing,yes,,,momster
+bonuswait,momster,general,Waiting for a grown up to check!,existing,yes,,,momster
+bj_sweep,momster,helper/bonus job,Sweep the kitchen.,existing,yes,,,momster
+bj_glass,momster,helper/bonus job,Wipe the glass door.,existing,yes,,,momster
+bj_car,momster,helper/bonus job,Clean out the car.,existing,yes,,,momster
+bj_walk,momster,helper/bonus job,Help walk the dog.,existing,yes,,,momster
+bj_towels,momster,helper/bonus job,Fold the towels.,existing,yes,,,momster
+bj_yard,momster,helper/bonus job,Pick up the yard.,existing,yes,,,momster
+bj_sink,momster,helper/bonus job,Wipe the bathroom sink.,existing,yes,,,momster
+bj_books,momster,helper/bonus job,Tidy the bookshelf.,existing,yes,,,momster
+j_shoesdoor,momster,job,Shoes by the door.,existing,yes,,,momster
+j_hamper,momster,job,Dirty clothes in the hamper.,existing,yes,,,momster
+j_dinner,momster,job,Help make dinner! Chef hats on!,existing,yes,,,momster
+jokeintro,momster,general,Joke time!,existing,yes,,,momster
+c1,momster,cheer,Great job! You're toot-ally awesome!,existing,yes,,,momster
+c2,momster,cheer,Nailed it! High five! Now go wash that hand.,existing,yes,,,momster
+c3,momster,cheer,Boom! Star for you!,existing,yes,,,momster
+c4,momster,cheer,Woo hoo! Even your butt is proud of you!,existing,yes,,,momster
+c5,momster,cheer,Great job! That deserves a victory toot!,existing,yes,,,momster
+c6,momster,cheer,You did it! Your stinky socks are cheering!,existing,yes,,,momster
+c7,momster,cheer,Stinkin' awesome!,existing,yes,,,momster
+c8,momster,cheer,Ka-pow! You're a job ninja!,existing,yes,,,momster
+c9,momster,cheer,Yes! Dance party! Wiggle your booty!,existing,yes,,,momster
+c10,momster,cheer,"Holy moly, guacamole!",existing,yes,,,momster
+c11,momster,cheer,"Excellent! Smell ya later, mess!",existing,yes,,,momster
+c12,momster,cheer,Wowza! You're cooler than a penguin's popsicle!,existing,yes,,,momster
+a1,momster,already-done,"Already done! Nice try, stinky pants!",existing,yes,,,momster
+a2,momster,already-done,"You already did that one, silly sausage!",existing,yes,,,momster
+a3,momster,already-done,"Done already! Did you forget, noodle brain?",existing,yes,,,momster
+k1,momster,joke,Why did the cookie go to the doctor? Because it felt crummy!,existing,yes,,,momster
+k2,momster,joke,What do you call a dinosaur that farts? A blast from the past!,existing,yes,,,momster
+k3,momster,joke,Why don't eggs tell jokes? They'd crack each other up!,existing,yes,,,momster
+k4,momster,joke,What did one toilet say to the other toilet? You look a little flushed!,existing,yes,,,momster
+k5,momster,joke,Why did the teddy bear say no to dessert? Because she was stuffed!,existing,yes,,,momster
+k6,momster,joke,What's brown and sticky? A stick!,existing,yes,,,momster
+k7,momster,joke,Why did the banana go to the doctor? It wasn't peeling well!,existing,yes,,,momster
+k8,momster,joke,What do you call a bear with no teeth? A gummy bear!,existing,yes,,,momster
+k9,momster,joke,Why can't you hear a pterodactyl go to the bathroom? Because the P is silent!,existing,yes,,,momster
+k10,momster,joke,What do you call a cow with no legs? Ground beef!,existing,yes,,,momster
+k11,momster,joke,Why didn't the skeleton go to the party? He had no body to go with!,existing,yes,,,momster
+k12,momster,joke,What do you call a sleeping dinosaur? A dino snore!,existing,yes,,,momster
+k13,momster,joke,Why did the toilet paper roll down the hill? To get to the bottom!,existing,yes,,,momster
+k14,momster,joke,What's invisible and smells like carrots? Bunny farts!,existing,yes,,,momster
+k15,momster,joke,Why did the kid bring a ladder to school? She wanted to go to high school!,existing,yes,,,momster
+k16,momster,joke,What do you call a pig that does karate? A pork chop!,existing,yes,,,momster
+k17,momster,joke,Why did the bee get married? He found his honey!,existing,yes,,,momster
+r_hp,momster,routine,Helper job! Double stars!,existing,yes,,,momster
+j_spoons,momster,job,Put away the silverware.,existing,yes,,,momster
+j_table,momster,job,Set the table.,existing,yes,,,momster
+j_socks,momster,job,Match the socks.,existing,yes,,,momster
+j_clothes,momster,job,Put away your clean clothes.,existing,yes,,,momster
+j_room,momster,job,Room rescue! Clothes in the hamper. Books on the shelf. Stuffies on the bed.,existing,yes,,,momster
+j_camo,momster,job,Feed the pet.,existing,yes,,,momster
+intro,momster,character intro,Hi! I'm <character name>! Pick me!,NEW,yes,"record once in EACH character folder (audio/squeaky/intro.mp3 ...) with that character's own name, and once in momster/",,momster
+m_troll,momster,villain name,Grumpy Tiara Troll,NEW,yes,spoken when the villain appears; key is the villain id,,momster
+m_booger,momster,villain name,Baron von Booger,NEW,yes,spoken when the villain appears; key is the villain id,,momster
+m_stink,momster,villain name,Sir Toots-a-Lot,NEW,yes,spoken when the villain appears; key is the villain id,,momster
+momster_cheer,momster,Momster line,Nice hit! Keep going!,NEW,yes,,,momster
+momster_almost,momster,Momster line,Almost had him!,NEW,yes,,,momster
+momster_win,momster,Momster line,"You did it, sweetie!",NEW,yes,,,momster
+t_do-it-like-a-t-rex-with-tiny-arms_1dcfbdc9,momster,silly twist,Do it like a T-rex with tiny arms!,NEW,yes,twists 1-9 already have clips,,momster
+t_do-it-like-grandpa-standing-up_1d7df4ef,momster,silly twist,Do it like grandpa standing up!,NEW,yes,twists 1-9 already have clips,,momster
+t_do-it-like-an-opera-singer_f79c1993,momster,silly twist,Do it like an opera singer!,NEW,yes,twists 1-9 already have clips,,momster
+t_nice-hustle-the-couch-cushions-fear-you_48ba58b1,momster,cheer,Nice hustle! The couch cushions fear you now!,NEW,yes,20% of the time after a job,,momster
+t_boom-that-job-is-toast_7d7cfc5b,momster,cheer,Boom! That job is TOAST!,NEW,yes,20% of the time after a job,,momster
+t_somebody-call-the-cleaners-oh-wait-that_4d4dabbd,momster,cheer,"Somebody call the cleaners! Oh wait, that's you!",NEW,yes,20% of the time after a job,,momster
+t_ooh-satisfying-like-popping-bubble-wrap_784a0c7c,momster,cheer,"Ooh, satisfying! Like popping bubble wrap!",NEW,yes,20% of the time after a job,,momster
+t_the-mess-never-stood-a-chance_1014fef1,momster,cheer,The mess never stood a chance!,NEW,yes,20% of the time after a job,,momster
+t_warning-extreme-tidiness-detected_f9ffa09b,momster,cheer,Warning: extreme tidiness detected!,NEW,yes,20% of the time after a job,,momster
+t_even-the-boogers-are-impressed_b7af202a,momster,cheer,Even the boogers are impressed!,NEW,yes,20% of the time after a job,,momster
+t_boom-shakalaka-star-time_9800c562,momster,cheer,Boom shakalaka! Star time!,NEW,yes,20% of the time after a job,,momster
+t_you-re-on-fire-quick-stop-drop-and-wiggl_4e93238b,momster,cheer,"You're on fire! Quick: stop, drop, and wiggle!",NEW,yes,20% of the time after a job,,momster
+t_that-s-how-it-s-done-rockstar_2d8c5703,momster,cheer,"That's how it's DONE, rockstar!",NEW,yes,20% of the time after a job,,momster
+t_my-hero-do-a-victory-wiggle_8b6e44e4,momster,cheer,My hero! Do a victory wiggle!,NEW,yes,20% of the time after a job,,momster
+t_the-germs-are-moving-out_8dbb74cd,momster,cheer,The germs are moving out!,NEW,yes,20% of the time after a job,,momster
+t_pee-yew-smell-my-socks_09c560b7,momster,villain taunt,Pee-yew! Smell my socks!,NEW,yes,plays when the kid pokes the villain,,m_sock
+t_your-socks-are-mine-now_7ca3f657,momster,villain taunt,Your socks are MINE now!,NEW,yes,plays when the kid pokes the villain,,m_sock
+t_i-hid-one-sock-good-luck_0a5dc3a8,momster,villain taunt,I hid one sock. Good luck!,NEW,yes,plays when the kid pokes the villain,,m_sock
+t_two-socks-never-heard-of-her_17d974b2,momster,villain taunt,Two socks? Never heard of her!,NEW,yes,plays when the kid pokes the villain,,m_sock
+t_nom-nom-crumbs-everywhere_a00e978b,momster,villain taunt,Nom nom! Crumbs everywhere!,NEW,yes,plays when the kid pokes the villain,,m_crumb
+t_is-that-a-cookie-mine_d5cc9978,momster,villain taunt,Is that a cookie? MINE!,NEW,yes,plays when the kid pokes the villain,,m_crumb
+t_i-love-a-messy-table_dd5b9783,momster,villain taunt,I love a messy table!,NEW,yes,plays when the kid pokes the villain,,m_crumb
+t_i-m-on-a-crumbs-only-diet_644093fe,momster,villain taunt,I'm on a crumbs-only diet!,NEW,yes,plays when the kid pokes the villain,,m_crumb
+t_achoo-i-love-dust_63e4561a,momster,villain taunt,Achoo! I love dust!,NEW,yes,plays when the kid pokes the villain,,m_dust
+t_i-live-under-your-bed_08b70497,momster,villain taunt,I live under your bed!,NEW,yes,plays when the kid pokes the villain,,m_dust
+t_dust-bunnies-forever_ba945399,momster,villain taunt,Dust bunnies forever!,NEW,yes,plays when the kid pokes the villain,,m_dust
+t_my-dust-bunnies-have-names_57a1235c,momster,villain taunt,My dust bunnies have NAMES!,NEW,yes,plays when the kid pokes the villain,,m_dust
+t_wheee-toys-on-the-floor_9a2b5eb8,momster,villain taunt,Wheee! Toys on the floor!,NEW,yes,plays when the kid pokes the villain,,m_toy
+t_i-spin-toys-everywhere_95e0fe00,momster,villain taunt,I spin toys EVERYWHERE!,NEW,yes,plays when the kid pokes the villain,,m_toy
+t_bet-you-can-t-clean-me-up_d3bca13b,momster,villain taunt,Bet you can't clean me up!,NEW,yes,plays when the kid pokes the villain,,m_toy
+t_tidy-toys-are-a-myth-like-bedtimes_b584179a,momster,villain taunt,"Tidy toys are a myth, like bedtimes!",NEW,yes,plays when the kid pokes the villain,,m_toy
+t_blub-blub-sticky-sticky_b2327b6d,momster,villain taunt,Blub blub! Sticky sticky!,NEW,yes,plays when the kid pokes the villain,,m_slime
+t_i-m-slimy-and-proud_66e722ce,momster,villain taunt,I'm slimy and proud!,NEW,yes,plays when the kid pokes the villain,,m_slime
+t_ooze-you-gonna-call_085f26bd,momster,villain taunt,Ooze you gonna call?,NEW,yes,plays when the kid pokes the villain,,m_slime
+t_sticky-is-my-cardio_70cf3895,momster,villain taunt,Sticky is my cardio!,NEW,yes,plays when the kid pokes the villain,,m_slime
+t_the-tiara-is-mine-grumble-grumble_456e50b2,momster,villain taunt,The tiara is MINE! Grumble grumble!,NEW,yes,plays when the kid pokes the villain,,m_troll
+t_no-princess-can-catch-me_7c790431,momster,villain taunt,No princess can catch me!,NEW,yes,plays when the kid pokes the villain,,m_troll
+t_trolls-don-t-do-bedtime_38afa0c9,momster,villain taunt,Trolls don't do bedtime!,NEW,yes,plays when the kid pokes the villain,,m_troll
+t_grumble-grumble-that-s-troll-for-help_774f976b,momster,villain taunt,Grumble grumble! That's troll for help!,NEW,yes,plays when the kid pokes the villain,,m_troll
+t_pick-a-winner-pick-me_9e3dd3f3,momster,villain taunt,Pick a winner! Pick ME!,NEW,yes,plays when the kid pokes the villain,,m_booger
+t_i-m-stuffed-up-with-power_0ffde9d8,momster,villain taunt,I'm stuffed up with POWER!,NEW,yes,plays when the kid pokes the villain,,m_booger
+t_green-is-my-favorite-color-and-my-person_651e77c9,momster,villain taunt,Green is my favorite color. And my personality!,NEW,yes,plays when the kid pokes the villain,,m_booger
+t_don-t-point-that-finger-at-me_89568e2f,momster,villain taunt,Don't point that finger at me!,NEW,yes,plays when the kid pokes the villain,,m_booger
+t_silent-but-deadly-my-special-move_64927973,momster,villain taunt,Silent but deadly: my SPECIAL move!,NEW,yes,plays when the kid pokes the villain,,m_stink
+t_whoever-smelt-it-dealt-it_4ebd2e31,momster,villain taunt,"Whoever smelt it, DEALT it!",NEW,yes,plays when the kid pokes the villain,,m_stink
+t_i-blame-the-dog-i-always-blame-the-dog_6c3e64e0,momster,villain taunt,I blame the dog! I ALWAYS blame the dog!,NEW,yes,plays when the kid pokes the villain,,m_stink
+t_you-cannot-defeat-what-you-cannot-inhale_674d68f0,momster,villain taunt,You cannot defeat what you cannot inhale!,NEW,yes,plays when the kid pokes the villain,,m_stink
+t_what-do-you-call-a-sock-with-a-hole-holy_6e879d02,momster,villain joke,What do you call a sock with a hole? HOLY sock! Hee hee!,NEW,yes,plays when the kid pokes the villain,,m_sock
+t_i-m-not-a-thief-i-m-a-sock-cerer_09a47c41,momster,villain joke,"I'm not a thief, I'm a sock-cerer!",NEW,yes,plays when the kid pokes the villain,,m_sock
+t_why-won-t-i-share-my-cookies-i-m-a-littl_63244b54,momster,villain joke,Why won't I share my cookies? I'm a little CRUMBY! Har har!,NEW,yes,plays when the kid pokes the villain,,m_crumb
+t_i-m-not-messy-i-m-saving-snacks-for-late_f8c1e9ac,momster,villain joke,"I'm not messy, I'm saving snacks for later!",NEW,yes,plays when the kid pokes the villain,,m_crumb
+t_what-s-a-troll-s-favorite-bedtime-never_9e0439e8,momster,villain joke,What's a troll's favorite bedtime? NEVER! Grumble grumble!,NEW,yes,plays when the kid pokes the villain,,m_troll
+t_why-do-i-love-tiaras-they-make-me-look-t_c6fddc42,momster,villain joke,Why do I love tiaras? They make me look TROLL-tastic!,NEW,yes,plays when the kid pokes the villain,,m_troll
+t_why-am-i-always-sleepy-i-m-dust-hausted_7c568d64,momster,villain joke,Why am I always sleepy? I'm DUST-hausted! Achoo!,NEW,yes,plays when the kid pokes the villain,,m_dust
+t_what-s-my-favorite-dance-the-dust-step_83922336,momster,villain joke,What's my favorite dance? The DUST-step!,NEW,yes,plays when the kid pokes the villain,,m_dust
+t_what-s-a-tornado-s-favorite-game-twister_fea216aa,momster,villain joke,What's a tornado's favorite game? TWISTER! Wheee!,NEW,yes,plays when the kid pokes the villain,,m_toy
+t_i-m-not-messy-i-m-just-a-little-spin-sat_6a3d37e1,momster,villain joke,"I'm not messy, I'm just a little spin-sational!",NEW,yes,plays when the kid pokes the villain,,m_toy
+t_what-s-a-slime-s-favorite-drink-ooze-jui_e80049f1,momster,villain joke,What's a slime's favorite drink? OOZE juice! Blub!,NEW,yes,plays when the kid pokes the villain,,m_slime
+t_i-m-not-gross-i-m-goo-geous_c9b4ac1a,momster,villain joke,"I'm not gross, I'm GOO-geous!",NEW,yes,plays when the kid pokes the villain,,m_slime
+t_why-did-the-booger-go-to-school-to-get-p_60d9cc2f,momster,villain joke,Why did the booger go to school? To get PICKED first!,NEW,yes,plays when the kid pokes the villain,,m_booger
+t_i-m-not-gross-i-m-a-snot-ural-wonder_45d3307a,momster,villain joke,"I'm not gross, I'm a snot-ural wonder!",NEW,yes,plays when the kid pokes the villain,,m_booger
+t_what-do-you-call-a-gassy-knight-sir-toot_a2e8705b,momster,villain joke,What do you call a gassy knight? SIR TOOTS-A-LOT! That's me!,NEW,yes,plays when the kid pokes the villain,,m_stink
+t_my-armor-doesn-t-stink-okay-it-does-badl_7c01caed,momster,villain joke,"My armor doesn't stink! Okay, it does. BADLY!",NEW,yes,plays when the kid pokes the villain,,m_stink
+t_ha-this-house-is-mine-now_1987d917,momster,villain mood,HA! This house is MINE now!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_you-ll-never-clean-me-up_211380b4,momster,villain mood,You'll NEVER clean me up!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_mess-forever-mwa-ha-ha_4b1f1fa1,momster,villain mood,Mess forever! Mwa-ha-ha!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_i-smell-fear-and-something-worse-phew_8da35e83,momster,villain mood,I smell fear. And something worse. Phew!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_you-cleaned-one-thing-big-deal_3c59de2c,momster,villain mood,You cleaned ONE thing. Big deal.,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_is-that-all-you-ve-got-heroes_fd1565cd,momster,villain mood,"Is that all you've got, heroes?",NEW,yes,plays when the kid pokes the villain,,villains:any
+t_i-m-not-scared-of-you_483277da,momster,villain mood,I'm not scared of you!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_your-mom-said-you-re-sweet-she-lied_770a2b58,momster,villain mood,Your mom said you're sweet. She LIED!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_wait-why-are-you-actually-good-at-this_8275cc74,momster,villain mood,Wait... why are you actually GOOD at this?!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_stop-it-you-re-making-it-tidy_d8a145ef,momster,villain mood,Stop it! You're making it TIDY!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_uh-oh-they-re-teaming-up_f45cb5f7,momster,villain mood,Uh oh. They're teaming up...,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_okay-okay-that-one-impressed-me-a-little_cdc4a0a7,momster,villain mood,Okay okay. That one impressed me a little.,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_please-stop-cleaning-i-have-a-family_64750c76,momster,villain mood,PLEASE stop cleaning! I have a family!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_noooo-not-the-folding_11434f0e,momster,villain mood,Noooo! Not the folding!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_i-m-melting-into-a-clean-room_3173d586,momster,villain mood,I'm melting... into a clean room!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_tell-my-mess-i-loved-her_de08d245,momster,villain mood,Tell my mess... I loved her!,NEW,yes,plays when the kid pokes the villain,,villains:any
+t_okay-okay-you-win_01a4e72b,momster,villain defeated,"Okay okay, you win!",NEW,yes,plays when the kid pokes a defeated villain,,villains:any
+t_my-mess-it-s-gone_55d7d22e,momster,villain defeated,My mess... it's gone!,NEW,yes,plays when the kid pokes a defeated villain,,villains:any
+t_i-ll-be-back-next-week_976ad48d,momster,villain defeated,I'll be back next week!,NEW,yes,plays when the kid pokes a defeated villain,,villains:any
+t_tell-my-mess-i-loved-her_7c29667f,momster,villain defeated,Tell my mess I loved her!,NEW,yes,plays when the kid pokes a defeated villain,,villains:any
+t_i-m-going-to-be-a-mess-at-grandma-s-hous_ae76c4ab,momster,villain defeated,I'm going to be a mess at GRANDMA'S house!,NEW,yes,plays when the kid pokes a defeated villain,,villains:any
+t_fine-take-the-tiara-it-itched-anyway_b46cfcdb,momster,villain defeated,Fine! Take the tiara. It itched anyway!,NEW,yes,plays when the kid pokes a defeated villain,,villains:any
+t_grrr-mess-forever_814e7265,momster,villain line,Grrr! Mess forever!,NEW,yes,fallback taunt,,villains:any
+t_i-ll-be-back-next-week-with-more-mess_130ae7aa,momster,villain line,I'll be back next week... with MORE mess!,NEW,yes,,,villains:any
+t_nooo-not-the-folding_87eaedd3,momster,villain defeated,Nooo! Not the folding!,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_i-ll-be-back-maybe_1103f07d,momster,villain defeated,I'll be back... maybe.,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_curse-you-momster-helper_98890dda,momster,villain defeated,"Curse you, Momster Helper!",NEW,NO (shown only),trophy shelf quote,,villains:any
+t_my-beautiful-mess_a00a4b4f,momster,villain defeated,My beautiful mess!,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_i-m-telling-my-mom_39a85505,momster,villain defeated,I'm telling my mom!,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_okay-okay-i-give-up_2ad1551f,momster,villain defeated,"Okay okay, I give up!",NEW,NO (shown only),trophy shelf quote,,villains:any
+t_un-flush-believable_92854858,momster,villain defeated,Un-flush-believable!,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_you-win-this-round-snot-noses_c086e0f8,momster,villain defeated,"You win this round, snot-noses!",NEW,NO (shown only),trophy shelf quote,,villains:any
+t_the-cleaning-it-burns_ce03de89,momster,villain defeated,The cleaning... it BURNS!,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_my-landlord-will-hear-about-this_0352768d,momster,villain defeated,My landlord will hear about this!,NEW,NO (shown only),trophy shelf quote,,villains:any
+t_i-fought-the-law-and-the-law-was-tidy_1ef3aaf8,momster,villain defeated,"I fought the law, and the law was TIDY!",NEW,NO (shown only),trophy shelf quote,,villains:any
+t_why-did-the-broom-get-a-promotion_8b8687f5,momster,joke of the day (setup),Why did the broom get a promotion?,NEW,yes,,,momster
+t_it-swept-the-competition_ff80794c,momster,joke of the day (punchline),It swept the competition!,NEW,yes,,,momster
+t_what-did-the-sock-say-to-the-washing-mac_5568c04f,momster,joke of the day (setup),What did the sock say to the washing machine?,NEW,yes,,,momster
+t_you-spin-me-right-round_64b900ff,momster,joke of the day (punchline),You spin me right round!,NEW,yes,,,momster
+t_why-did-the-cookie-go-to-the-doctor_fc12e7af,momster,joke of the day (setup),Why did the cookie go to the doctor?,NEW,yes,,,momster
+t_it-was-feeling-crumby_161b2a94,momster,joke of the day (punchline),It was feeling crumby!,NEW,yes,,,momster
+t_what-do-you-call-a-messy-superhero_52222c17,momster,joke of the day (setup),What do you call a messy superhero?,NEW,yes,,,momster
+t_captain-clutter_1675c241,momster,joke of the day (punchline),Captain Clutter!,NEW,yes,,,momster
+t_what-did-one-plate-say-to-the-other_daab9b14,momster,joke of the day (setup),What did one plate say to the other?,NEW,yes,,,momster
+t_dinner-s-on-me_3d6f60c5,momster,joke of the day (punchline),Dinner's on me!,NEW,yes,,,momster
+t_what-does-a-toothbrush-say-before-a-race_bd003c0e,momster,joke of the day (setup),What does a toothbrush say before a race?,NEW,yes,,,momster
+t_ready-set-brush_ff4a5c1f,momster,joke of the day (punchline),"Ready, set, BRUSH!",NEW,yes,,,momster
+t_what-kind-of-shoes-do-ninjas-wear_e1011662,momster,joke of the day (setup),What kind of shoes do ninjas wear?,NEW,yes,,,momster
+t_sneakers_c5c4cd34,momster,joke of the day (punchline),Sneakers!,NEW,yes,,,momster
+t_how-does-a-princess-clean-her-castle_dbbfbd53,momster,joke of the day (setup),How does a princess clean her castle?,NEW,yes,,,momster
+t_with-a-royal-flush_6717fc4a,momster,joke of the day (punchline),With a royal flush!,NEW,yes,,,momster
+t_what-do-you-call-a-dinosaur-that-cleans_4b90a3f9,momster,joke of the day (setup),What do you call a dinosaur that cleans?,NEW,yes,,,momster
+t_a-tidy-rannosaurus-rex_c921784e,momster,joke of the day (punchline),A Tidy-rannosaurus Rex!,NEW,yes,,,momster
+t_what-did-the-sock-say-after-the-dryer_1bcc0b3c,momster,joke of the day (setup),What did the sock say after the dryer?,NEW,yes,,,momster
+t_where-s-my-other-half_cf32752f,momster,joke of the day (punchline),Where's my other half?!,NEW,yes,,,momster
+t_why-don-t-messes-ever-win-races_80dd54d8,momster,joke of the day (setup),Why don't messes ever win races?,NEW,yes,,,momster
+t_they-always-fall-behind_bfbdd006,momster,joke of the day (punchline),They always fall behind!,NEW,yes,,,momster
+t_what-do-you-call-a-sleeping-dinosaur_b2dc0de3,momster,joke of the day (setup),What do you call a sleeping dinosaur?,NEW,yes,,,momster
+t_a-dino-snore_8779c951,momster,joke of the day (punchline),A dino-snore!,NEW,yes,,,momster
+t_why-can-t-you-trust-stairs_bed015a6,momster,joke of the day (setup),Why can't you trust stairs?,NEW,yes,,,momster
+t_they-re-always-up-to-something_12532ccf,momster,joke of the day (punchline),They're always up to something!,NEW,yes,,,momster
+t_why-did-the-pillow-go-to-the-doctor_973c745c,momster,joke of the day (setup),Why did the pillow go to the doctor?,NEW,yes,,,momster
+t_it-was-feeling-down_22e85e16,momster,joke of the day (punchline),It was feeling down!,NEW,yes,,,momster
+t_what-do-you-call-a-superhero-who-s-bad-a_e52aee21,momster,joke of the day (setup),What do you call a superhero who's bad at cleaning?,NEW,yes,,,momster
+t_captain-oops_7e0a4ae1,momster,joke of the day (punchline),Captain Oops!,NEW,yes,,,momster
+t_why-did-the-toilet-paper-roll-down-the-h_63db2a14,momster,joke of the day (setup),Why did the toilet paper roll down the hill?,NEW,yes,,,momster
+t_to-get-to-the-bottom_75907530,momster,joke of the day (punchline),To get to the bottom!,NEW,yes,,,momster
+t_what-did-one-toilet-say-to-the-other_68fd2a55,momster,joke of the day (setup),What did one toilet say to the other?,NEW,yes,,,momster
+t_you-look-a-little-flushed_84ecf9d2,momster,joke of the day (punchline),You look a little flushed!,NEW,yes,,,momster
+t_why-did-the-toot-get-in-trouble_b03154f6,momster,joke of the day (setup),Why did the toot get in trouble?,NEW,yes,,,momster
+t_it-was-talking-behind-your-back_641df462,momster,joke of the day (punchline),It was talking behind your back!,NEW,yes,,,momster
+t_what-s-invisible-and-smells-like-bananas_650297eb,momster,joke of the day (setup),What's invisible and smells like bananas?,NEW,yes,,,momster
+t_monkey-toots_2755a36e,momster,joke of the day (punchline),Monkey toots!,NEW,yes,,,momster
+t_why-do-dragons-sleep-all-day_87df80d5,momster,joke of the day (setup),Why do dragons sleep all day?,NEW,yes,,,momster
+t_so-they-can-fight-knights_851ac5a4,momster,joke of the day (punchline),So they can fight knights!,NEW,yes,,,momster
+t_what-do-you-call-a-bear-with-no-teeth_e8ce496a,momster,joke of the day (setup),What do you call a bear with no teeth?,NEW,yes,,,momster
+t_a-gummy-bear_0c16bb10,momster,joke of the day (punchline),A gummy bear!,NEW,yes,,,momster
+t_why-was-the-broom-late_db336c9f,momster,joke of the day (setup),Why was the broom late?,NEW,yes,,,momster
+t_it-over-swept_8cb26931,momster,joke of the day (punchline),It over-swept!,NEW,yes,,,momster
+t_what-s-a-tornado-s-favorite-game_ecf84840,momster,joke of the day (setup),What's a tornado's favorite game?,NEW,yes,,,momster
+t_twister_d200c082,momster,joke of the day (punchline),Twister!,NEW,yes,,,momster
+t_why-did-the-knight-clean-his-room_a0864da1,momster,joke of the day (setup),Why did the knight clean his room?,NEW,yes,,,momster
+t_his-mom-said-to-armor-ganize-it_c6e49d80,momster,joke of the day (punchline),His mom said to armor-ganize it!,NEW,yes,,,momster
+t_what-do-you-call-a-pile-of-kittens_b0eb0d00,momster,joke of the day (setup),What do you call a pile of kittens?,NEW,yes,,,momster
+t_a-meow-ntain_48a73c26,momster,joke of the day (punchline),A meow-ntain!,NEW,yes,,,momster
+t_why-did-the-banana-go-to-the-doctor_bcb1ef7c,momster,joke of the day (setup),Why did the banana go to the doctor?,NEW,yes,,,momster
+t_it-wasn-t-peeling-well_342f3c67,momster,joke of the day (punchline),It wasn't peeling well!,NEW,yes,,,momster
+t_what-do-you-call-cheese-that-isn-t-yours_5efd2ac7,momster,joke of the day (setup),What do you call cheese that isn't yours?,NEW,yes,,,momster
+t_nacho-cheese_a76ba8c8,momster,joke of the day (punchline),Nacho cheese!,NEW,yes,,,momster
+t_why-did-the-teddy-bear-say-no-to-dessert_0c3c8de5,momster,joke of the day (setup),Why did the teddy bear say no to dessert?,NEW,yes,,,momster
+t_it-was-already-stuffed_43c97ba9,momster,joke of the day (punchline),It was already stuffed!,NEW,yes,,,momster
+t_what-s-a-ninja-s-favorite-chore_de55853a,momster,joke of the day (setup),What's a ninja's favorite chore?,NEW,yes,,,momster
+t_karate-chopping-the-veggies_1050bf42,momster,joke of the day (punchline),Karate-chopping the veggies!,NEW,yes,,,momster
+t_why-did-the-cow-wear-a-bell_10a74d0e,momster,joke of the day (setup),Why did the cow wear a bell?,NEW,yes,,,momster
+t_because-its-horns-didn-t-work_9d69c0af,momster,joke of the day (punchline),Because its horns didn't work!,NEW,yes,,,momster
+t_why-don-t-scientists-trust-atoms_4fa5040f,momster,joke of the day (setup),Why don't scientists trust atoms?,NEW,yes,,,momster
+t_they-make-up-everything_81ee8b00,momster,joke of the day (punchline),They make up everything!,NEW,yes,,,momster
+t_what-did-the-ocean-say-to-the-beach_74fc1cba,momster,joke of the day (setup),What did the ocean say to the beach?,NEW,yes,,,momster
+t_nothing-it-just-waved_9c171ee5,momster,joke of the day (punchline),Nothing. It just waved!,NEW,yes,,,momster
+t_why-did-the-scarecrow-win-an-award_d35d86d1,momster,joke of the day (setup),Why did the scarecrow win an award?,NEW,yes,,,momster
+t_he-was-outstanding-in-his-field_0772e1fd,momster,joke of the day (punchline),He was outstanding in his field!,NEW,yes,,,momster
+t_what-do-you-call-a-fish-with-no-eyes_f2ea9ea0,momster,joke of the day (setup),What do you call a fish with no eyes?,NEW,yes,,,momster
+t_a-fsh_3378402c,momster,joke of the day (punchline),A fsh!,NEW,yes,,,momster
+t_i-m-reading-a-book-about-anti-gravity_28c3a8f6,momster,joke of the day (setup),I'm reading a book about anti-gravity.,NEW,yes,,,momster
+t_it-s-impossible-to-put-down_bd8386b6,momster,joke of the day (punchline),It's impossible to put down!,NEW,yes,,,momster
+t_what-do-you-call-a-belt-made-of-watches_71508717,momster,joke of the day (setup),What do you call a belt made of watches?,NEW,yes,,,momster
+t_a-waist-of-time_57086cad,momster,joke of the day (punchline),A waist of time!,NEW,yes,,,momster
+t_why-did-the-math-book-look-sad_6d5e5400,momster,joke of the day (setup),Why did the math book look sad?,NEW,yes,,,momster
+t_it-had-too-many-problems_c536e5bc,momster,joke of the day (punchline),It had too many problems.,NEW,yes,,,momster
+t_what-s-red-and-bad-for-your-teeth_5d6739d5,momster,joke of the day (setup),What's red and bad for your teeth?,NEW,yes,,,momster
+t_a-brick_b6752bf8,momster,joke of the day (punchline),A brick!,NEW,yes,,,momster
+t_why-did-the-bicycle-fall-over_2300b870,momster,joke of the day (setup),Why did the bicycle fall over?,NEW,yes,,,momster
+t_it-was-two-tired_a84c273f,momster,joke of the day (punchline),It was two-tired!,NEW,yes,,,momster
+t_what-do-you-call-a-sleeping-bull_1a3f74f1,momster,joke of the day (setup),What do you call a sleeping bull?,NEW,yes,,,momster
+t_a-bulldozer_6c11b094,momster,joke of the day (punchline),A bulldozer!,NEW,yes,,,momster
+t_why-did-the-golfer-bring-two-pairs-of-pa_f968c079,momster,joke of the day (setup),Why did the golfer bring two pairs of pants?,NEW,yes,,,momster
+t_in-case-he-got-a-hole-in-one_5164a8dc,momster,joke of the day (punchline),In case he got a hole in one!,NEW,yes,,,momster
+t_what-did-the-janitor-yell-when-he-jumped_cfc78ef1,momster,joke of the day (setup),What did the janitor yell when he jumped out of the closet?,NEW,yes,,,momster
+t_supplies_7ebe99b5,momster,joke of the day (punchline),SUPPLIES!,NEW,yes,,,momster
+t_why-are-elevator-jokes-so-good_8b5ffeb9,momster,joke of the day (setup),Why are elevator jokes so good?,NEW,yes,,,momster
+t_they-work-on-so-many-levels_2d762aca,momster,joke of the day (punchline),They work on so many levels!,NEW,yes,,,momster
+t_what-did-the-fish-say-when-it-swam-into_c8dc1f87,momster,joke of the day (setup),What did the fish say when it swam into a wall?,NEW,yes,,,momster
+t_dam_f3906ae0,momster,joke of the day (punchline),Dam!,NEW,yes,,,momster
+t_why-can-t-a-nose-be-12-inches-long_91337179,momster,joke of the day (setup),Why can't a nose be 12 inches long?,NEW,yes,,,momster
+t_because-then-it-would-be-a-foot_ea76f7f3,momster,joke of the day (punchline),Because then it would be a foot!,NEW,yes,,,momster
+t_what-do-you-call-a-pony-with-a-cough_f1143974,momster,joke of the day (setup),What do you call a pony with a cough?,NEW,yes,,,momster
+t_a-little-hoarse_2a0a4959,momster,joke of the day (punchline),A little hoarse!,NEW,yes,,,momster
+t_what-time-do-you-go-to-the-dentist_7644f72e,momster,joke of the day (setup),What time do you go to the dentist?,NEW,yes,,,momster
+t_tooth-hurty_9b4c93c3,momster,joke of the day (punchline),Tooth-hurty!,NEW,yes,,,momster
+t_what-do-you-call-a-dog-that-does-magic_b4684282,momster,joke of the day (setup),What do you call a dog that does magic?,NEW,yes,,,momster
+t_a-labracadabrador_f7838318,momster,joke of the day (punchline),A labracadabrador!,NEW,yes,,,momster
+t_why-do-bees-have-sticky-hair_01e067f7,momster,joke of the day (setup),Why do bees have sticky hair?,NEW,yes,,,momster
+t_they-use-honeycombs_a4e3f84a,momster,joke of the day (punchline),They use honeycombs!,NEW,yes,,,momster
+t_why-did-the-kid-stare-at-the-orange-juic_d626b261,momster,joke of the day (setup),Why did the kid stare at the orange juice?,NEW,yes,,,momster
+t_because-it-said-concentrate_03dc6908,momster,joke of the day (punchline),Because it said CONCENTRATE!,NEW,yes,,,momster
+t_what-do-you-call-a-gassy-dinosaur_a39d205b,momster,joke of the day (setup),What do you call a gassy dinosaur?,NEW,yes,,,momster
+t_a-toot-a-rex_cecbb7b9,momster,joke of the day (punchline),A toot-a-rex!,NEW,yes,,,momster
+t_why-did-the-toot-flunk-school_07a17354,momster,joke of the day (setup),Why did the toot flunk school?,NEW,yes,,,momster
+t_it-just-couldn-t-pass_a131e82c,momster,joke of the day (punchline),It just couldn't pass!,NEW,yes,,,momster
+t_why-did-the-burp-say-sorry_0a1a3af5,momster,joke of the day (setup),Why did the burp say sorry?,NEW,yes,,,momster
+t_it-didn-t-mean-to-let-it-rip_f372b748,momster,joke of the day (punchline),It didn't mean to let it rip!,NEW,yes,,,momster
+t_where-does-a-skunk-sit-in-church_84cb00df,momster,joke of the day (setup),Where does a skunk sit in church?,NEW,yes,,,momster
+t_in-its-own-pew_974e69c7,momster,joke of the day (punchline),In its own pew!,NEW,yes,,,momster
+t_urgent-message-a-villain-has-invaded-the_72f8fbb2,momster,villain intro,Urgent message! A villain has invaded the house: Stinky Sock Goblin. Stole one sock from every pair in the house! Weak to laundry & socks jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Stinky Sock Goblin. Stole one sock from every pair in the house! Weak to 🧺 laundry & socks jobs: double damage!,momster
+t_urgent-message-a-villain-has-invaded-the_d2035cc6,momster,villain intro,"Urgent message! A villain has invaded the house: Captain Crumbs. Sails the Sea of Snacks, dropping crumbs on every couch! Weak to kitchen jobs jobs: double damage!",NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,"Urgent message! A villain has invaded the house: Captain Crumbs. Sails the Sea of Snacks, dropping crumbs on every couch! Weak to 🍽️ kitchen jobs jobs: double damage!",momster
+t_urgent-message-a-villain-has-invaded-the_eff977e3,momster,villain intro,Urgent message! A villain has invaded the house: Grumpy Tiara Troll. Stole the royal tiara and hid it under the mess! Weak to getting-ready jobs jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Grumpy Tiara Troll. Stole the royal tiara and hid it under the mess! Weak to 🎒 getting-ready jobs jobs: double damage!,momster
+t_urgent-message-a-villain-has-invaded-the_02b1c066,momster,villain intro,Urgent message! A villain has invaded the house: Dust Bunny Boss. Lives under the bed and sneezes dust everywhere! Weak to bed & room jobs jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Dust Bunny Boss. Lives under the bed and sneezes dust everywhere! Weak to 🛏️ bed & room jobs jobs: double damage!,momster
+t_urgent-message-a-villain-has-invaded-the_b7e67d8e,momster,villain intro,Urgent message! A villain has invaded the house: Toy Tornado. Spins every toy right out of its bin! Weak to toy jobs jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Toy Tornado. Spins every toy right out of its bin! Weak to 🧸 toy jobs jobs: double damage!,momster
+t_urgent-message-a-villain-has-invaded-the_46fe2d17,momster,villain intro,Urgent message! A villain has invaded the house: Sludge Slime. Oozes onto teeth and sinks. Blub blub! Weak to brushing & wiping jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Sludge Slime. Oozes onto teeth and sinks. Blub blub! Weak to 🪥 brushing & wiping jobs: double damage!,momster
+t_urgent-message-a-villain-has-invaded-the_9ee889e5,momster,villain intro,Urgent message! A villain has invaded the house: Baron von Booger. Escaped from a giant nose. Wipes boogers on the couch cushions! Weak to wiping & brushing jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Baron von Booger. Escaped from a giant nose. Wipes boogers on the couch cushions! Weak to 🧼 wiping & brushing jobs: double damage!,momster
+t_urgent-message-a-villain-has-invaded-the_fb8810b1,momster,villain intro,Urgent message! A villain has invaded the house: Sir Toots-a-Lot. A gassy knight in stinky armor. Blames the dog for everything! Weak to laundry & airing out jobs: double damage!,NEW,yes (non-reader mode),text has emoji in the app; generate the clean text,Urgent message! A villain has invaded the house: Sir Toots-a-Lot. A gassy knight in stinky armor. Blames the dog for everything! Weak to 🧺 laundry & airing out jobs: double damage!,momster
+t_surprise-mission-the-great-crumb-inciden_8eee6dcf,momster,surprise mission,Surprise mission! THE GREAT CRUMB INCIDENT!. Wipe the table and sweep up crumbs.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-the-sock-has-awakened-f_774cf66b,momster,surprise mission,Surprise mission! THE SOCK HAS AWAKENED!. Find stray socks and put them in the hamper.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-toy-avalanche-5-minute_ca8891aa,momster,surprise mission,Surprise mission! TOY AVALANCHE!. 5-minute toy pickup race.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-shoe-pile-panic-line-up_dc08e19b,momster,surprise mission,Surprise mission! SHOE PILE PANIC!. Line up all the shoes by the door.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-couch-chaos-fix-the-pil_75cd4c4d,momster,surprise mission,Surprise mission! COUCH CHAOS!. Fix the pillows and fold the blankets.,NEW,yes (non-reader mode),,,momster
+t_your-special-mission-water-the-plants_7b8d855b,momster,special mission,Your special mission: Water the plants.,NEW,yes (non-reader mode),,,momster
+t_water-the-plants_f1c0fcfb,momster,special mission,Water the plants.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-sort-the-sock-mount_eca8da61,momster,special mission,Your special mission: Sort the sock mountain.,NEW,yes (non-reader mode),,,momster
+t_sort-the-sock-mountain_be12cb81,momster,special mission,Sort the sock mountain.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-wipe-the-table_c2820551,momster,special mission,Your special mission: Wipe the table.,NEW,yes (non-reader mode),,,momster
+t_wipe-the-table_d996d571,momster,special mission,Wipe the table.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-put-stray-toys-in-t_52c40f25,momster,special mission,Your special mission: Put stray toys in the bin.,NEW,yes (non-reader mode),,,momster
+t_put-stray-toys-in-the-bin_f48844c5,momster,special mission,Put stray toys in the bin.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-get-the-mail_e9259faf,momster,special mission,Your special mission: Get the mail.,NEW,yes (non-reader mode),,,momster
+t_get-the-mail_fa903a4f,momster,special mission,Get the mail.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-fluff-the-couch-cus_a128527d,momster,special mission,Your special mission: Fluff the couch cushions.,NEW,yes (non-reader mode),,,momster
+t_fluff-the-couch-cushions_7f832b1d,momster,special mission,Fluff the couch cushions.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-polish-the-bathroom_487cab98,momster,special mission,Your special mission: Polish the bathroom mirror.,NEW,yes (non-reader mode),,,momster
+t_polish-the-bathroom-mirror_baead3b8,momster,special mission,Polish the bathroom mirror.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_your-special-mission-dust-one-shelf_f39078d5,momster,special mission,Your special mission: Dust one shelf.,NEW,yes (non-reader mode),,,momster
+t_dust-one-shelf_a7c3d4f5,momster,special mission,Dust one shelf.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
+t_pick-your-special-mission-for-today_fb9bb13a,momster,special mission,Pick your special mission for today.,NEW,yes (non-reader mode),,,momster
+t_brush-your-hair_8c6ce704,momster,optional job,Brush your hair.,NEW,yes,family job list; plays when tapped,,momster
+t_take-your-vitamin_6f13d793,momster,optional job,Take your vitamin.,NEW,yes,family job list; plays when tapped,,momster
+t_pack-your-lunch-box_6ed85ef0,momster,optional job,Pack your lunch box.,NEW,yes,family job list; plays when tapped,,momster
+t_read-for-15-minutes_41b66b35,momster,optional job,Read for 15 minutes.,NEW,yes,family job list; plays when tapped,,momster
+t_practice-your-instrument_7e4be68e,momster,optional job,Practice your instrument.,NEW,yes,family job list; plays when tapped,,momster
+t_do-your-homework_69a05ab7,momster,optional job,Do your homework.,NEW,yes,family job list; plays when tapped,,momster
+t_play-outside-for-30-minutes_9077bda3,momster,optional job,Play outside for 30 minutes.,NEW,yes,family job list; plays when tapped,,momster
+t_floss-your-teeth_a1fc40a3,momster,optional job,Floss your teeth.,NEW,yes,family job list; plays when tapped,,momster
+t_pick-a-bedtime-story_fb02aaaa,momster,optional job,Pick a bedtime story.,NEW,yes,family job list; plays when tapped,,momster
+t_lay-out-tomorrow-s-clothes_1b7c31c4,momster,optional job,Lay out tomorrow's clothes.,NEW,yes,family job list; plays when tapped,,momster
+t_drink-some-water_9b360032,momster,optional job,Drink some water.,NEW,yes,family job list; plays when tapped,,momster
+t_level-up-you-are-now-rookie-helpers_ab30392d,momster,level up,Level up! You are now Rookie Helpers!,NEW,yes,,,momster
+t_level-up-you-are-now-junior-helpers_7e01c207,momster,level up,Level up! You are now Junior Helpers!,NEW,yes,,,momster
+t_level-up-you-are-now-super-helpers_ecdff655,momster,level up,Level up! You are now Super Helpers!,NEW,yes,,,momster
+t_level-up-you-are-now-mega-helpers_c883c57a,momster,level up,Level up! You are now Mega Helpers!,NEW,yes,,,momster
+t_level-up-you-are-now-ultra-helpers_56fd41de,momster,level up,Level up! You are now Ultra Helpers!,NEW,yes,,,momster
+t_level-up-you-are-now-momster-s-mvp_f72725ff,momster,level up,Level up! You are now Momster's MVP!,NEW,yes,,,momster
+t_combo-attack-sunrise-smash_7b5bca50,momster,combo,Combo attack! Sunrise Smash!,NEW,yes,,,momster
+t_combo-attack-backpack-blaster_24ce8518,momster,combo,Combo attack! Backpack Blaster!,NEW,yes,,,momster
+t_combo-attack-moonbeam-double-doom_d325819d,momster,combo,Combo attack! Moonbeam Double Doom!,NEW,yes,,,momster
+t_combo-attack-helper-hurricane_82179edc,momster,combo,Combo attack! Helper Hurricane!,NEW,yes,,,momster
+t_oops-excuse-me_aa7ef76f,momster,app line,Oops! Excuse me!,NEW,yes,,,momster
+t_hee-hee-that-tickles_02ce168b,momster,app line,Hee hee! That tickles!,NEW,yes,,,momster
+t_burrrp-pardon-me_5e881e2e,momster,app line,BURRRP! Pardon me!,NEW,yes,,,momster
+t_wheee_89130812,momster,app line,Wheee!,NEW,yes,,,momster
+t_achoo-ugh-i-sneezed-on-your-job_7493b8da,momster,app line,ACHOO! Ugh. I sneezed on your job.,NEW,yes,,,momster
+t_who-stepped-on-a-duck_b20f6f13,momster,app line,Who stepped on a duck?!,NEW,yes,,,momster
+t_test-mode-nothing-you-do-gets-saved_fb42a972,momster,app line,Test mode! Nothing you do gets saved.,NEW,yes,,,momster
+t_mission-report-look-what-the-momster-hel_bda0951e,momster,app line,Mission report! Look what the Momster Helpers did this week!,NEW,yes,,,momster
+t_talking-is-on_2f7e6b0b,momster,app line,Talking is on!,NEW,yes,,,momster
+t_ooh-good-choice_9aa08c16,momster,app line,"Ooh, good choice!",NEW,yes,,,momster
+t_special-mission-complete-two-big-stars_3e0d2638,momster,app line,Special mission complete! Two big stars!,NEW,yes,,,momster
+t_your-prize-is-a-surprise-fill-your-jar-t_0167fc11,momster,app line,Your prize is a surprise! Fill your jar to find out!,NEW,yes,,,momster
+t_this-is-your-prize-this-week-ask-a-grown_a85e29ee,momster,app line,This is your prize this week! Ask a grown-up if you want to change it.,NEW,yes,,,momster
+t_hi-sound-is-working_948a7a71,momster,app line,Hi! Sound is working.,NEW,yes,,,momster
+t_the-dog-did-it-i-saw-him_0d676ce6,momster,toot reaction,The dog did it! I saw him!,NEW,yes,villain reacts after a toot,,villains:any
+t_that-one-smelled-like-justice_66f38817,momster,toot reaction,That one smelled like JUSTICE!,NEW,yes,villain reacts after a toot,,villains:any
+t_ewww-rude_b65f0387,momster,toot reaction,EWWW! Rude!,NEW,yes,villain reacts after a toot,,villains:any
+t_p-u-who-did-that_233402e2,momster,toot reaction,P-U! Who did that?!,NEW,yes,villain reacts after a toot,,villains:any
+t_my-nose-my-nose_39d02ecb,momster,toot reaction,My nose! MY NOSE!,NEW,yes,villain reacts after a toot,,villains:any
+t_that-s-my-move_06ab2b40,momster,toot reaction,That's my move!,NEW,yes,villain reacts after a toot,,villains:any
+t_gross-even-i-have-standards_bd2b36be,momster,toot reaction,Gross! Even I have standards!,NEW,yes,villain reacts after a toot,,villains:any
+t_whoever-smelt-it-dealt-it_2bb7c011,momster,toot reaction,"Whoever smelt it, dealt it!",NEW,yes,villain reacts after a toot,,villains:any
+t_that-should-be-illegal_bed1ed69,momster,toot reaction,That should be ILLEGAL!,NEW,yes,villain reacts after a toot,,villains:any
+t_my-eyes-are-watering_a9d29ae9,momster,toot reaction,My eyes are WATERING!,NEW,yes,villain reacts after a toot,,villains:any
+t_prize-done-keep-going_bd9ad54a,momster,app line,Prize done! Keep going!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_ask-a-grown-up-for-your-prize_daee4cd5,momster,app line,Ask a grown-up for your prize!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_walking-today_423998a8,momster,ride picker,Walking today!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_bus-today_56dbcb7f,momster,ride picker,Bus today!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_driving-today_d4026820,momster,ride picker,Driving today!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_top-rank-legends-forever_9eeff2b7,momster,level up,Top rank! Legends forever!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_ouch-that-stings_16e5611f,momster,battle,Ouch! That stings!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_ugh-they-re-strong_7daa6d46,momster,battle,Ugh! They're strong!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_mystery-hit-double-damage-lucky-you_dd10d9ff,momster,battle,Mystery hit! Double damage! Lucky you!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_combo-attack-landed_a62bb610,momster,combo,Combo attack landed!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_star-jar-full-you-saved-up-for-that-that_bbd37df8,momster,app line,Star jar full! You saved up for that. That's what I call stick-to-it!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_the-dog-is-taking-the-blame_8cd0fed0,momster,toot milestone,The dog is taking the blame.,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_the-epa-has-been-notified-twice_add27e9e,momster,toot milestone,The EPA has been notified. Twice.,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_the-dog-is-packing-its-bags_390484d4,momster,toot milestone,The dog is packing its bags.,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_that-one-hurts-the-villain-double_9f696dfe,momster,battle,That one hurts the villain double!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_morning_02e055cf,momster,routine name,Morning,NEW,NO (label),,,momster
+t_after-school_203b34ff,momster,routine name,After school,NEW,NO (label),,,momster
+t_bedtime_8774abad,momster,routine name,Bedtime,NEW,NO (label),,,momster
+t_helper_6a61af4d,momster,routine name,Helper,NEW,NO (label),,,momster
+t_first-star_c8d1c5cf,momster,sticker name,First star,NEW,NO (label),tap-to-hear needed,,momster
+t_100-stars_e590895d,momster,sticker name,100 stars,NEW,NO (label),tap-to-hear needed,,momster
+t_500-stars_63e62a39,momster,sticker name,500 stars,NEW,NO (label),tap-to-hear needed,,momster
+t_full-jar_a6242c09,momster,sticker name,Full jar,NEW,NO (label),tap-to-hear needed,,momster
+t_4-full-jars_ff767eda,momster,sticker name,4 full jars,NEW,NO (label),tap-to-hear needed,,momster
+t_beat-the-clock_fb40d8e0,momster,sticker name,Beat the clock,NEW,NO (label),tap-to-hear needed,,momster
+t_5-races_750d38f2,momster,sticker name,5 races,NEW,NO (label),tap-to-hear needed,,momster
+t_20-races_85499729,momster,sticker name,20 races,NEW,NO (label),tap-to-hear needed,,momster
+t_3-nights_f31fae81,momster,sticker name,3 nights,NEW,NO (label),tap-to-hear needed,,momster
+t_7-nights_91f71345,momster,sticker name,7 nights,NEW,NO (label),tap-to-hear needed,,momster
+t_14-nights_7f31b667,momster,sticker name,14 nights,NEW,NO (label),tap-to-hear needed,,momster
+t_first-egg_1036c9c8,momster,sticker name,First egg,NEW,NO (label),tap-to-hear needed,,momster
+t_10-eggs_c20be33e,momster,sticker name,10 eggs,NEW,NO (label),tap-to-hear needed,,momster
+t_villain-buster_3bd38091,momster,sticker name,Villain buster,NEW,NO (label),tap-to-hear needed,,momster
+t_4-villains-busted_31e01728,momster,sticker name,4 villains busted,NEW,NO (label),tap-to-hear needed,,momster
+t_first-buy_d53e8801,momster,sticker name,First buy,NEW,NO (label),tap-to-hear needed,,momster
+t_10-items_ff4b41d0,momster,sticker name,10 items,NEW,NO (label),tap-to-hear needed,,momster
+t_dragon_73654acd,momster,sticker name,Dragon!,NEW,NO (label),tap-to-hear needed,,momster
+t_unicorn_03f97362,momster,sticker name,Unicorn!,NEW,NO (label),tap-to-hear needed,,momster
+t_5-bonus-jobs_23de36fd,momster,sticker name,5 bonus jobs,NEW,NO (label),tap-to-hear needed,,momster
+t_little-chef_6e9f3543,momster,sticker name,Little chef,NEW,NO (label),tap-to-hear needed,,momster
+t_made-a-sidekick_6fc711c4,momster,sticker name,Made a sidekick,NEW,NO (label),tap-to-hear needed,,momster
+t_dance-party_b73fe758,momster,sticker name,Dance party,NEW,NO (label),tap-to-hear needed,,momster
+t_rookie-helpers_b5c17be3,momster,rank name,Rookie Helpers,NEW,NO (label),,,momster
+t_junior-helpers_7b4d8211,momster,rank name,Junior Helpers,NEW,NO (label),,,momster
+t_super-helpers_186dd1c5,momster,rank name,Super Helpers,NEW,NO (label),,,momster
+t_mega-helpers_c6c1db5e,momster,rank name,Mega Helpers,NEW,NO (label),,,momster
+t_ultra-helpers_53b34d88,momster,rank name,Ultra Helpers,NEW,NO (label),,,momster
+t_momster-s-mvp_64aa2a0b,momster,rank name,Momster's MVP,NEW,NO (label),,,momster
+t_duke-of-dawn_71fbd50f,momster,hero award,Duke of Dawn,NEW,NO (label),,,momster
+t_backpack-boss_f54b5860,momster,hero award,Backpack Boss,NEW,NO (label),,,momster
+t_pajama-champion_f0bddf88,momster,hero award,Pajama Champion,NEW,NO (label),,,momster
+t_helper-hero_85ca4343,momster,hero award,Helper Hero,NEW,NO (label),,,momster
+t_bonus-beast_17cb8203,momster,hero award,Bonus Beast,NEW,NO (label),,,momster
+t_super_9d397374,momster,hero style,Super,NEW,NO (label),,,momster
+t_princess_a8192ad6,momster,hero style,Princess,NEW,NO (label),,,momster
+t_knight_cd17325c,momster,hero style,Knight,NEW,NO (label),,,momster
+t_ninja_a0402c4b,momster,hero style,Ninja,NEW,NO (label),,,momster
+t_squeaky_124c0f8a,momster,character name,Squeaky,NEW,NO (label),,,momster
+t_sparkle-fairy_c4e83794,momster,character name,Sparkle Fairy,NEW,NO (label),,,momster
+t_dino_aa72d75d,momster,character name,Dino,NEW,NO (label),,,momster
+t_big-bear_caac5589,momster,character name,Big Bear,NEW,NO (label),,,momster
+t_robo_96451f91,momster,character name,Robo,NEW,NO (label),,,momster
+t_silly-ghost_ea0f2be7,momster,character name,Silly Ghost,NEW,NO (label),,,momster
+t_balloon_5781edbc,momster,shop item,Balloon,NEW,NO (label),tap-to-hear needed,,momster
+t_sunflower_c971259a,momster,shop item,Sunflower,NEW,NO (label),tap-to-hear needed,,momster
+t_carrot_e6637c92,momster,shop item,Carrot,NEW,NO (label),tap-to-hear needed,,momster
+t_banana_c6e3dc70,momster,shop item,Banana,NEW,NO (label),tap-to-hear needed,,momster
+t_ice-cream_90852ebe,momster,shop item,Ice cream,NEW,NO (label),tap-to-hear needed,,momster
+t_soccer-ball_b371376b,momster,shop item,Soccer ball,NEW,NO (label),tap-to-hear needed,,momster
+t_lollipop_d999d0aa,momster,shop item,Lollipop,NEW,NO (label),tap-to-hear needed,,momster
+t_popcorn_9a55e2aa,momster,shop item,Popcorn,NEW,NO (label),tap-to-hear needed,,momster
+t_juice-box_32937eca,momster,shop item,Juice box,NEW,NO (label),tap-to-hear needed,,momster
+t_pizza-slice_e732353f,momster,shop item,Pizza slice,NEW,NO (label),tap-to-hear needed,,momster
+t_toilet-paper_df0a480a,momster,shop item,Toilet paper,NEW,NO (label),tap-to-hear needed,,momster
+t_bone_42720baf,momster,shop item,Bone,NEW,NO (label),tap-to-hear needed,,momster
+t_teddy_f3cfd871,momster,shop item,Teddy,NEW,NO (label),tap-to-hear needed,,momster
+t_kite_42db7936,momster,shop item,Kite,NEW,NO (label),tap-to-hear needed,,momster
+t_books_d9d036b1,momster,shop item,Books,NEW,NO (label),tap-to-hear needed,,momster
+t_magic-wand_e53a32d2,momster,shop item,Magic wand,NEW,NO (label),tap-to-hear needed,,momster
+t_knight-shield_d16949d5,momster,shop item,Knight shield,NEW,NO (label),tap-to-hear needed,,momster
+t_knight-sword_0ddf06fd,momster,shop item,Knight sword,NEW,NO (label),tap-to-hear needed,,momster
+t_rose_906e6426,momster,shop item,Rose,NEW,NO (label),tap-to-hear needed,,momster
+t_royal-mirror_0a9f46b3,momster,shop item,Royal mirror,NEW,NO (label),tap-to-hear needed,,momster
+t_trophy_81d15d1f,momster,shop item,Trophy,NEW,NO (label),tap-to-hear needed,,momster
+t_guitar_f53c5c2f,momster,shop item,Guitar,NEW,NO (label),tap-to-hear needed,,momster
+t_ball-cap_0d077f4c,momster,shop item,Ball cap,NEW,NO (label),tap-to-hear needed,,momster
+t_bow_d8cb838b,momster,shop item,Bow,NEW,NO (label),tap-to-hear needed,,momster
+t_mushroom-hat_beeed312,momster,shop item,Mushroom hat,NEW,NO (label),tap-to-hear needed,,momster
+t_sun-hat_c6a1853c,momster,shop item,Sun hat,NEW,NO (label),tap-to-hear needed,,momster
+t_donut-hat_41efbbda,momster,shop item,Donut hat,NEW,NO (label),tap-to-hear needed,,momster
+t_pumpkin-hat_777d2c2a,momster,shop item,Pumpkin hat,NEW,NO (label),tap-to-hear needed,,momster
+t_smarty-hat_4544dd6c,momster,shop item,Smarty hat,NEW,NO (label),tap-to-hear needed,,momster
+t_helmet_d6085f40,momster,shop item,Helmet,NEW,NO (label),tap-to-hear needed,,momster
+t_cupcake-hat_2fbbba1e,momster,shop item,Cupcake hat,NEW,NO (label),tap-to-hear needed,,momster
+t_pizza-hat_8f858c18,momster,shop item,Pizza hat,NEW,NO (label),tap-to-hear needed,,momster
+t_octopus-hat_d0762c43,momster,shop item,Octopus hat,NEW,NO (label),tap-to-hear needed,,momster
+t_top-hat_79ec6481,momster,shop item,Top hat,NEW,NO (label),tap-to-hear needed,,momster
+t_halo_4feb09bf,momster,shop item,Halo,NEW,NO (label),tap-to-hear needed,,momster
+t_unicorn-horn_6c8b0050,momster,shop item,Unicorn horn,NEW,NO (label),tap-to-hear needed,,momster
+t_crown_c1595930,momster,shop item,Crown,NEW,NO (label),tap-to-hear needed,,momster
+t_knight-helmet_07a6e241,momster,shop item,Knight helmet,NEW,NO (label),tap-to-hear needed,,momster
+t_princess-tiara_3eacba85,momster,shop item,Princess tiara,NEW,NO (label),tap-to-hear needed,,momster
+t_glasses_ef27a8db,momster,shop item,Glasses,NEW,NO (label),tap-to-hear needed,,momster
+t_clown-nose_d163faa5,momster,shop item,Clown nose,NEW,NO (label),tap-to-hear needed,,momster
+t_mustache_ccac198f,momster,shop item,Mustache,NEW,NO (label),tap-to-hear needed,,momster
+t_sunglasses_045830e7,momster,shop item,Sunglasses,NEW,NO (label),tap-to-hear needed,,momster
+t_goggles_2c9cee17,momster,shop item,Goggles,NEW,NO (label),tap-to-hear needed,,momster
+t_snorkel_5763f49f,momster,shop item,Snorkel,NEW,NO (label),tap-to-hear needed,,momster
+t_party-mask_62c8a0f9,momster,shop item,Party mask,NEW,NO (label),tap-to-hear needed,,momster
+t_ninja-mask_e928e4ad,momster,shop item,Ninja mask,NEW,NO (label),tap-to-hear needed,,momster
+t_hero-mask_07481a6f,momster,shop item,Hero mask,NEW,NO (label),tap-to-hear needed,,momster
+t_fancy-tie_d9fedc04,momster,shop item,Fancy tie,NEW,NO (label),tap-to-hear needed,,momster
+t_scarf_251c6f5e,momster,shop item,Scarf,NEW,NO (label),tap-to-hear needed,,momster
+t_beads_b9c01292,momster,shop item,Beads,NEW,NO (label),tap-to-hear needed,,momster
+t_gold-medal_a5fb2aa8,momster,shop item,Gold medal,NEW,NO (label),tap-to-hear needed,,momster
+t_hero-cape_13a2112c,momster,shop item,Hero cape,NEW,NO (label),tap-to-hear needed,,momster
+t_princess-cape_e9fac495,momster,shop item,Princess cape,NEW,NO (label),tap-to-hear needed,,momster
+t_striped-tee_c7642082,momster,shop item,Striped tee,NEW,NO (label),tap-to-hear needed,,momster
+t_star-pjs_4762da3e,momster,shop item,Star PJs,NEW,NO (label),tap-to-hear needed,,momster
+t_overalls_144f2dcb,momster,shop item,Overalls,NEW,NO (label),tap-to-hear needed,,momster
+t_team-jersey_a532e1ec,momster,shop item,Team jersey,NEW,NO (label),tap-to-hear needed,,momster
+t_tutu_ff017115,momster,shop item,Tutu,NEW,NO (label),tap-to-hear needed,,momster
+t_princess-gown_37db21f1,momster,shop item,Princess gown,NEW,NO (label),tap-to-hear needed,,momster
+t_super-suit_7c116195,momster,shop item,Super suit,NEW,NO (label),tap-to-hear needed,,momster
+t_knight-armor_fbada983,momster,shop item,Knight armor,NEW,NO (label),tap-to-hear needed,,momster
+t_ninja-suit_c2979adc,momster,shop item,Ninja suit,NEW,NO (label),tap-to-hear needed,,momster
+t_snail_333192ea,momster,shop item,Snail,NEW,NO (label),tap-to-hear needed,,momster
+t_bee_b6b3491f,momster,shop item,Bee,NEW,NO (label),tap-to-hear needed,,momster
+t_butterfly_5d4a9704,momster,shop item,Butterfly,NEW,NO (label),tap-to-hear needed,,momster
+t_chick_9ecf59fb,momster,shop item,Chick,NEW,NO (label),tap-to-hear needed,,momster
+t_turtle_2810323f,momster,shop item,Turtle,NEW,NO (label),tap-to-hear needed,,momster
+t_frog_1e743f07,momster,shop item,Frog,NEW,NO (label),tap-to-hear needed,,momster
+t_hedgehog_8317c3bc,momster,shop item,Hedgehog,NEW,NO (label),tap-to-hear needed,,momster
+t_kitty_825b13a0,momster,shop item,Kitty,NEW,NO (label),tap-to-hear needed,,momster
+t_puppy_02a9a7a5,momster,shop item,Puppy,NEW,NO (label),tap-to-hear needed,,momster
+t_penguin_e1dc1e1f,momster,shop item,Penguin,NEW,NO (label),tap-to-hear needed,,momster
+t_poop-pal_2d9f9222,momster,shop item,Poop pal,NEW,NO (label),tap-to-hear needed,,momster
+t_tiny-dino_a4d31681,momster,shop item,Tiny dino,NEW,NO (label),tap-to-hear needed,,momster
+t_swan_cf19b0cc,momster,shop item,Swan,NEW,NO (label),tap-to-hear needed,,momster
+t_unicorn_4466e477,momster,shop item,Unicorn,NEW,NO (label),tap-to-hear needed,,momster
+t_dragon_cc1ebe3e,momster,shop item,Dragon,NEW,NO (label),tap-to-hear needed,,momster
+t_beach_c6aedde8,momster,shop item,Beach,NEW,NO (label),tap-to-hear needed,,momster
+t_forest_953ca480,momster,shop item,Forest,NEW,NO (label),tap-to-hear needed,,momster
+t_snow-day_185975c4,momster,shop item,Snow day,NEW,NO (label),tap-to-hear needed,,momster
+t_outer-space_fd2c5182,momster,shop item,Outer space,NEW,NO (label),tap-to-hear needed,,momster
+t_under-the-sea_14c0157d,momster,shop item,Under the sea,NEW,NO (label),tap-to-hear needed,,momster
+t_candy-land_5c9d3f03,momster,shop item,Candy land,NEW,NO (label),tap-to-hear needed,,momster
+t_castle_e0d61e79,momster,shop item,Castle,NEW,NO (label),tap-to-hear needed,,momster
+t_royal-ballroom_734c6bca,momster,shop item,Royal ballroom,NEW,NO (label),tap-to-hear needed,,momster
+t_volcano_b21f8d5d,momster,shop item,Volcano,NEW,NO (label),tap-to-hear needed,,momster
+t_rainbow_5c15be49,momster,shop item,Rainbow,NEW,NO (label),tap-to-hear needed,,momster
+t_star-hat_34b2f12c,momster,shop item,Star hat,NEW,NO (label),tap-to-hear needed,,momster
+t_diamond_df593b47,momster,shop item,Diamond,NEW,NO (label),tap-to-hear needed,,momster
+t_crystal-ball_f36d27ce,momster,shop item,Crystal ball,NEW,NO (label),tap-to-hear needed,,momster
+t_tiny-planet_29f8992f,momster,shop item,Tiny planet,NEW,NO (label),tap-to-hear needed,,momster
+t_comet_6acb19af,momster,shop item,Comet,NEW,NO (label),tap-to-hear needed,,momster
+t_peacock_121a762d,momster,shop item,Peacock,NEW,NO (label),tap-to-hear needed,,momster
+t_wise-owl_550abbf3,momster,shop item,Wise owl,NEW,NO (label),tap-to-hear needed,,momster
+t_flamingo_54b4a4bc,momster,shop item,Flamingo,NEW,NO (label),tap-to-hear needed,,momster
+t_sloth_f9bbf0fb,momster,shop item,Sloth,NEW,NO (label),tap-to-hear needed,,momster
+t_shark_4d856ab2,momster,shop item,Shark,NEW,NO (label),tap-to-hear needed,,momster
+t_ghost-pal_1753b08d,momster,shop item,Ghost pal,NEW,NO (label),tap-to-hear needed,,momster
+t_rainbow-cape_cdbe443c,momster,shop item,Rainbow cape,NEW,NO (label),tap-to-hear needed,,momster
+t_heart-glasses_d9cb245f,momster,shop item,Heart glasses,NEW,NO (label),tap-to-hear needed,,momster
+t_northern-lights_c74c3694,momster,shop item,Northern lights,NEW,NO (label),tap-to-hear needed,,momster
+t_disco-party_4ec40d7d,momster,shop item,Disco party,NEW,NO (label),tap-to-hear needed,,momster
+t_skeleton-suit_16b3af37,momster,shop item,Skeleton suit,NEW,NO (label),tap-to-hear needed,,momster
+t_witch-hat_1ac3671d,momster,shop item,Witch hat,NEW,NO (label),tap-to-hear needed,,momster
+t_vampire-cape_8e3b1a10,momster,shop item,Vampire cape,NEW,NO (label),tap-to-hear needed,,momster
+t_bat_d5bc7448,momster,shop item,Bat,NEW,NO (label),tap-to-hear needed,,momster
+t_spider_db6aea28,momster,shop item,Spider,NEW,NO (label),tap-to-hear needed,,momster
+t_jack-o-lantern_c38d8032,momster,shop item,Jack-o'-lantern,NEW,NO (label),tap-to-hear needed,,momster
+t_haunted-house_9d6a5d6a,momster,shop item,Haunted house,NEW,NO (label),tap-to-hear needed,,momster
+t_turkey_0bb24bef,momster,shop item,Turkey,NEW,NO (label),tap-to-hear needed,,momster
+t_pie_cf479255,momster,shop item,Pie,NEW,NO (label),tap-to-hear needed,,momster
+t_maple-leaf_435a49e6,momster,shop item,Maple leaf,NEW,NO (label),tap-to-hear needed,,momster
+t_corn_548a9e73,momster,shop item,Corn,NEW,NO (label),tap-to-hear needed,,momster
+t_fall-leaves_2dcaabe4,momster,shop item,Fall leaves,NEW,NO (label),tap-to-hear needed,,momster
+t_holiday-sweater_cd1f57cc,momster,shop item,Holiday sweater,NEW,NO (label),tap-to-hear needed,,momster
+t_santa-hat_0579b53b,momster,shop item,Santa hat,NEW,NO (label),tap-to-hear needed,,momster
+t_present_d160028c,momster,shop item,Present,NEW,NO (label),tap-to-hear needed,,momster
+t_tiny-tree_9c6475e9,momster,shop item,Tiny tree,NEW,NO (label),tap-to-hear needed,,momster
+t_reindeer_8595a2eb,momster,shop item,Reindeer,NEW,NO (label),tap-to-hear needed,,momster
+t_snowman_7a0f5fbe,momster,shop item,Snowman,NEW,NO (label),tap-to-hear needed,,momster
+t_cozy-christmas_471cf27e,momster,shop item,Cozy Christmas,NEW,NO (label),tap-to-hear needed,,momster
+t_this-week-s-villain_b4cc8c56,momster,screen text,This week's villain,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_finish-the-same-routine-together-for-a-c_a2761a20,momster,screen text,Finish the same routine together for a combo attack!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_let-s-help-momster_2b61588f,momster,screen text,Let's help Momster!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_choose-one-for-today-two-stars-when-you_a0e17d94,momster,screen text,Choose one for today. Two stars when you finish it.,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_coins-never-take-away-your-stars_2ba9b5bd,momster,screen text,Coins never take away your stars!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_build_95967543,momster,screen text,Build,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_faces_a79c251d,momster,screen text,Faces,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_neck_cc25a532,momster,screen text,Neck,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_outfits_a848978f,momster,screen text,Outfits,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_pets_35cb7c97,momster,screen text,Pets,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_places_a808d03d,momster,screen text,Places,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_stickers_1609e2dd,momster,screen text,Stickers,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_team-rank_18b9c1fa,momster,screen text,Team rank,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_team-prize_cb00b934,momster,screen text,Team prize,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_trophy-wall_d886eddd,momster,screen text,Trophy wall,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_jobs-done_70e598b3,momster,screen text,Jobs done,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_combo-attacks_a0fc1a28,momster,screen text,Combo attacks,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_weak-spot-hits_c80af917,momster,screen text,Weak spot hits,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_total-damage_d52bc0c6,momster,screen text,Total damage,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_family-toots_413a085a,momster,screen text,Family toots,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_dad-joke-of-the-day_edfcd32e,momster,screen text,Dad joke of the day!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_tell-me_da5e85a7,momster,screen text,Tell me!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_tell-it-again_5f04b936,momster,screen text,Tell it again!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_pick-your-hero-style_3831445b,momster,screen text,Pick your hero style!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_your-sidekick-gets-a-free-costume-to-mat_7f3be6c5,momster,screen text,Your sidekick gets a free costume to match. Switch anytime!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_just-me_173e9e23,momster,screen text,Just me.,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_pick-your-helper-voice_63e6711a,momster,screen text,Pick your helper voice!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_tap-a-voice-to-hear-it-then-tap-yes-to-p_dab1483b,momster,screen text,"Tap a voice to hear it, then tap Yes to pick it.",NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_tap-a-prize-to-choose-it-then-tap-yes-to_4be45a88,momster,screen text,"Tap a prize to choose it, then tap Yes to confirm.",NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_getting-to-school_d506c3c0,momster,screen text,Getting to school,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_walk_22ccd730,momster,screen text,Walk,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_bus_c4da6e99,momster,screen text,Bus,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_drive_f1aafc17,momster,screen text,Drive,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_yes_dc811cc3,momster,screen text,Yes!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_no_523d6bdc,momster,screen text,No.,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_got-it_c6d78a11,momster,screen text,Got it!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+t_pick-a-prize_5e3ad70f,momster,screen text,Pick a prize.,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
+tour_1,momster,tutorial,"Hi! I’m Momster. I’m so glad you’re here to help me chase away the pesky villains hanging around our house. When a villain stays too long, I can get pretty grumpy. But with your help, I can get back to my happiest mood: relaxed!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_2,momster,tutorial,"Before we begin, let me show you how it works. Listen closely, because I have an awesome reward for you at the end.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_3,momster,tutorial,"Each week, a different villain visits our house to cause chaos and spoil our fun. Every villain has a health bar. When that bar reaches zero, we win! Every task you finish takes away some of the villain’s health.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_4,momster,tutorial,"Some tasks and combos do extra damage. First, tap your card to open your profile. Pick the prize you’d like to earn this week. Then you’ll see a Special Mission and a Surprise Mission. You can choose your Special Mission now or come back to it later.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_5,momster,tutorial,"Your tasks are sorted into five groups: Morning, After School, Bedtime, Helper, and Bonus. Pick a group from the menu to see its tasks. When you finish one, tap its card to see how much damage you did to the villain.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_6,momster,tutorial,"See a siren in the top-right corner? Tap it to check any Special or Surprise Missions you haven’t finished yet. You can find them in Bonus, too. They often do extra damage and come with extra rewards!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_7,momster,tutorial,"For helping me, you’ll earn stars and coins. Each task card shows how many stars you can earn. You also get your very own sidekick! You can dress it up and it wears the treasures you find.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_8,momster,tutorial,"Collect stars to unlock stickers and badges in Hero HQ. When you reach the weekly star goal your family set, you’ll defeat the villain! You’ll also get one coin each time you finish a task group, up to five coins a day. If you complete all the tasks in a day, you can also hatch a mystery egg, which awards you rare items for your sidekick or bonus coins! Defeat the weekly villain and you’ll get ten more coins.",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_9,momster,tutorial,"And don’t stop there: until the next villain arrives, you’ll earn double coins for your tasks. You can keep collecting stars for stickers, too. Spend your coins on clothes, accessories, toys, pets, and backgrounds for your sidekick. Make it yours!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+tour_10,momster,tutorial,"You listened all the way through, so here’s that awesome reward I promised: 25 coins to get you started! Spend them on something for your sidekick, or save them for later. Now, let’s pick your first task and show that villain what we can do!",generated,yes,plays whatever sound option is chosen (tour.js),,momster
+t_emergency-the-great-crumb-incident-wipe_5fd1b5dc,momster,surprise mission,Emergency! THE GREAT CRUMB INCIDENT! Wipe the table and sweep up crumbs!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
+t_emergency-the-sock-has-awakened-find-str_6955ecfc,momster,surprise mission,Emergency! THE SOCK HAS AWAKENED! Find stray socks and put them in the hamper!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
+t_emergency-toy-avalanche-5-minute-toy-pic_9da4b761,momster,surprise mission,Emergency! TOY AVALANCHE! 5-minute toy pickup race!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
+t_emergency-shoe-pile-panic-line-up-all-th_99061852,momster,surprise mission,Emergency! SHOE PILE PANIC! Line up all the shoes by the door!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
+t_emergency-couch-chaos-fix-the-pillows-an_a9f8cf08,momster,surprise mission,Emergency! COUCH CHAOS! Fix the pillows and fold the blankets!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
