@@ -1111,4 +1111,4 @@ t_200-family-toots_7bbeb227,momster,toot milestone,200 family toots!,NEW,yes,pla
 t_500-family-toots_d45132d6,momster,toot milestone,500 family toots!,NEW,yes,plays with the toot milestone banner (before the funny line),,momster
 t_you-earned-a-coin_315f69b0,momster,app line,You earned a coin!,NEW,yes,card after finishing a routine (1 coin),,momster
 t_you-earned-2-coins_c796f206,momster,app line,You earned 2 coins!,NEW,yes,card after finishing a routine once the villain is beaten (2 coins),,momster
-t_joke-time-tap-the-card-to-hear-a-joke_79b2f450,momster,app line,Joke time! Tap the card to hear a joke!,NEW,yes,joke card after finishing a routine,,momster
+t_tap-the-card-to-hear-a-joke_29f44893,momster,app line,Tap the card to hear a joke!,NEW,yes,"joke card after finishing a group of jobs (does not say Joke time: the Joke time clip plays once, with the first joke)",,momster

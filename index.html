@@ -1850,10 +1850,15 @@ function cheer(big,text,keys,confetti,auto){ let c=null; popup(()=>{ if(confetti
   c.firstChild.textContent=big; c.children[1].textContent=text; document.body.appendChild(c);
   if(auto) setTimeout(()=>c.remove(),2400); else c.addEventListener("click",()=>c.remove());
   if(keys) play(keys); }, 2400, auto ? null : ()=>!!(c && c.isConnected)); }
-// After a routine the joke is offered on a card: the kid taps the card to hear it (tapping anywhere else just closes it).
-function jokeOffer(){ let c=null; popup(()=>{ c=document.createElement("div"); c.className="cheer tapcard jokecard";
+// Finishing a group of jobs unlocks ONE joke for that kid, that group, that day. The Joke button and the joke card both play that same joke,
+// and "Joke time!" is said only the first time it is played.
+function jokeEntry(k, cat){ const day=ymd(new Date()), all=loadLocal("jokes")||{}; if(all.day!==day){ for(const x of Object.keys(all)) delete all[x]; all.day=day; }
+  const key=k+":"+cat; if(!all[key]){ all[key]={id:pickJoke(), said:false}; saveLocal("jokes", all); } return {all, e:all[key]}; }
+function playJoke(k, cat){ const {all,e}=jokeEntry(k,cat), keys=[]; if(!e.said){ keys.push("jokeintro"); e.said=true; saveLocal("jokes", all); } keys.push(e.id); play(keys); }
+// After a group is finished the joke is offered on a card: the kid taps the card to hear it (tapping anywhere else just closes it).
+function jokeOffer(k, cat){ let c=null; popup(()=>{ c=document.createElement("div"); c.className="cheer tapcard jokecard";
   c.innerHTML='<div class="big">🤣</div><div>Joke time!</div><div class="tapnote">Tap here to hear a joke</div>';
-  c.addEventListener("click",()=>{ c.remove(); play(["jokeintro", pickJoke()]); }); document.body.appendChild(c); play(["BJ:Joke time! Tap the card to hear a joke!"]); }, 0, ()=>!!(c && c.isConnected)); }
+  c.addEventListener("click",()=>{ c.remove(); playJoke(k, cat); }); document.body.appendChild(c); play(["BJ:Tap the card to hear a joke!"]); }, 0, ()=>!!(c && c.isConnected)); }
 // Non-readers mode: read UI text out loud.
 // A tap anywhere that is not on a "tap to continue" card closes it (and does nothing else).
 document.addEventListener("click", e=>{ const c=document.querySelector(".cheer.tapcard"); if(!c || c.contains(e.target)) return; e.preventDefault(); e.stopPropagation(); c.remove(); }, true);
@@ -3245,7 +3250,7 @@ document.addEventListener("click", e=>{
     case "test": { play(["fanfare","BJ:Hi! Sound is working."]); const n=document.getElementById("sndNote");
       setTimeout(()=>{ if(n) n.textContent = soundOk===false ? "This browser blocked sound. Open the link in Chrome or Safari, not inside the Claude app." : "Hear nothing? Turn volume up and check the silent switch."; },700); } break;
     case "recs": recSheet(); break;
-    case "joke": play(["jokeintro", pickJoke()]); break;
+    case "joke": playJoke(view.kid, view.routine); break;
     case "vc": { const id=t.dataset.v;
       const allVoiceTiles=document.querySelectorAll('.rw[data-a="vc"]');
       if(t.dataset.armed){ settings.voice=id; saveSettings(); close(); render(); play(["fanfare","great"]); }
@@ -3365,7 +3370,7 @@ function tapJob(k, id){ settleCoins(k);
         dmgPop(Math.max(1,dmgR)); },650); const sk = r.id==="bt" ? streak(k) : 0, fire = [3,5,7,10,14].includes(sk);
     setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r),["raceWin"]); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r),["streak"]); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐",[r.doneSnd||"alldone", praiseSpoken(k)]); }, 1400);
     play(["fanfare","bonus"]);
-    if(!eggReady(k)) setTimeout(jokeOffer, 4200); }
+    if(!eggReady(k)) setTimeout(()=>jokeOffer(k, r.id), 4200); }
   else { render(); let hit = Math.max(1,teamDamage()-dmgB);
     const ms = mysteryLeft(k)>0 && Math.random()<0.12;
     if(ms){ mysteryUse(k); hit += 5; }

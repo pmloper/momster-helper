@@ -80,14 +80,28 @@ async function run(){
     ok((await ev(`window.__hits`)) === 1, "with no card up, the button works as usual");
 
     // 2. The joke is offered, and only played when the card is tapped
-    await ev(`window.__k.length=0; jokeOffer(); true`); await sleep(900);
+    await ev(`window.__k.length=0; jokeOffer("k1","am"); true`); await sleep(900);
     ok((await ev(`(document.querySelector(".jokecard")||{}).textContent||""`)).includes("Joke time"), "a joke card appears");
     ok(!(await keys()).includes("jokeintro"), "the joke is not played by itself");
     await ev(`document.getElementById("under").click(); true`); await sleep(300);
     ok(!(await keys()).includes("jokeintro"), "tapping outside the joke card closes it without telling the joke");
-    await ev(`window.__k.length=0; jokeOffer(); true`); await sleep(1000);
+    await ev(`window.__k.length=0; jokeOffer("k1","am"); true`); await sleep(1000);
     await ev(`document.querySelector(".jokecard").click(); true`); await sleep(200);
     ok((await keys()).includes("jokeintro"), "tapping the joke card plays the joke");
+
+    // 2b. One joke per finished group; "Joke time!" is said once
+    await ev(`saveLocal("jokes", {}); window.__k.length=0; playJoke("k1","pm"); playJoke("k1","pm"); playJoke("k1","pm"); true`);
+    const calls = JSON.parse(await ev(`JSON.stringify(window.__k.map(x=>JSON.parse(x)).filter(a=>Array.isArray(a)))`)).slice(-3);
+    ok(calls.length === 3 && calls[0][0] === "jokeintro" && calls[0].length === 2, "the first press says Joke time and tells the joke: " + JSON.stringify(calls[0]));
+    ok(calls[1].length === 1 && calls[2].length === 1 && calls[1][0] === calls[0][1] && calls[2][0] === calls[0][1], "later presses replay the same joke without Joke time: " + JSON.stringify(calls.slice(1)));
+    await ev(`window.__k.length=0; playJoke("k1","bt"); true`);
+    const other = JSON.parse(await ev(`JSON.stringify(window.__k.map(x=>JSON.parse(x)))`)).flat();
+    ok(other[0] === "jokeintro", "a different finished group has its own joke (and its own first-time intro): " + JSON.stringify(other));
+    await ev(`window.__k.length=0; jokeOffer("k1","pm"); true`); await sleep(1000);
+    await ev(`document.querySelector(".jokecard").click(); true`); await sleep(200);
+    const viaCard = JSON.parse(await ev(`JSON.stringify(window.__k.map(x=>JSON.parse(x)))`)).flat();
+    ok(!viaCard.includes("jokeintro") && viaCard.includes(calls[0][1]), "the card plays that group's same joke, with no second Joke time: " + JSON.stringify(viaCard));
+    ok(!viaCard.some(k=>/Joke time/i.test(String(k))), "and the card's spoken prompt does not say Joke time either");
 
     // 3. Finishing a routine gives its coin on a card
     await ev(`window.__k.length=0; buddies.k1.coinAwards={}; awardCategory("k1","am",ymd(new Date()),false,"Morning done!"); true`); await sleep(3000);
