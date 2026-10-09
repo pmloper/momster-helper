@@ -1,9 +1,9 @@
-// Voices: Momster voice 1 and 2 (a family-wide choice) and the eight villains' own fixed voices.
-//   * Where a line is looked for: the chosen Momster voice, then voice 1; villain lines only in that villain's own folder; a line with
+// Voices: Momster's voice and the eight villains' own fixed voices.
+//   * Where a line is looked for: Momster lines in audio/momster/; villain lines only in that villain's own folder; a line with
 //     no clip plays nothing and the next line still plays.
 //   * The villain pokes and toot reactions are said by the villain of the week.
-//   * The Sound sheet offers Momster voice 1, voice 2 and a not-yet-available "record your own"; picking takes two taps and is saved.
-//   * The manifest builder understands audio/villains/<id>/ and the tutorial follows the chosen voice.
+//   * The Sound sheet offers Momster's voice and a not-yet-available "record your own"; picking takes two taps and is saved.
+//   * The manifest builder understands audio/villains/<id>/.
 // Real Chromium over CDP (node >= 22, no deps).   Usage: node tests/voices.test.js   (CHROME env var overrides the browser path)
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -75,22 +75,20 @@ async function run(){
       const got=[]; const realPlayUrl=playUrl; window.playUrl=(u,k)=>{ got.push(u); nextClip(); };
       const say=(keys,voice,talk)=>{ got.length=0; queue=[]; if(voice) settings.voice=voice; else delete settings.voice; voiceLvl=talk===0?0:1; soundLevel=1; play(keys); return got.slice(); };
       const kHi=textKey("Hello there!"), kSock=textKey("Pee-yew! Smell my socks!"), kDust=textKey("Achoo! I love dust!");
-      AUDIO_INDEX={ momster:new Set([kHi,kSock]), momster2:new Set([kHi]), "villains/m_sock":new Set([kSock]) };
+      AUDIO_INDEX={ momster:new Set([kHi,kSock]), "villains/m_sock":new Set([kSock]) };
       const o={};
       o.default = say(["BJ:Hello there!"]);
-      o.voice2 = say(["BJ:Hello there!"],"momster2");
-      o.voice2Fallback = say(["BJ:Pee-yew! Smell my socks!"],"momster2");
+      o.retired = say(["BJ:Hello there!"],"momster2");
       o.bogus = say(["BJ:Hello there!"],"squeaky");
-      o.villain = say(["V:m_sock:Pee-yew! Smell my socks!"],"momster2");
+      o.villain = say(["V:m_sock:Pee-yew! Smell my socks!"],"custom");
       o.villainMissing = say(["V:m_dust:Achoo! I love dust!","BJ:Hello there!"]);
       o.villainNotFromMomster = say(["V:m_toy:Pee-yew! Smell my socks!"]);
       o.talkOff = say(["V:m_sock:Pee-yew! Smell my socks!"],null,0); voiceLvl=1;
       o.kD=kDust; window.playUrl=realPlayUrl; delete settings.voice; return o; })()`);
     ok(same(R.default,["audio/momster/"+encodeURIComponent(await ev(`textKey("Hello there!")`))+".mp3"]), "default is Momster voice 1: "+R.default);
-    ok(R.voice2.length===1 && R.voice2[0].startsWith("audio/momster2/"), "Momster voice 2 plays from audio/momster2/: "+R.voice2);
-    ok(R.voice2Fallback.length===1 && R.voice2Fallback[0].startsWith("audio/momster/"), "a line voice 2 doesn't have yet falls back to voice 1: "+R.voice2Fallback);
+    ok(R.retired.length===1 && R.retired[0].startsWith("audio/momster/"), "the retired voice 2 setting is treated as Momster's voice");
     ok(R.bogus.length===1 && R.bogus[0].startsWith("audio/momster/"), "an unknown or retired voice setting is treated as voice 1");
-    ok(R.villain.length===1 && R.villain[0].startsWith("audio/villains/m_sock/"), "a villain's line plays from that villain's own folder, whatever Momster voice is chosen: "+R.villain);
+    ok(R.villain.length===1 && R.villain[0].startsWith("audio/villains/m_sock/"), "a villain's line plays from that villain's own folder, whatever voice setting a family has: "+R.villain);
     ok(R.villainMissing.length===1 && R.villainMissing[0].startsWith("audio/momster/"), "a villain line with no clip plays nothing and the next line still plays");
     ok(R.villainNotFromMomster.length===0, "a villain never borrows a clip from a Momster folder or another villain");
     ok(R.talkOff.length===0, "with talking off the villains are quiet too");
@@ -109,29 +107,20 @@ async function run(){
     await ev(`document.querySelector('.top.bar-card [data-a="sound"]').click(); true`); await sleep(400);
     const S1 = await ev(`(function(){ const sh=document.getElementById("csmSheet"); const tiles=[...sh.querySelectorAll('[data-a="vc"]')].map(b=>({v:b.dataset.v,t:b.textContent.trim(),on:b.classList.contains("on")}));
       const soon=[...sh.querySelectorAll(".rw")].find(b=>/Record your own/.test(b.textContent)); return {tiles, rws:[...sh.querySelectorAll(".rw")].map(b=>b.textContent.trim()), soon:!!soon, soonClickable:!!(soon&&soon.dataset.a), soonText:soon?soon.textContent.replace(/\\s+/g," ").trim():"", hasKidPicker:!!sh.querySelector('[data-a="soundKid"]')}; })()`);
-    ok(same(S1.tiles.map(t=>t.v),["momster","momster2"]) && S1.tiles[0].on, "the Sound sheet offers Momster voice 1 (selected) and Momster voice 2: "+S1.tiles.map(t=>t.t).join(" / "));
+    ok(same(S1.tiles.map(t=>t.v),["momster"]) && S1.tiles[0].on, "the Sound sheet offers Momster's voice (selected): "+S1.tiles.map(t=>t.t).join(" / "));
     ok(S1.soon && !S1.soonClickable && /Coming soon/.test(S1.soonText), "'Record your own' is shown as coming soon and can't be tapped");
     ok(!S1.hasKidPicker, "the voice is one family-wide choice, no per-kid picker");
-    await ev(`document.querySelector('[data-a="vc"][data-v="momster2"]').click(); true`); await sleep(200);
-    ok(await ev(`(loadLocal("settings")||{}).voice!=="momster2" && !settings.voice`), "one tap only previews the voice, it doesn't save it");
-    await ev(`document.querySelector('[data-a="vc"][data-v="momster2"]').click(); true`); await sleep(300);
-    ok(await ev(`settings.voice==="momster2" && (loadLocal("settings")||{}).voice==="momster2"`), "a second tap picks it and saves it for the whole family");
-
-    // ---- the tutorial follows the chosen voice ----
-    await ev(`startTour(); true`); await sleep(900); await ev(`MomsterTour.finish(false); true`);
-    const T = await ev(`(async function(){ const urls=[]; const realFetch=window.fetch; window.fetch=function(u){ urls.push(String(u)); return realFetch.apply(this,arguments); };
-      AUDIO_INDEX=Object.assign({},AUDIO_INDEX,{momster2:new Set(["tour_1"]), momster:new Set(["tour_1","tour_2"])}); settings.voice="momster2";
-      MomsterTour.start(); await new Promise(r=>setTimeout(r,500)); MomsterTour.goTo(1,0); await new Promise(r=>setTimeout(r,500)); MomsterTour.finish(false); window.fetch=realFetch;
-      return urls.filter(u=>/tour_\\d+\\.mp3/.test(u)).map(u=>u.split("/").slice(-2).join("/")); })()`);
-    ok(T.includes("momster2/tour_1.mp3") && !T.includes("momster/tour_1.mp3"), "the tutorial uses voice 2's clip when it has one: "+T.join(", "));
-    ok(T.includes("momster/tour_2.mp3") && !T.includes("momster2/tour_2.mp3"), "and voice 1's clip when voice 2 doesn't have that line yet");
+    await ev(`document.querySelector('[data-a="vc"][data-v="momster"]').click(); true`); await sleep(200);
+    ok(await ev(`(loadLocal("settings")||{}).voice!=="momster" && !settings.voice`), "one tap only previews the voice, it doesn't save it");
+    await ev(`document.querySelector('[data-a="vc"][data-v="momster"]').click(); true`); await sleep(300);
+    ok(await ev(`settings.voice==="momster" && (loadLocal("settings")||{}).voice==="momster"`), "a second tap picks it and saves it for the whole family");
 
     // ---- the manifest builder ----
-    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mh-man-")); for(const d of ["momster","momster2","villains/m_sock","villains/m_toy","names/hi"]) fs.mkdirSync(path.join(tmp,"audio",d),{recursive:true});
-    for(const f of ["audio/momster/a.mp3","audio/momster2/a.mp3","audio/villains/m_sock/x.mp3","audio/villains/m_toy/y.mp3","audio/names/hi/ana.mp3"]) fs.writeFileSync(path.join(tmp,f),"x");
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "mh-man-")); for(const d of ["momster","villains/m_sock","villains/m_toy","names/hi"]) fs.mkdirSync(path.join(tmp,"audio",d),{recursive:true});
+    for(const f of ["audio/momster/a.mp3","audio/villains/m_sock/x.mp3","audio/villains/m_toy/y.mp3","audio/names/hi/ana.mp3"]) fs.writeFileSync(path.join(tmp,f),"x");
     execFileSync(process.execPath,[path.join(REPO,"tools/build-audio-manifest.mjs")],{cwd:tmp,stdio:"ignore"});
     const man = JSON.parse(fs.readFileSync(path.join(tmp,"audio/manifest.json"),"utf8"));
-    ok(same(man["villains/m_sock"],["x"]) && same(man["villains/m_toy"],["y"]) && same(man.momster2,["a"]) && same(man.names,{hi:["ana"]}), "the manifest lists each villain's folder and Momster voice 2: "+Object.keys(man).join(", "));
+    ok(same(man["villains/m_sock"],["x"]) && same(man["villains/m_toy"],["y"]) && same(man.momster,["a"]) && same(man.names,{hi:["ana"]}), "the manifest lists each villain's folder and Momster's: "+Object.keys(man).join(", "));
     fs.rmSync(tmp,{recursive:true,force:true});
   } catch(e){ fails++; console.log("EXCEPTION "+(e && e.stack || e)); }
   finally { try { ws.close(); } catch(e){} try { proc.kill(); } catch(e){} try { server.close(); } catch(e){} }

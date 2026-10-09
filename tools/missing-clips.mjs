@@ -3,8 +3,8 @@
 //   node tools/missing-clips.mjs --list          -> every missing clip with its text
 //   node tools/missing-clips.mjs --voice villains/m_sock --list
 //   node tools/missing-clips.mjs --all           -> also count labels and text that is shown but not played yet
-// Voices: momster (voice 1), momster2 (voice 2), and villains/<villain id> (each villain's own voice).
-// A line with speaker "momster" is needed in both Momster voices; a villain's own line only in that villain's folder;
+// Voices: momster, and villains/<villain id> (each villain's own voice).
+// A line with speaker "momster" is needed in audio/momster/; a villain's own line only in that villain's folder;
 // a "villains:any" line in every villain's folder. Rebuild the manifest first:  node tools/build-audio-manifest.mjs
 import fs from 'node:fs';
 import path from 'node:path';
@@ -21,7 +21,7 @@ const [head, ...rows] = parse(fs.readFileSync(path.join(process.cwd(), 'audio/li
 const ix = Object.fromEntries(head.map((h, i) => [h, i]));
 const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'audio/manifest.json'), 'utf8'));
 const VILLAINS = ['m_sock', 'm_crumb', 'm_dust', 'm_toy', 'm_slime', 'm_troll', 'm_booger', 'm_stink'];
-const MOMSTER = ['momster', 'momster2'];
+const MOMSTER = ['momster'];
 const only = process.argv.includes('--voice') ? process.argv[process.argv.indexOf('--voice') + 1] : null;
 const all = process.argv.includes('--all');
 

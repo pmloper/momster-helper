@@ -1117,8 +1117,8 @@ const URLS = {};
 function toUrl(b64){ try{ const bin=atob(b64), arr=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
   return URL.createObjectURL(new Blob([arr],{type:"audio/mpeg"})); }catch(e){ return "data:audio/mpeg;base64,"+b64; } }
 function getUrl(set,k){ const c=CLIPS[set]; if(!c||!c[k]) return null; URLS[set]=URLS[set]||{}; return URLS[set][k] || (URLS[set][k]=toUrl(c[k])); }
-// Momster's voice is one family-wide choice: voice 1, voice 2 or (later) the family's own recorded voice. Villains have fixed voices of their own.
-const MOMSTER_VOICES = ["momster","momster2"];
+// Momster has one voice (audio/momster/); later a family can swap in their own recorded voice. Villains have fixed voices of their own.
+const MOMSTER_VOICES = ["momster"];
 function enVoices(){ try{ return speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); }catch(e){ return []; } }
 function curVoice(){ const v=settings && settings.voice; return MOMSTER_VOICES.includes(v) ? v : DEFAULT_VOICE_DIR; }
 /* Spoken lines are lazy-loaded files: audio/<voice>/<key>.mp3, listed in audio/manifest.json (see audio/README.md).
@@ -1131,7 +1131,7 @@ function loadAudioIndex(){ try{ fetch(AUDIO_DIR+"manifest.json",{cache:"no-cache
   Object.keys((m&&m.names)||{}).forEach(t=>{ if(Array.isArray(m.names[t])) nx[t]=new Set(m.names[t]); }); AUDIO_INDEX=ix; NAME_INDEX=nx; }).catch(()=>{}); }catch(e){} }
 const nameFile = (t, n) => { const sl=nameSlug(n); return sl && NAME_INDEX[t] && NAME_INDEX[t].has(sl) ? AUDIO_DIR+"names/"+t+"/"+sl+".mp3" : null; };
 loadAudioIndex();
-// The family's chosen Momster voice wins; a line it doesn't have yet falls back to voice 1. Null means no file, so nothing plays.
+// Momster's voice (a family's own recording will come first here later). Null means no file, so nothing plays.
 function voiceFile(k){ const cv=curVoice(), dirs=cv===DEFAULT_VOICE_DIR ? [DEFAULT_VOICE_DIR] : [cv,DEFAULT_VOICE_DIR];
   for(const d of dirs){ if(AUDIO_INDEX[d] && AUDIO_INDEX[d].has(k)) return AUDIO_DIR+d+"/"+encodeURIComponent(k)+".mp3"; } return null; }
 // Villains speak in their own fixed voices: audio/villains/<villain id>/<line key>.mp3. A line a villain doesn't have a clip for plays nothing.
@@ -2768,7 +2768,7 @@ function rewardSheet(k){
     <div class="rewards">${REWARDS.map(r=>`<button class="rw ${weeks[k].reward===r.id||weeks[k].reward2===r.id?"on":""}" data-a="rw" data-r="${r.id}"><b>${r.e}</b>${esc(r.t)}</button>`).join("")}</div>
     <p class="hint" style="text-align:center;margin-top:8px">${p1? "Prize: "+(p1.t||"") : "Pick your prize!"}</p></div></div>`;
 }
-const VOICE_CHOICES = () => [["momster","💪","Momster voice 1"],["momster2","🌟","Momster voice 2"]];
+const VOICE_CHOICES = () => [["momster","💪","Momster's voice"]];
 const VOICE_CUSTOM_SOON = `<div class="rw" style="opacity:.55;cursor:default" aria-disabled="true" title="Coming soon"><b>🎙️</b>Record your own<small style="display:block;font-size:12px">Coming soon</small></div>`;
 function voiceSheet(k){
   const cur=curVoice();
