@@ -2117,13 +2117,13 @@ function tootAttack(el){ const boss=document.querySelector(".boss .bface"); if(!
   c.style.left=(a.left+a.width/2)+"px"; c.style.top=(a.top)+"px"; c.style.setProperty("--dx",(b.left-a.left)+"px"); c.style.setProperty("--dy",(b.top-a.top)+"px");
   document.body.appendChild(c); setTimeout(()=>c.remove(),1200);
   if(tootsOn()) toot(); else play(["whoosh"]);
-  { const c=tootN(); if([10,25,50,100,200,500].includes(c)){ const said=c>=500?"The dog is packing its bags.":c>=100?"The EPA has been notified. Twice.":"The dog is taking the blame."; setTimeout(()=>{ cheer("💨", c+" family toots! "+said, ["BJ:"+said]); },1400); } }
+  { const c=tootN(); if([10,25,50,100,200,500].includes(c)){ const said=c>=500?"The dog is packing its bags.":c>=100?"The EPA has been notified. Twice.":"The dog is taking the blame."; setTimeout(()=>{ cheer("💨", c+" family toots! "+said, ["BJ:"+c+" family toots!", "BJ:"+said]); },1400); } }
   const others=Object.keys(KIDS).filter(x=>x!==view.kid).map(x=>KIDS[x].name);
   const L=["EWWW! Rude!","P-U! Who did that?!","My nose! MY NOSE!","That's my move!","Gross! Even I have standards!","Whoever smelt it, dealt it!","That should be ILLEGAL!","My eyes are WATERING!"]
     .concat(others.length?["I blame "+others[Math.floor(Math.random()*others.length)]+"!"]:[])
     .concat(["The dog did it! I saw him!","That one smelled like JUSTICE!"]);
   setTimeout(()=>{ const old=boss.querySelector(".taunt"); if(old) old.remove(); const line=L[Math.floor(Math.random()*L.length)]; const t=document.createElement("span"); t.className="taunt"; t.textContent="🤢 "+line;
-    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); { const bl=/^I blame (.+)!$/.exec(line); play([bl?nameKey("blame",bl[1]):villainKey(monster(),line)]); } setTimeout(()=>t.remove(),2600); }, 700); }
+    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); { const bl=/^I blame (.+)!$/.exec(line); if(!document.querySelector(".cheer.tapcard")) play([bl?nameKey("blame",bl[1]):villainKey(monster(),line)]); } setTimeout(()=>t.remove(),2600); }, 700); }   // the villain talks over nothing: a banner that is still up keeps its voice
 function sideSilly(el){ const r=Math.floor(Math.random()*6); el.classList.remove("silly"); void el.offsetWidth; el.classList.add("silly");
   const puff=(e)=>{ const p=document.createElement("span"); p.className="spuff"; p.textContent=e; el.appendChild(p); setTimeout(()=>p.remove(),1100); };
   if(r===0){ puff("💨"); if(tootsOn()) toot(); play(["BJ:Oops! Excuse me!"]); }
