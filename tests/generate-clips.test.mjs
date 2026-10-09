@@ -50,7 +50,7 @@ r = await run(w, ['--voice', 'momster', '--limit', '2']);
 ok(r.code === 2 && /ELEVENLABS_API_KEY/.test(r.out) && requests.length === 0, 'a live run without a key is refused');
 r = await run(w, ['--voice', 'momster', '--limit', '2'], withKey);
 ok(r.code === 2 && /--max-chars/.test(r.out) && requests.length === 0, 'a live run without a spending limit is refused');
-fs.writeFileSync(path.join(w, 'audio/voices.json'), fs.readFileSync(path.join(REPO, 'audio/voices.json')));
+{ const blank = JSON.parse(fs.readFileSync(path.join(REPO, 'audio/voices.json'), 'utf8')); for (const v of Object.values(blank.voices)) v.voice_id = ''; fs.writeFileSync(path.join(w, 'audio/voices.json'), JSON.stringify(blank)); }
 r = await run(w, ['--voice', 'momster', '--limit', '2', '--max-chars', '1000'], withKey);
 ok(r.code === 2 && /No voice_id/.test(r.out) && requests.length === 0, 'a voice with no voice_id is refused before any request');
 r = await run(w, ['--voice', 'nobody', '--dry-run']);
