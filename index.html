@@ -2334,7 +2334,9 @@ function refreshMissionHub(){
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && layer.querySelector("#missionHub")) close(); });
 function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"]; 
   cheer("💥","COMBO! "+c[1]+"! −"+COMBO_DMG+" ❤️",["punch","fanfare","BJ:Combo attack! "+c[1]+"!"],["💥",c[0],"🤝","⭐"]); }
-const villainIntroText = m => "Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+(m[6]||"")+" jobs: double damage!";
+// What the narrator says: the same words as the screen ("Weak to kitchen jobs: double damage!") without the emoji.
+const spokenText = t => String(t||"").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F\u200D]/gu,"").replace(/\s+/g," ").trim();
+const villainIntroText = m => "Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+spokenText(m[6])+": double damage!";
 let introOpen=false;
 function villainIntro(){ if(window.tourOn) return; const m=monster(); introOpen=true;
   layer.innerHTML=`<div class="ov"><div class="sheet intro"><div class="i-alert">🚨 URGENT MESSAGE 🚨</div><p>A villain has invaded the house!</p>

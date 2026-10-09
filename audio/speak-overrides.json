@@ -1,0 +1,3 @@
+{
+  "_readme": "Use this when a line is read wrong. Key = the line's key in audio/lines.csv, value = the exact words to send to the voice (respell it: 'sock-cerer' -> 'sock sir-er'). The line's own text, and so its clip name, never changes."
+}

@@ -32,3 +32,18 @@ A name with no clip is read by the device voice (whole sentence).
 ## Who says each line
 
 `lines.csv` has a `speaker` column: `momster`, a villain id (`m_sock`, `m_crumb`, `m_dust`, `m_toy`, `m_slime`, `m_troll`, `m_booger`, `m_stink`) for lines only that villain says, or `villains:any` for lines every villain can say. A `villains:any` line is recorded once per villain, in that villain's voice. Villain clips are meant to live in `audio/villains/<villain id>/<key>.mp3`.
+
+## Generating the clips (ElevenLabs)
+
+Everything below runs from the repo root. The ElevenLabs key is only ever read from the `ELEVENLABS_API_KEY` environment variable.
+
+1. Fill in `audio/voices.json`: a `voice_id` for `momster` (the same voice, model and settings as the tutorial lines) and for each villain. Each villain has a `description` you can paste into ElevenLabs Voice Design.
+2. See the plan and the cost: `node tools/generate-clips.mjs --voice all --dry-run`
+3. Try a few lines first: `node tools/generate-clips.mjs --voice momster --limit 10 --max-chars 2000`
+4. Generate: `node tools/generate-clips.mjs --voice all --takes 2 --max-chars 60000` (it skips takes that already exist, so it can be re-run to resume; `--max-chars` is a hard spending limit).
+5. Level, trim and check them: `node tools/check-clips.mjs --transcribe` (writes `audio/_candidates/report.json` and a levelled `take<N>.norm.mp3` beside each take).
+6. Listen: `node tools/build-review-page.mjs`, then open `audio/_candidates/review/index.html` (or zip the `_candidates` folder and send it). Pick a take for each line, tick "redo" or type a respelling where a line is wrong, then "Download decisions.json".
+7. Ship the picks: `node tools/promote-clips.mjs decisions.json`. Picked takes go to `audio/<voice>/<key>.mp3` and the manifest is rebuilt. Redo lines are cleared; run step 4 again to regenerate just those.
+8. `node tools/missing-clips.mjs` shows what is still outstanding. `node tests/audio-coverage.test.js` (via the test runner) fails if the app asks for a line that is not in `lines.csv`.
+
+`audio/_candidates/` is ignored by git; only promoted clips are committed. Respellings go in `audio/speak-overrides.json`; the line's own text and clip name never change.
