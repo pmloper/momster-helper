@@ -1218,7 +1218,18 @@ function stitchCtxGet(){ try{ if(!stitchCtx){ const AC=window.AudioContext||wind
 function stitchLoad(url){ if(!stitchBuf.has(url)){ const ctx=stitchCtx||stitchCtxGet();
   stitchBuf.set(url, fetch(url).then(r=>{ if(!r.ok) throw new Error("clip "+r.status); return r.arrayBuffer(); }).then(b=>new Promise((ok,no)=>{ const p=ctx.decodeAudioData(b,ok,no); if(p&&p.catch) p.catch(no); })).catch(e=>{ stitchBuf.delete(url); throw e; })); }
   return stitchBuf.get(url); }
-function stopStitch(){ stitchTok++; stitchSrc.forEach(x=>{ try{ x.onended=null; x.stop(); }catch(e){} }); stitchSrc=[]; }
+let underSrc=[], underTimer=null; const sfxBuf=new Map();   // sound effects that play underneath the voice; decoded ahead of time
+function stopStitch(){ stitchTok++; stitchSrc.forEach(x=>{ try{ x.onended=null; x.stop(); }catch(e){} }); stitchSrc=[];
+  underSrc.forEach(x=>{ try{ x.stop(); }catch(e){} }); underSrc=[]; clearTimeout(underTimer); underTimer=null; }
+/* Sound effects at the very start of a line of speech play UNDER the voice: the effect starts first, and the voice joins about a third
+   of a second later while the rest of the effect plays on, a little quieter. (Before, the voice waited for the whole effect to end.) */
+const UNDER_OK = k => SFX.has(k) && k!=="music" && k!=="silent";
+function sfxWarm(){ try{ const ctx=stitchCtxGet(); if(!ctx) return; SFX.forEach(k=>{ if(!UNDER_OK(k) || sfxBuf.has(k)) return; const u=clipUrl(k); if(u) stitchLoad(u).then(b=>sfxBuf.set(k,b)).catch(()=>{}); }); }catch(e){} }
+function playUnder(lead, rest){ const ctx=stitchCtx; if(!ctx || ctx.state!=="running" || !lead.length || !rest.length || !lead.every(k=>sfxBuf.has(k))) return false;
+  let t=ctx.currentTime+0.01, total=0; const g=ctx.createGain(); g.gain.value=soundLevel*0.6; g.connect(ctx.destination);
+  lead.forEach(k=>{ const b=sfxBuf.get(k), x=ctx.createBufferSource(), kg=ctx.createGain(); kg.gain.value=QUIET_KEYS.has(k)?0.55:1; x.buffer=b; x.connect(kg); kg.connect(g); x.start(t); underSrc.push(x); t+=b.duration; total+=b.duration; });
+  queue=[]; underTimer=setTimeout(()=>{ underTimer=null; queue=rest.slice(); nextClip(); }, Math.min(total,0.32)*1000);
+  return true; }
 function playStitched(parts){ const ctx=stitchCtxGet();
   const slow=()=>{ queue.unshift(...parts); nextClip(); };
   if(!ctx || ctx.state!=="running") return slow();
@@ -1229,7 +1240,7 @@ function playStitched(parts){ const ctx=stitchCtxGet();
     stitchSrc=srcs; srcs[srcs.length-1].onended=()=>{ if(tok===stitchTok){ stitchSrc=[]; nextClip(); } };
   }).catch(()=>{ if(tok===stitchTok) slow(); }); }
 // Get every kid's name pieces ready, so the first "Hi <name>!" has nothing left to download.
-function stitchWarm(){ try{ if(!AUDIO_READY || !stitchCtxGet()) return;
+function stitchWarm(){ try{ sfxWarm(); if(!AUDIO_READY || !stitchCtxGet()) return;
   FAMILY.kids.forEach(c=>Object.keys(NAME_PARTS).forEach(t=>{ const ks=nameParts(t,(c.name||"").trim()); if(ks) ks.forEach(k=>{ const u=voiceFile(k.slice(3)); if(u) stitchLoad(u).catch(()=>{}); }); })); }catch(e){} }
 const QUIET_KEYS = new Set(["ding","pop","coin","sparkle","magic"]); // chimes at ~55% so they don't blast
 function playUrl(u,k){ player.src=u; player.volume=QUIET_KEYS.has(k)? soundLevel*0.55 : soundLevel; const p=player.play();
@@ -1241,7 +1252,9 @@ const keepWhenQuiet = k => SFX.has(k) || k==="music" || k==="jokeintro" || /^h?k
 const isTalkKey = k => typeof k==="string" && (k.startsWith("BJ:") || !SFX.has(k) && !/^h?k\d+$/.test(k) && k!=="music" && k!=="jokeintro");
 let soundLevel = (()=>{ const v=loadLocal("vol"); return (v===0||v===0.4||v===1) ? v : 1; })();
 const volIcon = () => (soundLevel===0 && voiceLvl===0) ? "🔇" : (soundLevel===0 ? "🎵" : (voiceLvl===0 ? "🤐" : "🔊"));
-function play(keys){ stopStitch(); if(voiceLvl===0) keys=(keys||[]).filter(k=>k&&!isTalkKey(k)); if(soundLevel===0){ queue=[]; try{ player.pause(); speechSynthesis.cancel(); }catch(e){} return; } try{ if(ttsOk) speechSynthesis.cancel(); }catch(e){} player.pause(); queue=keys.filter(Boolean); nextClip(); }
+function play(keys){ stopStitch(); if(voiceLvl===0) keys=(keys||[]).filter(k=>k&&!isTalkKey(k)); if(soundLevel===0){ queue=[]; try{ player.pause(); speechSynthesis.cancel(); }catch(e){} return; } try{ if(ttsOk) speechSynthesis.cancel(); }catch(e){} player.pause(); keys=keys.filter(Boolean);
+  { let n=0; while(n<keys.length && UNDER_OK(keys[n])) n++; if(n && n<keys.length && playUnder(keys.slice(0,n), keys.slice(n))) return; }
+  queue=keys; nextClip(); }
 let unlocked=false;
 function unlock(){ try{ stitchCtxGet(); stitchWarm(); }catch(e){} if(unlocked) return; unlocked=true; player.src=getUrl("sfx","silent"); const p=player.play(); if(p&&p.catch) p.catch(()=>{unlocked=false;});
   try{ if(window.speechSynthesis && window.SpeechSynthesisUtterance){ const u=new SpeechSynthesisUtterance(" "); u.volume=0;
