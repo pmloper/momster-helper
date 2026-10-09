@@ -44,7 +44,8 @@ const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDi
 // ---- dry run and refusals ----
 let w = workdir(), r;
 r = await run(w, ['--voice', 'all', '--dry-run']);
-ok(r.code === 0 && /665 lines, 1330 generations/.test(r.out) && requests.length === 0, 'a dry run counts 665 lines x 2 takes and sends nothing: ' + r.out.split('\n')[0]);
+const dry = /(\d+) lines, (\d+) need their own clip \((\d+) repeat.*?, (\d+) generations to do.*?, (\d+) characters/.exec(r.out);
+ok(r.code === 0 && dry && +dry[4] === 2 * +dry[2] && +dry[1] === +dry[2] + +dry[3] && requests.length === 0, 'a dry run counts the lines, the repeats and 2 takes each, and sends nothing: ' + r.out.split('\n')[0]);
 r = await run(w, ['--voice', 'momster', '--limit', '2']);
 ok(r.code === 2 && /ELEVENLABS_API_KEY/.test(r.out) && requests.length === 0, 'a live run without a key is refused');
 r = await run(w, ['--voice', 'momster', '--limit', '2'], withKey);
@@ -54,6 +55,14 @@ r = await run(w, ['--voice', 'momster', '--limit', '2', '--max-chars', '1000'], 
 ok(r.code === 2 && /No voice_id/.test(r.out) && requests.length === 0, 'a voice with no voice_id is refused before any request');
 r = await run(w, ['--voice', 'nobody', '--dry-run']);
 ok(r.code === 2 && /Unknown voice/.test(r.out), 'an unknown voice name is refused');
+
+// ---- lines with the same words share one clip ----
+w = workdir(); requests.length = 0;
+fs.writeFileSync(path.join(w, 'audio/lines.csv'), 'key,voice_folder,category,text,status,played_in_app,note,exact_app_text,speaker\na1,momster,x,"Whoever smelt it, DEALT it!",NEW,yes,,,momster\na2,momster,y,"Whoever smelt it, dealt it!",NEW,yes,,,momster\na3,momster,y,Something else.,NEW,yes,,,momster\n');
+fs.writeFileSync(path.join(w, 'audio/manifest.json'), '{}');
+r = await run(w, ['--voice', 'momster', '--takes', '1', '--max-chars', '500'], withKey);
+ok(requests.length === 2 && /3 lines, 2 need their own clip \(1 repeat/.test(r.out), 'two lines with the same words are generated once: ' + requests.length + ' requests');
+ok(JSON.parse(fs.readFileSync(path.join(w, 'audio/_candidates/momster/a1/meta.json'), 'utf8')).aliases.join() === 'a2', 'the repeat is recorded as an alias in meta.json');
 
 // ---- a small live run ----
 w = workdir(); requests.length = 0;

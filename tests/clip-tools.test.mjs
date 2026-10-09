@@ -18,7 +18,7 @@ const probe = f => parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_ent
 const w = fs.mkdtempSync(path.join(os.tmpdir(), 'mh-clip-')); fs.mkdirSync(path.join(w, 'audio'), { recursive: true }); fs.writeFileSync(path.join(w, 'audio/speak-overrides.json'), '{}');
 const cand = path.join(w, 'audio/_candidates');
 const make = (voice, key, text, category, take, graph) => { const d = path.join(cand, voice, key); fs.mkdirSync(d, { recursive: true });
-  fs.writeFileSync(path.join(d, 'meta.json'), JSON.stringify({ voice, key, text, say: text, category })); tone(path.join(d, `take${take}.mp3`), graph); };
+  fs.writeFileSync(path.join(d, 'meta.json'), JSON.stringify({ voice, key, text, say: text, category, aliases: key === 'good' ? ['good_twin'] : [] })); tone(path.join(d, `take${take}.mp3`), graph); };
 // good: 1.3 s of tone with 0.4 s of silence in front and 0.6 s behind
 make('momster', 'good', 'Hello there kids', 'cheer', 1, 'sine=frequency=440:duration=1.3,volume=0.3,adelay=400|400,apad=pad_dur=0.6[o]');
 make('momster', 'good', 'Hello there kids', 'cheer', 2, 'sine=frequency=330:duration=1.2,volume=0.3[o]');
@@ -66,9 +66,9 @@ ok(parses && page.includes('Download decisions.json') && !page.includes('sk-test
 // ---- promote ----
 fs.writeFileSync(path.join(w, 'decisions.json'), JSON.stringify({ 'momster/good': { pick: 2, respell: 'Hell-o there, kids' }, 'momster/long': { redo: true }, 'villains/m_sock/gap': { pick: 1 } }));
 r = await run(w, 'promote-clips.mjs', ['decisions.json', '--dry-run']);
-ok(/\[dry run\] 2 clips promoted, 1 queued for redo/.test(r.out) && !fs.existsSync(path.join(w, 'audio/momster/good.mp3')) && fs.existsSync(path.join(cand, 'momster/long')), 'a dry run changes nothing');
+ok(/\[dry run\] 3 clips promoted, 1 queued for redo/.test(r.out) && !fs.existsSync(path.join(w, 'audio/momster/good.mp3')) && fs.existsSync(path.join(cand, 'momster/long')), 'a dry run changes nothing');
 r = await run(w, 'promote-clips.mjs', ['decisions.json']);
-ok(/2 clips promoted, 1 queued for redo, 1 respellings saved/.test(r.out) && fs.existsSync(path.join(w, 'audio/momster/good.mp3')) && fs.existsSync(path.join(w, 'audio/villains/m_sock/gap.mp3')), 'picked takes are copied into audio/<voice>/<key>.mp3');
+ok(/3 clips promoted, 1 queued for redo, 1 respellings saved/.test(r.out) && fs.existsSync(path.join(w, 'audio/momster/good_twin.mp3')) && fs.existsSync(path.join(w, 'audio/momster/good.mp3')) && fs.existsSync(path.join(w, 'audio/villains/m_sock/gap.mp3')), 'picked takes are copied into audio/<voice>/<key>.mp3, and to every line that shares its words');
 ok(Math.abs(probe(path.join(w, 'audio/momster/good.mp3')) - probe(path.join(cand, 'momster/good/take2.norm.mp3'))) < 0.05, 'the levelled version of the picked take is the one shipped');
 ok(!fs.existsSync(path.join(cand, 'momster/long')), 'a redo clears that line\'s candidates so the next generation makes new ones');
 ok(JSON.parse(fs.readFileSync(path.join(w, 'audio/speak-overrides.json'), 'utf8')).good === 'Hell-o there, kids', 'a respelling is saved to speak-overrides.json under the line\'s key');

@@ -87,10 +87,10 @@ async function run(){
       (typeof HELPER_LIST!=="undefined"?HELPER_LIST:[]).forEach(j=>add("helper job", j.snd));
       try{ bonusJobs().forEach(j=>add("bonus job", j.snd || BJ(j.t))); }catch(e){}
       REWARDS.forEach(r=>add("prize", r.snd));
-      Object.values(BONUS_JOBS_POOL).flat().forEach(j=>add("optional job (setup pool)", BJ(j.t+".")));
-      pickList().forEach(p=>{ add("special mission", BJ("Your special mission: "+p.t+".")); add("special mission name", BJ(p.t+".")); });
+      Object.values(BONUS_JOBS_POOL).flat().forEach(j=>add("optional job (setup pool)", BJ(endSentence(j.t))));
+      pickList().forEach(p=>{ add("special mission", BJ("Your special mission: "+endSentence(p.t))); add("special mission name", BJ(endSentence(p.t))); });
       add("special mission", BJ("Pick your special mission for today."));
-      EVENTS.forEach(e=>{ add("surprise mission", BJ("Surprise mission! "+e[2]+". "+e[3]+".")); add("surprise mission announce", BJ("Emergency! "+e[2]+" "+e[3]+"!")); });
+      EVENTS.forEach(e=>{ add("surprise mission", BJ("Surprise mission! "+joinSentences(e[2],e[3]))); add("surprise mission announce", BJ("Emergency! "+e[2]+" "+e[3]+"!")); });
       for(let n=1;n<=9;n++) add("silly twist","s"+n); TWISTS.slice(9).forEach(t=>add("silly twist",BJ("Do it "+t+"!")));
       Object.entries(TAUNTS).forEach(([id,l])=>l.forEach(t=>add("villain taunt","V:"+id+":"+t))); Object.entries(VJOKES).forEach(([id,l])=>l.forEach(t=>add("villain joke","V:"+id+":"+t)));
       MOODS.forEach(m=>m[1].forEach(t=>add("villain mood","V:any:"+t))); KO_LINES.forEach(t=>add("villain defeated","V:any:"+t));
@@ -105,6 +105,10 @@ async function run(){
       ["Walking today!","Bus today!","Driving today!"].forEach(t=>add("ride picker",BJ(t)));
       ["momster_cheer","momster_almost","momster_win"].forEach(x=>add("Momster line",x));
       const split=r=>{ if(r.startsWith("BJ:")) return [null,r.slice(3)]; if(r.startsWith("V:")){ const i=r.indexOf(":",2); return [r.slice(2,i), r.slice(i+1)]; } return [null,null]; };
+      Object.entries(KO_QUOTE).forEach(([id,t])=>add("trophy wall quote","V:"+id+":"+t));
+      for(let n=6;n<=100;n++) add("number","n_"+n); add("number","moretogo");
+      ["Every chore you finish takes health from the villain!","Top rank! Legends forever!","Mystery hit! Double damage! Lucky you!","That one hurts the villain double!","The dog is taking the blame.","The EPA has been notified. Twice.","The dog is packing its bags."].forEach(t=>add("battle and rank lines",BJ(t)));
+      ["Ouch! That stings!","Ugh! They're strong!"].forEach(t=>add("villain reaction on the damage card","V:any:"+t));
       return E.map(e=>{ const r=e.raw, [v,t]=split(r); return {src:e.src, raw:r, id: t!==null ? textKey(t) : r, text:t, villain:v}; }); })()`);
     // plain keys that are sound effects, not spoken lines
     const sfx = new Set(await ev(`Object.keys(CLIPS.sfx).concat([...SFX])`));
@@ -140,7 +144,7 @@ async function run(){
     for(const r of (traced?traced.req:[])){
       if(r.raw.startsWith("N:")){ nameTpl.add(r.raw.split(":")[1]); continue; }
       if(!r.text && sfx.has(r.raw)) continue;
-      if(/more to go!$|^Minus |^Every chore you finish/.test(r.text||"")) continue;
+      
       if(csvKeys.has(r.id)) continue;
       if(!tracedMissing.has(r.id)) tracedMissing.set(r.id, r.text||r.raw);
     }
@@ -161,13 +165,11 @@ async function run(){
 
     // lines that contain a changing number or name: recorded another way, listed here on purpose
     const DYNAMIC = [
-      "Damage card: \"Minus N health! <villain> has N health left!\" (numbers up to the villain's health)",
-      "\"N more to go!\" when more than five jobs are left",
-      "Cheer banners with live numbers: \"N family toots!\" and the toot milestone sentences (shown only, no sound)",
+      "Numbers on screen (health, damage, star and coin counts, \"N family toots!\"): not spoken; only the number words 6 to 100 are, for \"N more to go!\"",
       "A family's own text: custom jobs, prizes and special missions (generated per family, or silent)",
       "Kid-name sentences: hi, justme, blame, ready_hero/princess/knight/ninja (generated per name)"
     ];
-    const dynamicIds = a => /^BJ:(\d+ more to go!|Minus |Every chore you finish)/.test(a.raw) || /\d/.test(a.raw) && /more to go|health left/.test(a.raw);
+    const dynamicIds = a => false;
     const missing = new Map();
     for(const a of all){ if(dynamicIds(a)) continue; if(!a.text && sfx.has(a.raw)) continue; if(csvKeys.has(a.id)) continue; if(!missing.has(a.id)) missing.set(a.id, a); }
     // every line a villain says must name that villain (or "villains:any") in the speaker column

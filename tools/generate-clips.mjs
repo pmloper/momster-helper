@@ -8,7 +8,7 @@
 //   --voice <folder|all>   momster, villains/<id>, or all (default all)
 //   --takes <n>            takes per line (default 2); each take is one paid generation
 //   --limit <n>            stop after n lines        --category <name>   only that category     --key <key>   only that line
-//   --labels               also generate labels and text that is only shown (default: only lines the app plays)
+//   --played-only          skip labels and text that is only shown (default: labels are generated too, for tap-to-hear)
 //   --redo                 also regenerate lines that already have a final clip     --force   overwrite existing takes
 //   --concurrency <n>      parallel requests (default 2; ElevenLabs limits this per plan)
 //   --max-chars <n>        REQUIRED for a live run: stop before spending more than n characters (every take counts)
@@ -43,10 +43,11 @@ export const speechText = (text, key, overrides = {}) => {
   t = t.replace(EMOJI, '').replace(/&/g, ' and ').replace(/\s+/g, ' ').trim();
   return t;
 };
+export const sameWords = t => String(t).toLowerCase().replace(/\.\.\.|…/g, ' ').replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
 const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; };
 
 // ---- which lines each voice still needs ----
-export function plan({ voice, category, key, labels, redo }) {
+export function plan({ voice, category, key, playedOnly, redo }) {
   const [head, ...rows] = parseCsv(fs.readFileSync(path.join(ROOT, 'audio/lines.csv'), 'utf8'));
   const ix = Object.fromEntries(head.map((h, i) => [h, i]));
   const manifest = readJson('audio/manifest.json', {});
@@ -54,7 +55,7 @@ export function plan({ voice, category, key, labels, redo }) {
   const jobs = [];
   for (const r of rows) {
     if (!r[ix.key]) continue;
-    if (!labels && !(r[ix.played_in_app] || '').startsWith('yes')) continue;
+    if (playedOnly && !(r[ix.played_in_app] || '').startsWith('yes')) continue;
     if (category && r[ix.category] !== category) continue;
     if (key && r[ix.key] !== key) continue;
     const sp = r[ix.speaker] || 'momster';
@@ -91,9 +92,13 @@ export async function main() {
   const cfg = readJson('audio/voices.json', null);
   if (!cfg) { console.error('audio/voices.json is missing.'); return 2; }
   const overrides = readJson('audio/speak-overrides.json', {});
-  let jobs = plan({ voice, category: opt('category'), key: opt('key'), labels: flag('labels'), redo: flag('redo') });
+  let jobs = plan({ voice, category: opt('category'), key: opt('key'), playedOnly: flag('played-only'), redo: flag('redo') });
   const seen = new Set(); jobs = jobs.filter(j => { const k = j.voice + '|' + j.key; if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, limit);
   for (const j of jobs) j.say = speechText(j.text, j.key, overrides);
+  // Lines that say the same words in the same voice share one generation; the clip is copied to each key when it is promoted.
+  const total = jobs.length, groups = new Map();
+  for (const j of jobs) { const g = j.voice + '|' + sameWords(j.say); if (!groups.has(g)) groups.set(g, { ...j, aliases: [] }); else groups.get(g).aliases.push(j.key); }
+  jobs = [...groups.values()];
 
   // todo = (voice, line, take) that does not exist yet
   const todo = [];
@@ -103,7 +108,7 @@ export async function main() {
   }
   const chars = todo.reduce((a, t) => a + t.say.length, 0);
   const byVoice = {}; for (const t of todo) { const b = byVoice[t.voice] = byVoice[t.voice] || { clips: 0, chars: 0 }; b.clips++; b.chars += t.say.length; }
-  console.log(`${jobs.length} lines, ${todo.length} generations to do (${takes} take${takes > 1 ? 's' : ''} each, existing takes skipped), ${chars} characters`);
+  console.log(`${total} lines, ${jobs.length} need their own clip (${total - jobs.length} repeat another line's words and share its clip), ${todo.length} generations to do (${takes} take${takes > 1 ? 's' : ''} each, existing takes skipped), ${chars} characters`);
   for (const [v, b] of Object.entries(byVoice)) console.log(`  ${v.padEnd(18)} ${String(b.clips).padStart(5)} generations  ${String(b.chars).padStart(7)} characters${cfg.voices?.[v]?.voice_id ? '' : '   (no voice_id in audio/voices.json yet)'}`);
   if (dry) { console.log('dry run: nothing was sent.'); return 0; }
 
@@ -128,7 +133,7 @@ export async function main() {
       try {
         const r = await synth({ base, apiKey, voiceId: v.voice_id, body, format: cfg.output_format || 'mp3_44100_128' });
         fs.mkdirSync(path.dirname(t.file), { recursive: true }); fs.writeFileSync(t.file, r.audio);
-        fs.writeFileSync(path.join(path.dirname(t.file), 'meta.json'), JSON.stringify({ voice: t.voice, key: t.key, category: t.category, text: t.text, say: t.say, model_id: body.model_id, settings, generatedAt: new Date().toISOString() }, null, 1));
+        fs.writeFileSync(path.join(path.dirname(t.file), 'meta.json'), JSON.stringify({ voice: t.voice, key: t.key, category: t.category, text: t.text, say: t.say, aliases: t.aliases, model_id: body.model_id, settings, generatedAt: new Date().toISOString() }, null, 1));
         fs.appendFileSync(ledger, JSON.stringify({ at: new Date().toISOString(), voice: t.voice, key: t.key, take: t.take, chars: t.say.length, bytes: r.audio.length, requestId: r.requestId }) + '\n');
         done++; if (done % 10 === 0 || done === todo.length) console.log(`  ${done}/${todo.length} done, ${spent} characters used`);
       } catch (e) {

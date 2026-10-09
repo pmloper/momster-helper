@@ -33,7 +33,7 @@ w_movie,momster,prize,Family movie night.,existing,yes,,,momster
 w_dessert,momster,prize,Special dessert.,existing,yes,,,momster
 w_dinner,momster,prize,Pick a dinner.,existing,yes,,,momster
 w_park,momster,prize,Park trip.,existing,yes,,,momster
-w_switch,momster,prize,Extra 20 minutes of Switch.,existing,yes,,,momster
+w_switch,momster,prize,Extra 20 minutes of screen time.,NEW,yes,,,momster
 w_late,momster,prize,Stay up 15 minutes late.,existing,yes,,,momster
 w_bake,momster,prize,Bake cookies together.,existing,yes,,,momster
 w_game,momster,prize,Family game night.,existing,yes,,,momster
@@ -46,10 +46,10 @@ eggtap,momster,general,Tap tap tap!,existing,yes,,,momster
 eggopen,momster,general,Whoa! A rare treasure!,existing,yes,,,momster
 pow1,momster,battle pop,Pow!,existing,yes,,,momster
 pow2,momster,battle pop,Splat!,existing,yes,,,momster
-pow3,momster,battle pop,"Take that, monster!",existing,yes,,,momster
+pow3,momster,battle pop,"Take that, villain!",NEW,yes,,,momster
 pow4,momster,battle pop,Bonk!,existing,yes,,,momster
-monsterhi,momster,general,Uh oh! A mess monster is here! Do your jobs to beat it!,existing,yes,,,momster
-monsterwin,momster,general,You beat the monster! Hooray! Bonus coins for everyone!,existing,yes,,,momster
+monsterhi,momster,general,Uh oh! A villain is here! Do your jobs to beat it!,NEW,yes,,,momster
+monsterwin,momster,general,You beat the villain! Hooray! Bonus coins for everyone!,NEW,yes,,,momster
 m_sock,momster,villain name,The Stinky Sock Goblin!,existing,yes,,,momster
 m_crumb,momster,villain name,The Crumb Gobbler!,existing,yes,,,momster
 m_dust,momster,villain name,The Dust Bunny Boss!,existing,yes,,,momster
@@ -76,11 +76,11 @@ hk5,momster,joke,What room does a ghost not need? A living room!,existing,yes,,,
 hk6,momster,joke,Why did the vampire need mouthwash? He had bat breath!,existing,yes,,,momster
 hk7,momster,joke,What do you get when you cross a vampire and a snowman? Frostbite!,existing,yes,,,momster
 hk8,momster,joke,Why are ghosts bad at lying? You can see right through them!,existing,yes,,,momster
-buddyhi,momster,general,Let's make your monster pal!,existing,yes,,,momster
-shop,momster,general,Buddy shop! Pick something cool!,existing,yes,,,momster
+buddyhi,momster,general,Let's make your sidekick!,NEW,yes,,,momster
+shop,momster,general,Sidekick shop! Pick something cool!,NEW,yes,,,momster
 tapbuy,momster,general,Tap again to buy it!,existing,yes,,,momster
 bought,momster,general,You got it! Looking fancy!,existing,yes,,,momster
-needcoins,momster,general,Not enough coins yet! Do more jobs to get more!,existing,yes,,,momster
+needcoins,momster,general,Not enough coins yet! Finish a whole group of jobs to earn more!,NEW,yes,,,momster
 wear,momster,general,"Ooh, fancy!",existing,yes,,,momster
 coin,momster,general,Cha ching!,existing,yes,,,momster
 racego,momster,general,Beat the clock! Go go go!,existing,yes,,,momster
@@ -88,11 +88,11 @@ raceWin,momster,general,You beat the clock! Bonus star!,existing,yes,,,momster
 teamwin,momster,general,Team power! Everyone filled their star jars! Family prize time!,existing,yes,,,momster
 streak,momster,general,You're on fire! Fire streak!,existing,yes,,,momster
 r_bonus,momster,routine,Bonus jobs! Extra stars!,existing,yes,,,momster
-bonusask,momster,general,Go do it! Then ask a grown up to check!,existing,yes,,,momster
+bonusask,momster,general,Go do it! Then ask a grown-up to check!,NEW,yes,,,momster
 bonusok,momster,general,Bonus stars! You're a superstar!,existing,yes,,,momster
 bonusmax,momster,general,That's all the bonus jobs for today! Come back tomorrow!,existing,yes,,,momster
 bonusno,momster,general,Not yet! Give it another try!,existing,yes,,,momster
-bonuswait,momster,general,Waiting for a grown up to check!,existing,yes,,,momster
+bonuswait,momster,general,Waiting for a grown-up to check!,NEW,yes,,,momster
 bj_sweep,momster,helper/bonus job,Sweep the kitchen.,existing,yes,,,momster
 bj_glass,momster,helper/bonus job,Wipe the glass door.,existing,yes,,,momster
 bj_car,momster,helper/bonus job,Clean out the car.,existing,yes,,,momster
@@ -238,17 +238,14 @@ t_i-m-going-to-be-a-mess-at-grandma-s-hous_ae76c4ab,momster,villain defeated,I'm
 t_fine-take-the-tiara-it-itched-anyway_b46cfcdb,momster,villain defeated,Fine! Take the tiara. It itched anyway!,NEW,yes,plays when the kid pokes a defeated villain,,villains:any
 t_grrr-mess-forever_814e7265,momster,villain line,Grrr! Mess forever!,NEW,yes,fallback taunt,,villains:any
 t_i-ll-be-back-next-week-with-more-mess_130ae7aa,momster,villain line,I'll be back next week... with MORE mess!,NEW,yes,,,villains:any
-t_nooo-not-the-folding_87eaedd3,momster,villain defeated,Nooo! Not the folding!,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_i-ll-be-back-maybe_1103f07d,momster,villain defeated,I'll be back... maybe.,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_curse-you-momster-helper_98890dda,momster,villain defeated,"Curse you, Momster Helper!",NEW,NO (shown only),trophy shelf quote,,villains:any
-t_my-beautiful-mess_a00a4b4f,momster,villain defeated,My beautiful mess!,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_i-m-telling-my-mom_39a85505,momster,villain defeated,I'm telling my mom!,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_okay-okay-i-give-up_2ad1551f,momster,villain defeated,"Okay okay, I give up!",NEW,NO (shown only),trophy shelf quote,,villains:any
-t_un-flush-believable_92854858,momster,villain defeated,Un-flush-believable!,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_you-win-this-round-snot-noses_c086e0f8,momster,villain defeated,"You win this round, snot-noses!",NEW,NO (shown only),trophy shelf quote,,villains:any
-t_the-cleaning-it-burns_ce03de89,momster,villain defeated,The cleaning... it BURNS!,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_my-landlord-will-hear-about-this_0352768d,momster,villain defeated,My landlord will hear about this!,NEW,NO (shown only),trophy shelf quote,,villains:any
-t_i-fought-the-law-and-the-law-was-tidy_1ef3aaf8,momster,villain defeated,"I fought the law, and the law was TIDY!",NEW,NO (shown only),trophy shelf quote,,villains:any
+t_i-ll-be-back-maybe_1103f07d,momster,villain defeated,I'll be back... maybe.,NEW,yes,plays when the kid taps this villain on the trophy wall,,m_troll
+t_curse-you-momster-helper_98890dda,momster,villain defeated,"Curse you, Momster Helper!",NEW,yes,plays when the kid taps this villain on the trophy wall,,m_crumb
+t_my-beautiful-mess_a00a4b4f,momster,villain defeated,My beautiful mess!,NEW,yes,plays when the kid taps this villain on the trophy wall,,m_dust
+t_okay-okay-i-give-up_2ad1551f,momster,villain defeated,"Okay okay, I give up!",NEW,yes,plays when the kid taps this villain on the trophy wall,,m_sock
+t_un-flush-believable_92854858,momster,villain defeated,Un-flush-believable!,NEW,yes,plays when the kid taps this villain on the trophy wall,,m_stink
+t_you-win-this-round-snot-noses_c086e0f8,momster,villain defeated,"You win this round, snot-noses!",NEW,yes,plays when the kid taps this villain on the trophy wall,,m_booger
+t_the-cleaning-it-burns_ce03de89,momster,villain defeated,The cleaning... it BURNS!,NEW,yes,plays when the kid taps this villain on the trophy wall,,m_slime
+t_i-fought-the-law-and-the-law-was-tidy_1ef3aaf8,momster,villain defeated,"I fought the law, and the law was TIDY!",NEW,yes,plays when the kid taps this villain on the trophy wall,,m_toy
 t_why-did-the-broom-get-a-promotion_8b8687f5,momster,joke of the day (setup),Why did the broom get a promotion?,NEW,yes,,,momster
 t_it-swept-the-competition_ff80794c,momster,joke of the day (punchline),It swept the competition!,NEW,yes,,,momster
 t_what-did-the-sock-say-to-the-washing-mac_5568c04f,momster,joke of the day (setup),What did the sock say to the washing machine?,NEW,yes,,,momster
@@ -315,8 +312,8 @@ t_what-did-the-ocean-say-to-the-beach_74fc1cba,momster,joke of the day (setup),W
 t_nothing-it-just-waved_9c171ee5,momster,joke of the day (punchline),Nothing. It just waved!,NEW,yes,,,momster
 t_why-did-the-scarecrow-win-an-award_d35d86d1,momster,joke of the day (setup),Why did the scarecrow win an award?,NEW,yes,,,momster
 t_he-was-outstanding-in-his-field_0772e1fd,momster,joke of the day (punchline),He was outstanding in his field!,NEW,yes,,,momster
-t_what-do-you-call-a-fish-with-no-eyes_f2ea9ea0,momster,joke of the day (setup),What do you call a fish with no eyes?,NEW,yes,,,momster
-t_a-fsh_3378402c,momster,joke of the day (punchline),A fsh!,NEW,yes,,,momster
+t_what-do-you-call-a-fish-in-a-fancy-suit_25a8bb37,momster,joke of the day (setup),What do you call a fish in a fancy suit?,NEW,yes,,,momster
+t_sofishticated_1a099b1e,momster,joke of the day (punchline),Sofishticated!,NEW,yes,,,momster
 t_i-m-reading-a-book-about-anti-gravity_28c3a8f6,momster,joke of the day (setup),I'm reading a book about anti-gravity.,NEW,yes,,,momster
 t_it-s-impossible-to-put-down_bd8386b6,momster,joke of the day (punchline),It's impossible to put down!,NEW,yes,,,momster
 t_what-do-you-call-a-belt-made-of-watches_71508717,momster,joke of the day (setup),What do you call a belt made of watches?,NEW,yes,,,momster
@@ -365,11 +362,11 @@ t_urgent-message-a-villain-has-invaded-the_9315204c,momster,villain intro,Urgent
 t_urgent-message-a-villain-has-invaded-the_d9634238,momster,villain intro,Urgent message! A villain has invaded the house: Sludge Slime. Oozes onto teeth and sinks. Blub blub! Weak to brushing & wiping: double damage!,NEW,yes (non-reader mode),"plays when a new villain starts; same words as the screen, without the emoji",,momster
 t_urgent-message-a-villain-has-invaded-the_d7972bfb,momster,villain intro,Urgent message! A villain has invaded the house: Baron von Booger. Escaped from a giant nose. Wipes boogers on the couch cushions! Weak to wiping & brushing: double damage!,NEW,yes (non-reader mode),"plays when a new villain starts; same words as the screen, without the emoji",,momster
 t_urgent-message-a-villain-has-invaded-the_d68e9d3b,momster,villain intro,Urgent message! A villain has invaded the house: Sir Toots-a-Lot. A gassy knight in stinky armor. Blames the dog for everything! Weak to laundry & airing out: double damage!,NEW,yes (non-reader mode),"plays when a new villain starts; same words as the screen, without the emoji",,momster
-t_surprise-mission-the-great-crumb-inciden_8eee6dcf,momster,surprise mission,Surprise mission! THE GREAT CRUMB INCIDENT!. Wipe the table and sweep up crumbs.,NEW,yes (non-reader mode),,,momster
-t_surprise-mission-the-sock-has-awakened-f_774cf66b,momster,surprise mission,Surprise mission! THE SOCK HAS AWAKENED!. Find stray socks and put them in the hamper.,NEW,yes (non-reader mode),,,momster
-t_surprise-mission-toy-avalanche-5-minute_ca8891aa,momster,surprise mission,Surprise mission! TOY AVALANCHE!. 5-minute toy pickup race.,NEW,yes (non-reader mode),,,momster
-t_surprise-mission-shoe-pile-panic-line-up_dc08e19b,momster,surprise mission,Surprise mission! SHOE PILE PANIC!. Line up all the shoes by the door.,NEW,yes (non-reader mode),,,momster
-t_surprise-mission-couch-chaos-fix-the-pil_75cd4c4d,momster,surprise mission,Surprise mission! COUCH CHAOS!. Fix the pillows and fold the blankets.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-the-great-crumb-inciden_95dea4ab,momster,surprise mission,Surprise mission! THE GREAT CRUMB INCIDENT! Wipe the table and sweep up crumbs.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-the-sock-has-awakened-f_1a3f8d37,momster,surprise mission,Surprise mission! THE SOCK HAS AWAKENED! Find stray socks and put them in the hamper.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-toy-avalanche-5-minute_6d387c1e,momster,surprise mission,Surprise mission! TOY AVALANCHE! 5-minute toy pickup race.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-shoe-pile-panic-line-up_d9a9ac11,momster,surprise mission,Surprise mission! SHOE PILE PANIC! Line up all the shoes by the door.,NEW,yes (non-reader mode),,,momster
+t_surprise-mission-couch-chaos-fix-the-pil_48cf3a5f,momster,surprise mission,Surprise mission! COUCH CHAOS! Fix the pillows and fold the blankets.,NEW,yes (non-reader mode),,,momster
 t_your-special-mission-water-the-plants_7b8d855b,momster,special mission,Your special mission: Water the plants.,NEW,yes (non-reader mode),,,momster
 t_water-the-plants_f1c0fcfb,momster,special mission,Water the plants.,NEW,yes (non-reader mode),"name only, after choosing and on completion",,momster
 t_your-special-mission-sort-the-sock-mount_eca8da61,momster,special mission,Your special mission: Sort the sock mountain.,NEW,yes (non-reader mode),,,momster
@@ -432,21 +429,20 @@ t_gross-even-i-have-standards_bd2b36be,momster,toot reaction,Gross! Even I have 
 t_whoever-smelt-it-dealt-it_2bb7c011,momster,toot reaction,"Whoever smelt it, dealt it!",NEW,yes,villain reacts after a toot,,villains:any
 t_that-should-be-illegal_bed1ed69,momster,toot reaction,That should be ILLEGAL!,NEW,yes,villain reacts after a toot,,villains:any
 t_my-eyes-are-watering_a9d29ae9,momster,toot reaction,My eyes are WATERING!,NEW,yes,villain reacts after a toot,,villains:any
-t_prize-done-keep-going_bd9ad54a,momster,app line,Prize done! Keep going!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_ask-a-grown-up-for-your-prize_daee4cd5,momster,app line,Ask a grown-up for your prize!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_walking-today_423998a8,momster,ride picker,Walking today!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_bus-today_56dbcb7f,momster,ride picker,Bus today!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_driving-today_d4026820,momster,ride picker,Driving today!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_top-rank-legends-forever_9eeff2b7,momster,level up,Top rank! Legends forever!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_ouch-that-stings_16e5611f,momster,battle,Ouch! That stings!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_ugh-they-re-strong_7daa6d46,momster,battle,Ugh! They're strong!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_mystery-hit-double-damage-lucky-you_dd10d9ff,momster,battle,Mystery hit! Double damage! Lucky you!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_combo-attack-landed_a62bb610,momster,combo,Combo attack landed!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_star-jar-full-you-saved-up-for-that-that_bbd37df8,momster,app line,Star jar full! You saved up for that. That's what I call stick-to-it!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_the-dog-is-taking-the-blame_8cd0fed0,momster,toot milestone,The dog is taking the blame.,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_the-epa-has-been-notified-twice_add27e9e,momster,toot milestone,The EPA has been notified. Twice.,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_the-dog-is-packing-its-bags_390484d4,momster,toot milestone,The dog is packing its bags.,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
-t_that-one-hurts-the-villain-double_9f696dfe,momster,battle,That one hurts the villain double!,NEW,NO (shown only),text is on screen but no sound is wired yet,,momster
+t_prize-done-keep-going_bd9ad54a,momster,app line,Prize done! Keep going!,NEW,NO (label),status text on screen; tap-to-hear,,momster
+t_ask-a-grown-up-for-your-prize_daee4cd5,momster,app line,Ask a grown-up for your prize!,NEW,NO (label),status text on screen; tap-to-hear,,momster
+t_walking-today_423998a8,momster,ride picker,Walking today!,NEW,yes,plays when the ride is picked,,momster
+t_bus-today_56dbcb7f,momster,ride picker,Bus today!,NEW,yes,plays when the ride is picked,,momster
+t_driving-today_d4026820,momster,ride picker,Driving today!,NEW,yes,plays when the ride is picked,,momster
+t_top-rank-legends-forever_9eeff2b7,momster,level up,Top rank! Legends forever!,NEW,yes,plays when Hero HQ opens at the top rank,,momster
+t_ouch-that-stings_16e5611f,momster,villain mood,Ouch! That stings!,NEW,yes,the villain reacts on the damage card,,villains:any
+t_ugh-they-re-strong_7daa6d46,momster,villain mood,Ugh! They're strong!,NEW,yes,the villain reacts on the damage card,,villains:any
+t_mystery-hit-double-damage-lucky-you_dd10d9ff,momster,battle,Mystery hit! Double damage! Lucky you!,NEW,yes,plays with the mystery hit banner,,momster
+t_combo-attack-landed_a62bb610,momster,combo,Combo attack landed!,NEW,NO (label),status text on screen; tap-to-hear,,momster
+t_the-dog-is-taking-the-blame_8cd0fed0,momster,toot milestone,The dog is taking the blame.,NEW,yes,plays with the toot milestone banner,,momster
+t_the-epa-has-been-notified-twice_add27e9e,momster,toot milestone,The EPA has been notified. Twice.,NEW,yes,plays with the toot milestone banner,,momster
+t_the-dog-is-packing-its-bags_390484d4,momster,toot milestone,The dog is packing its bags.,NEW,yes,plays with the toot milestone banner,,momster
+t_that-one-hurts-the-villain-double_9f696dfe,momster,battle,That one hurts the villain double!,NEW,yes,plays when a kid taps a job the villain is weak to,,momster
 t_morning_02e055cf,momster,routine name,Morning,NEW,NO (label),,,momster
 t_after-school_203b34ff,momster,routine name,After school,NEW,NO (label),,,momster
 t_bedtime_8774abad,momster,routine name,Bedtime,NEW,NO (label),,,momster
@@ -489,12 +485,6 @@ t_super_9d397374,momster,hero style,Super,NEW,NO (label),,,momster
 t_princess_a8192ad6,momster,hero style,Princess,NEW,NO (label),,,momster
 t_knight_cd17325c,momster,hero style,Knight,NEW,NO (label),,,momster
 t_ninja_a0402c4b,momster,hero style,Ninja,NEW,NO (label),,,momster
-t_squeaky_124c0f8a,momster,character name,Squeaky,NEW,NO (label),,,momster
-t_sparkle-fairy_c4e83794,momster,character name,Sparkle Fairy,NEW,NO (label),,,momster
-t_dino_aa72d75d,momster,character name,Dino,NEW,NO (label),,,momster
-t_big-bear_caac5589,momster,character name,Big Bear,NEW,NO (label),,,momster
-t_robo_96451f91,momster,character name,Robo,NEW,NO (label),,,momster
-t_silly-ghost_ea0f2be7,momster,character name,Silly Ghost,NEW,NO (label),,,momster
 t_balloon_5781edbc,momster,shop item,Balloon,NEW,NO (label),tap-to-hear needed,,momster
 t_sunflower_c971259a,momster,shop item,Sunflower,NEW,NO (label),tap-to-hear needed,,momster
 t_carrot_e6637c92,momster,shop item,Carrot,NEW,NO (label),tap-to-hear needed,,momster
@@ -643,8 +633,6 @@ t_tell-it-again_5f04b936,momster,screen text,Tell it again!,NEW,NO (label),on-sc
 t_pick-your-hero-style_3831445b,momster,screen text,Pick your hero style!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_your-sidekick-gets-a-free-costume-to-mat_7f3be6c5,momster,screen text,Your sidekick gets a free costume to match. Switch anytime!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_just-me_173e9e23,momster,screen text,Just me.,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
-t_pick-your-helper-voice_63e6711a,momster,screen text,Pick your helper voice!,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
-t_tap-a-voice-to-hear-it-then-tap-yes-to-p_dab1483b,momster,screen text,"Tap a voice to hear it, then tap Yes to pick it.",NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_tap-a-prize-to-choose-it-then-tap-yes-to_4be45a88,momster,screen text,"Tap a prize to choose it, then tap Yes to confirm.",NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_getting-to-school_d506c3c0,momster,screen text,Getting to school,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
 t_walk_22ccd730,momster,screen text,Walk,NEW,NO (label),on-screen text; tap-to-hear needed,,momster
@@ -669,3 +657,182 @@ t_emergency-the-sock-has-awakened-find-str_6955ecfc,momster,surprise mission,Eme
 t_emergency-toy-avalanche-5-minute-toy-pic_9da4b761,momster,surprise mission,Emergency! TOY AVALANCHE! 5-minute toy pickup race!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
 t_emergency-shoe-pile-panic-line-up-all-th_99061852,momster,surprise mission,Emergency! SHOE PILE PANIC! Line up all the shoes by the door!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
 t_emergency-couch-chaos-fix-the-pillows-an_a9f8cf08,momster,surprise mission,Emergency! COUCH CHAOS! Fix the pillows and fold the blankets!,NEW,yes,found by the coverage check: plays when a surprise mission is first announced,,momster
+t_every-chore-you-finish-takes-health-from_f3c554d2,momster,battle,Every chore you finish takes health from the villain!,NEW,yes,first damage card of the day,,momster
+n_6,momster,number,Six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_7,momster,number,Seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_8,momster,number,Eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_9,momster,number,Nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_10,momster,number,Ten.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_11,momster,number,Eleven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_12,momster,number,Twelve.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_13,momster,number,Thirteen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_14,momster,number,Fourteen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_15,momster,number,Fifteen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_16,momster,number,Sixteen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_17,momster,number,Seventeen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_18,momster,number,Eighteen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_19,momster,number,Nineteen.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_20,momster,number,Twenty.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_21,momster,number,Twenty-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_22,momster,number,Twenty-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_23,momster,number,Twenty-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_24,momster,number,Twenty-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_25,momster,number,Twenty-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_26,momster,number,Twenty-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_27,momster,number,Twenty-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_28,momster,number,Twenty-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_29,momster,number,Twenty-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_30,momster,number,Thirty.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_31,momster,number,Thirty-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_32,momster,number,Thirty-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_33,momster,number,Thirty-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_34,momster,number,Thirty-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_35,momster,number,Thirty-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_36,momster,number,Thirty-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_37,momster,number,Thirty-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_38,momster,number,Thirty-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_39,momster,number,Thirty-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_40,momster,number,Forty.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_41,momster,number,Forty-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_42,momster,number,Forty-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_43,momster,number,Forty-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_44,momster,number,Forty-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_45,momster,number,Forty-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_46,momster,number,Forty-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_47,momster,number,Forty-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_48,momster,number,Forty-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_49,momster,number,Forty-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_50,momster,number,Fifty.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_51,momster,number,Fifty-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_52,momster,number,Fifty-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_53,momster,number,Fifty-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_54,momster,number,Fifty-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_55,momster,number,Fifty-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_56,momster,number,Fifty-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_57,momster,number,Fifty-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_58,momster,number,Fifty-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_59,momster,number,Fifty-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_60,momster,number,Sixty.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_61,momster,number,Sixty-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_62,momster,number,Sixty-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_63,momster,number,Sixty-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_64,momster,number,Sixty-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_65,momster,number,Sixty-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_66,momster,number,Sixty-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_67,momster,number,Sixty-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_68,momster,number,Sixty-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_69,momster,number,Sixty-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_70,momster,number,Seventy.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_71,momster,number,Seventy-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_72,momster,number,Seventy-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_73,momster,number,Seventy-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_74,momster,number,Seventy-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_75,momster,number,Seventy-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_76,momster,number,Seventy-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_77,momster,number,Seventy-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_78,momster,number,Seventy-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_79,momster,number,Seventy-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_80,momster,number,Eighty.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_81,momster,number,Eighty-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_82,momster,number,Eighty-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_83,momster,number,Eighty-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_84,momster,number,Eighty-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_85,momster,number,Eighty-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_86,momster,number,Eighty-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_87,momster,number,Eighty-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_88,momster,number,Eighty-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_89,momster,number,Eighty-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_90,momster,number,Ninety.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_91,momster,number,Ninety-one.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_92,momster,number,Ninety-two.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_93,momster,number,Ninety-three.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_94,momster,number,Ninety-four.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_95,momster,number,Ninety-five.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_96,momster,number,Ninety-six.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_97,momster,number,Ninety-seven.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_98,momster,number,Ninety-eight.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_99,momster,number,Ninety-nine.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+n_100,momster,number,One hundred.,NEW,yes,"said before ""more to go!"" when more than five jobs are left",,momster
+moretogo,momster,number,More to go!,NEW,yes,said after a number when more than five jobs are left,,momster
+t_joke_28fdcb66,momster,screen text (label),Joke,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_hero-hq_6f95d068,momster,screen text (label),Hero HQ,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_grown-ups_1e37979f,momster,screen text (label),Grown-ups,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_school_e7df7fe9,momster,screen text (label),School,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_bonus_756008e4,momster,screen text (label),Bonus,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_dance_ca0fab3c,momster,screen text (label),Dance,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_super-helper-double-stars_0ef91878,momster,screen text (label),Super helper! Double stars!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_help-make-dinner-together_a171aed0,momster,screen text (label),Help make dinner (together!),NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_pick-today-s-special-mission_bba84dea,momster,screen text (label),Pick today's special mission,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_fix-the-pillows-and-fold-the-blankets_7ba9bb90,momster,screen text (label),Fix the pillows and fold the blankets,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_hats_53fe97c3,momster,screen text (label),Hats,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_toys_bece5c9c,momster,screen text (label),Toys,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_body_428a1095,momster,screen text (label),Body,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_color_e5b43cf8,momster,screen text (label),Color,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_size_a6478e7c,momster,screen text (label),Size,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_ears_66354660,momster,screen text (label),Ears,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_eyes_aacd536b,momster,screen text (label),Eyes,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_nose_1433f56a,momster,screen text (label),Nose,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_mouth_4620047c,momster,screen text (label),Mouth,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_pattern_f49120c9,momster,screen text (label),Pattern,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_tail_91e05d83,momster,screen text (label),Tail,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_blob_ca9c47ca,momster,screen text (label),Blob,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_robot_73d1357f,momster,screen text (label),Robot,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_ghost_1dfb7570,momster,screen text (label),Ghost,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_octopus_ef6886ae,momster,screen text (label),Octopus,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_monster_611f5e31,momster,screen text (label),Monster,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_alien_05ec52ac,momster,screen text (label),Alien,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_cupcake_02fcd37b,momster,screen text (label),Cupcake,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_star_51677b91,momster,screen text (label),Star,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_slime_2bb23f7b,momster,screen text (label),Slime,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_mission-report_a6ba4d25,momster,screen text (label),Mission report,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_couch-potato-cadet_cf8f99c1,momster,screen text (label),Couch Potato Cadet,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_pick-your-prize_4b966016,momster,screen text (label),Pick your prize!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_sparkle-smash_46888914,momster,screen text (label),SPARKLE SMASH!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_clang_0e18e69d,momster,screen text (label),CLANG!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_hi-ya_af9ed97a,momster,screen text (label),HI-YA!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_my-own-look_badf5cc2,momster,screen text (label),My own look,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_close_cd86acc3,momster,screen text (label),Close,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_mystery-egg_be782676,momster,screen text (label),Mystery egg!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_not-busted-yet_2246228b,momster,screen text (label),Not busted yet,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_busted-victory-dance_a03d4203,momster,screen text (label),BUSTED! Victory dance!,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_stop_4b7f7705,momster,screen text (label),Stop,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_finish-a-whole-group-of-jobs-to-earn_45c9238b,momster,screen text (label),Finish a whole group of jobs to earn,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_finish-a-whole-group-of-jobs-to-earn-two_d6751ea6,momster,screen text (label),"Finish a whole group of jobs to earn · Two hands: two toys, or a toy and a pet",NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_wear_64e86cbe,momster,screen text (label),Wear,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_candy_9a0e3efe,momster,screen text (label),Candy,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_none_304ff7fb,momster,screen text (label),None,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_cat_68fef3a7,momster,screen text (label),Cat,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_bunny_b1b2ab7f,momster,screen text (label),Bunny,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_bear_f131e373,momster,screen text (label),Bear,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_mouse_2b1d9b64,momster,screen text (label),Mouse,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_fox_197e2aee,momster,screen text (label),Fox,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_panda_c0712a1b,momster,screen text (label),Panda,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_dino_aa72d75d,momster,screen text (label),Dino,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_devil_a7bf05b9,momster,screen text (label),Devil,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_dots_879266c9,momster,screen text (label),Dots,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_sparkle_058972d5,momster,screen text (label),Sparkle,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_lashes_fb6144d1,momster,screen text (label),Lashes,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_big-shiny_30772a82,momster,screen text (label),Big shiny,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_googly_ffb88bba,momster,screen text (label),Googly,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_hearts_d2a179d0,momster,screen text (label),Hearts,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_wink_89412bd6,momster,screen text (label),Wink,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_sleepy_d3988d03,momster,screen text (label),Sleepy,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_stars_07e804c6,momster,screen text (label),Stars,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_one-eye_c45d58b2,momster,screen text (label),One eye,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_button_33881a91,momster,screen text (label),Button,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_dot_386d9fc0,momster,screen text (label),Dot,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_heart_b6e00083,momster,screen text (label),Heart,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_piggy_e431bdf3,momster,screen text (label),Piggy,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_long_45939473,momster,screen text (label),Long,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_smile_fac2972f,momster,screen text (label),Smile,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_big-grin_aff3525d,momster,screen text (label),Big grin,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_silly_687f2158,momster,screen text (label),Silly,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_fangs_88f765d4,momster,screen text (label),Fangs,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_buck-teeth_08b40e0c,momster,screen text (label),Buck teeth,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_surprised_586fc67a,momster,screen text (label),Surprised,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_plain_a5b8c207,momster,screen text (label),Plain,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_spots_bcd2a7aa,momster,screen text (label),Spots,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_stripes_8da6c99d,momster,screen text (label),Stripes,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_puff_109656fa,momster,screen text (label),Puff,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_fluffy_eddaae79,momster,screen text (label),Fluffy,NEW,NO (label),on-screen label; tap-to-hear later,,momster
+t_pick-one_534a183c,momster,screen text (label),Pick one,NEW,NO (label),on-screen label; tap-to-hear later,,momster

@@ -24,7 +24,7 @@ for (const voice of voices) { if (only && voice !== only) continue;
     const takes = fs.readdirSync(dir).map(f => /^take(\d+)\.mp3$/.exec(f)).filter(Boolean).map(m => +m[1]).sort((a, b) => a - b).map(n => {
       const norm = fs.existsSync(path.join(dir, `take${n}.norm.mp3`)); const rep = report[`${voice}/${key}/take${n}`] || {};
       return { n, src: `../${voice}/${key}/take${n}${norm ? '.norm' : ''}.mp3`, leveled: norm, flags: rep.flags || [], seconds: rep.seconds, heard: rep.heard, match: rep.match }; });
-    lines.push({ voice, key, category: meta.category, text: meta.text, say: meta.say, takes }); } }
+    lines.push({ voice, key, category: meta.category, text: meta.text, say: meta.say, aliases: meta.aliases || [], takes }); } }
 lines.sort((a, b) => a.voice.localeCompare(b.voice) || String(a.category).localeCompare(String(b.category)) || a.text.localeCompare(b.text));
 
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Momster clip review</title>
@@ -62,6 +62,7 @@ function render(){
     const d=D[id(l)]||{}; const box=el('div',{class:'line '+(st==='todo'?'':st)});
     box.append(el('div',{class:'meta'},[l.voice+' · '+l.category+' · '+l.key]), el('div',{class:'txt'},[l.text]));
     if(l.say&&l.say!==l.text) box.append(el('div',{class:'meta'},['sent as: '+l.say]));
+    if(l.aliases&&l.aliases.length) box.append(el('div',{class:'meta'},['also used for '+l.aliases.length+' other line'+(l.aliases.length>1?'s':'')+' with the same words']));
     for(const t of l.takes){ const r=el('input',{type:'radio',name:id(l),value:t.n}); r.checked=String(d.pick)===String(t.n); r.onchange=()=>{ D[id(l)]=Object.assign(D[id(l)]||{},{pick:t.n,redo:false}); save(); render(); };
       const row=el('div',{class:'take'},[el('label',{},[r,' take '+t.n]),el('audio',{controls:'',preload:'none',src:t.src}),el('span',{class:'meta'},[(t.seconds?t.seconds+' s':'')+(t.leveled?'':' (not levelled)')]),...t.flags.map(x=>el('span',{class:'flag'},[x]))]);
       if(t.heard!==undefined) row.append(el('div',{class:'heard'},['heard: "'+t.heard+'" ('+Math.round((t.match||0)*100)+'% match)'])); box.append(row); }

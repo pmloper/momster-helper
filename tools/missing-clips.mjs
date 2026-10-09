@@ -2,7 +2,7 @@
 //   node tools/missing-clips.mjs                 -> how many clips each voice still needs, by category
 //   node tools/missing-clips.mjs --list          -> every missing clip with its text
 //   node tools/missing-clips.mjs --voice villains/m_sock --list
-//   node tools/missing-clips.mjs --all           -> also count labels and text that is shown but not played yet
+//   node tools/missing-clips.mjs --played-only   -> leave out labels and text that is only shown
 // Voices: momster, and villains/<villain id> (each villain's own voice).
 // A line with speaker "momster" is needed in audio/momster/; a villain's own line only in that villain's folder;
 // a "villains:any" line in every villain's folder. Rebuild the manifest first:  node tools/build-audio-manifest.mjs
@@ -23,12 +23,12 @@ const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'audio/mani
 const VILLAINS = ['m_sock', 'm_crumb', 'm_dust', 'm_toy', 'm_slime', 'm_troll', 'm_booger', 'm_stink'];
 const MOMSTER = ['momster'];
 const only = process.argv.includes('--voice') ? process.argv[process.argv.indexOf('--voice') + 1] : null;
-const all = process.argv.includes('--all');
+const playedOnly = process.argv.includes('--played-only');
 
 const need = {};   // voice folder -> [{key, text, category}]
 for (const r of rows) {
   if (!r[ix.key]) continue;
-  if (!all && !(r[ix.played_in_app] || '').startsWith('yes')) continue;
+  if (playedOnly && !(r[ix.played_in_app] || '').startsWith('yes')) continue;
   const sp = r[ix.speaker] || 'momster';
   const voices = sp === 'momster' ? MOMSTER : sp === 'villains:any' ? VILLAINS.map(v => 'villains/' + v) : ['villains/' + sp];
   for (const v of voices) (need[v] = need[v] || []).push({ key: r[ix.key], text: r[ix.text], category: r[ix.category] });
