@@ -14,8 +14,9 @@
       }
     },
     "villains/m_sock": {
-      "voice_id": "",
-      "description": "Stinky Sock Goblin: raspy, gleeful, scheming goblin who cackles."
+      "voice_id": "OTMqA7lryJHXgAnPIQYt",
+      "description": "Stinky Sock Goblin: raspy, gleeful, scheming goblin who cackles.",
+      "settings": {}
     },
     "villains/m_crumb": {
       "voice_id": "",
