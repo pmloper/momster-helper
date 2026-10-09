@@ -32,7 +32,8 @@ const base = `http://127.0.0.1:${server.address().port}`;
 
 function workdir() {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'mh-gen-')); fs.mkdirSync(path.join(d, 'audio'), { recursive: true });
-  for (const f of ['lines.csv', 'manifest.json']) fs.copyFileSync(path.join(REPO, 'audio', f), path.join(d, 'audio', f));
+  fs.copyFileSync(path.join(REPO, 'audio/lines.csv'), path.join(d, 'audio/lines.csv'));
+  fs.writeFileSync(path.join(d, 'audio/manifest.json'), '{}');   // an empty app, so every line needs a clip (the real manifest is full once the clips ship)
   const cfg = JSON.parse(fs.readFileSync(path.join(REPO, 'audio/voices.json'), 'utf8'));
   // the tests exercise the per-category settings path (v2 style), whatever model the real config uses
   Object.assign(cfg, { model_id: 'eleven_multilingual_v2', defaults: { stability: 0.5, similarity_boost: 0.75, style: 0.3, use_speaker_boost: true }, categories: cfg._categories_v2 });
