@@ -75,14 +75,23 @@ async function run(){
       view.kid="k1"; view.routine="bt"; render(); return true; })()`);
     await ev(`tapJob("k1", window._last); true`);
     let max = 0, kinds = new Set(), worst = "";
-    for(let i=0;i<190;i++){
-      const s = await ev(`(function(){ const o={cheer:document.querySelectorAll(".cheer").length, dmg:document.querySelectorAll(".dmgpop-ov").length, disco:document.querySelectorAll(".disco").length, sheet:layer.innerHTML?1:0}; o.disco=0; return o; })()`);
+    // Nobody taps: the first card must still be there well past the old 5-second timeout, and nothing else may pile on top of it.
+    await sleep(7500);
+    ok(await ev(`!!document.querySelector(".dmgpop-ov")`), "the damage card waits for a tap (still showing after 7.5 seconds)");
+    ok(await ev(`document.querySelectorAll(".cheer").length===0`), "no banner is shown on top of it while it waits");
+    let idle = 0, cheersSeen = 0, cheersWaited = true;
+    for(let i=0;i<400 && idle<30;i++){
+      const s = await ev(`(function(){ const o={cheer:document.querySelectorAll(".cheer").length, dmg:document.querySelectorAll(".dmgpop-ov").length, sheet:layer.innerHTML?1:0, tap:document.querySelectorAll(".cheer.tapcard").length}; return o; })()`);
       const n = s.cheer + s.dmg + s.sheet;
       if(n > max){ max = n; worst = JSON.stringify(s); }
       if(s.cheer) kinds.add("banner"); if(s.dmg) kinds.add("damage card"); if(s.sheet) kinds.add("sheet/egg");
+      idle = n ? 0 : idle + 1;
+      if(s.dmg){ await sleep(500); await ev(`document.querySelector(".dmgpop-ov").click(); true`); }                 // the kid taps the card
+      else if(s.tap){ cheersSeen++; await sleep(3200); if(!(await ev(`!!document.querySelector(".cheer.tapcard")`))) cheersWaited = false; await ev(`document.querySelector(".cheer.tapcard").click(); true`); }
+      else if(await ev(`!!layer.querySelector(".egg")`)){ await sleep(300); await ev(`close(); true`); }              // the kid closes the egg
       await sleep(100);
-      if(await ev(`!!layer.querySelector(".egg")`)){ await sleep(300); await ev(`close(); true`); }   // the kid closes the egg
     }
+    ok(cheersSeen >= 2 && cheersWaited, "banners wait for a tap too (" + cheersSeen + " seen, each still showing 3.2 seconds later)");
     ok(max <= 1, "never more than one celebration on screen at once (worst: "+max+" "+worst+")");
     ok(kinds.size >= 2, "the sequence did show several different celebrations one after another: "+[...kinds].join(", "));
 

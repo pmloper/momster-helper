@@ -180,6 +180,8 @@ button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
 .cheer{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);z-index:31;background:var(--card);border-radius:36px;
   padding:20px 30px;text-align:center;font-size:clamp(28px,6vw,46px);font-weight:800;border:6px solid var(--gold2);animation:pop2 .4s ease-out;line-height:1.1}
 .cheer .big{font-size:84px;line-height:1}
+.cheer.tapcard{cursor:pointer;z-index:32}.cheer .tapnote{margin-top:10px;font-size:16px;font-weight:700;color:var(--soft);animation:tapblink 1.4s ease-in-out infinite}
+@keyframes tapblink{50%{opacity:.35}}
 @keyframes pop2{from{transform:translate(-50%,-50%) scale(.3)}to{transform:translate(-50%,-50%) scale(1)}}
 
 /* Grown-up */
@@ -230,6 +232,7 @@ details summary{font-size:20px;font-weight:800;cursor:pointer;margin:6px 0}
 .egg .crack{position:absolute;font-size:.35em;left:50%;top:40%;transform:translate(-50%,-50%)}
 @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
 .eggBtn{background:color-mix(in srgb,#9B5DE5 25%,var(--card))!important;animation:wiggle 1s infinite}
+.handsfull{border:4px solid #e5484d;background:color-mix(in srgb,#e5484d 12%,var(--card))}.handsfull h2{color:#c0272d}
 .bopt .tag{position:absolute;top:2px;right:4px;font-size:14px}
 [data-say]{cursor:pointer}
 .stk{border:3px dashed var(--line);border-radius:18px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;font-size:13px;font-weight:800;color:var(--soft);text-align:center;line-height:1.1}
@@ -359,7 +362,7 @@ details summary{font-size:20px;font-weight:800;cursor:pointer;margin:6px 0}
 .bopt.armed{box-shadow:0 4px 0 var(--gold2);animation:wiggle .8s infinite}
 .bopt.cant{opacity:1}.bopt.cant .ie{filter:grayscale(.7);opacity:.55}
 .pill{border-radius:999px;padding:2px 10px;font-size:15px;font-weight:800;line-height:1.4;white-space:nowrap}
-.bopt .pill{padding:5px 14px;font-size:16px;min-height:30px}
+.bopt .pill{padding:0 14px;font-size:16px;height:30px;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 .p-buy{background:#FFE6A3;color:#6B4A00}.p-cant{background:var(--line);color:var(--soft)}
 .p-wear{background:#D7E9FF;color:#1D4E89}.p-on{background:var(--doneInk);color:#fff}
 .bopt .tag{top:4px;right:6px;font-size:16px}
@@ -1648,8 +1651,8 @@ setInterval(()=>{ const w=weekStart(); if(w!==WEEK){ WEEK=w; Object.keys(KIDS).f
 /* ---------- Helpers ---------- */
 const rawAv = k => (settings.avatars||{})[k] || KIDS[k].av;
 const avHtml = a => PIC[a] ? `<img src="${PIC[a]}" alt="" style="height:1em;width:1em;vertical-align:-0.14em">` : a;
-const av = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:'style="height:1.2em;width:1.2em;vertical-align:middle;overflow:visible"'}) : avHtml(rawAv(k));
-const avC = k => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, vb:"0 18 200 182", attrs:'style="height:1.1em;width:1.1em;display:block;margin:auto;overflow:visible"'}) : avHtml(rawAv(k));
+const av = k => buddies[k] ? buddyFor(k, {noBg:true, attrs:'style="height:1.2em;width:1.2em;vertical-align:middle;overflow:visible"'}) : avHtml(rawAv(k));
+const avC = k => buddies[k] ? buddyFor(k, {noBg:true, vb:"0 18 200 182", attrs:'style="height:1.1em;width:1.1em;display:block;margin:auto;overflow:visible"'}) : avHtml(rawAv(k));
 // +1 "finished the whole routine" bonus for every routine completed that day
 function starsFor(k,w,wk){ let n=w.bonus||0;
   { const p=w.pick||{}; if(p.day===ymd(new Date()) && ((w.done||{})[ymd(new Date())]||[]).includes("pk_"+p.id)) n+=2; }
@@ -1770,10 +1773,12 @@ function popNext(){ const it=popQ.shift(); if(!it){ popBusy=false; return; } pop
   if(it.gate){ const t0=Date.now(), iv=setInterval(()=>{ let on=false; try{ on=it.gate(); }catch(e){} if(!on||Date.now()-t0>90000){ clearInterval(iv); next(); } },300); }
   else setTimeout(next, it.ms||2400); }
 // cheer(big, text, keys?, confetti?): the banner, its confetti and its sound all arrive together, when it is its turn.
-function cheer(big,text,keys,confetti){ popup(()=>{ if(confetti) party(confetti);
-  const c=document.createElement("div"); c.className="cheer"; c.innerHTML='<div class="big"></div><div></div>';
-  c.firstChild.textContent=big; c.lastChild.textContent=text; document.body.appendChild(c); setTimeout(()=>c.remove(),2400);
-  if(keys) play(keys); },2400); }
+// It stays until it is tapped, and the next celebration waits for that (pass auto=true for a short banner that goes by itself).
+function cheer(big,text,keys,confetti,auto){ let c=null; popup(()=>{ if(confetti) party(confetti);
+  c=document.createElement("div"); c.className="cheer"+(auto?"":" tapcard"); c.innerHTML='<div class="big"></div><div></div>'+(auto?"":'<div class="tapnote">Tap to continue</div>');
+  c.firstChild.textContent=big; c.children[1].textContent=text; document.body.appendChild(c);
+  if(auto) setTimeout(()=>c.remove(),2400); else c.addEventListener("click",()=>c.remove());
+  if(keys) play(keys); }, 2400, auto ? null : ()=>!!(c && c.isConnected)); }
 // Non-readers mode: read UI text out loud.
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
@@ -1801,7 +1806,7 @@ const eggReady = k => dayAllDone(k,new Date()) && !((buddies[k].eggs||{})[ymd(ne
 let eggTaps=0;
 function eggSheet(k, item){
   const egg = item ? `<div style="font-size:120px;line-height:1">${item[2]}</div><h2>${esc(item[3])}!</h2><p>${item[1]==="coins"?(item[5]?"Double coins! The villain is beaten, so your egg paid twice. Spend them in the shop!":"Spend them in the shop!"):"A rare treasure. Your sidekick is wearing it!"}</p>
-      <div style="width:200px;margin:0 auto">${buddySvg(buddies[k].look,buddies[k].wear,{attrs:'style="width:200px;height:200px"'})}</div>
+      <div style="width:200px;margin:0 auto">${buddyFor(k,{attrs:'style="width:200px;height:200px"'})}</div>
       <button class="chip go big" data-a="closeOv" style="margin-top:8px">Yay!</button>`
     : `<div class="egg ${eggTaps?"shake":""}" data-a="eggTap" style="font-size:${150+eggTaps*12}px">🥚${eggTaps>=1?'<span class="crack">⚡</span>':""}</div><h2>Mystery egg!</h2><p>Tap it ${3-eggTaps} more ${3-eggTaps===1?"time":"times"}!</p>`;
   layer.innerHTML = `<div class="ov"><div class="sheet" style="max-width:440px;text-align:center">${egg}</div></div>`;
@@ -1849,9 +1854,11 @@ function effortPraise(k, r){ const day=ymd(new Date()), dd=((weeks[k].done||{})[
   const done=jobsFor(r,todayDow(),k).filter(j=>dd.includes(j.id)).map(j=>j.t);
   if(!done.length) return "All done!";
   const first=done[0], two=done.length>1? " and "+done[done.length-1] : "";
-  const openers=["Nice hustle","Look at that","Boom","You crushed it","Way to go","Nailed it"];
-  const pick1=openers[Math.abs(day.split("-").join("")*7 + kidIndex(k))%openers.length];
-  return pick1+"! "+first+two+" - all done without being asked twice!"; }
+  return praiseOpener(k)+"! "+first+two+" - all done without being asked twice!"; }
+const PRAISE_OPENERS=["Nice hustle","Look at that","Boom","You crushed it","Way to go","Nailed it"];
+const praiseOpener = k => PRAISE_OPENERS[Math.abs(ymd(new Date()).split("-").join("")*7 + kidIndex(k))%PRAISE_OPENERS.length];
+// The card names this family's own jobs, so what it says out loud is the part that never changes.
+const praiseSpoken = k => "BJ:"+praiseOpener(k)+"! All done without being asked twice!";
 function comboList(){ if(KID_IDS.length<2) return []; const days=new Set(); Object.keys(KIDS).forEach(k=>Object.keys(weeks[k].done||{}).forEach(d=>days.add(d))); const out=[];
   [...days].sort().forEach(day=>ROUTINES.forEach(r=>{ if(Object.keys(KIDS).every(k=>routineDoneDay(k,day,r))) out.push(day+"|"+r.id); })); return out; }
 function weakHits(){ let n=0; Object.keys(KIDS).forEach(k=>{ Object.values(weeks[k].done||{}).forEach(a=>a.forEach(id=>{ if(isWeak(id)) n++; }));
@@ -1886,7 +1893,7 @@ function moodLine(){ const left=monsterLeft(), pct=left/monsterHP()*100; if(!lef
   const lines=MOODS.find(([t])=>pct>t)[1]; return lines[new Date().getDay()%lines.length]; }
 const monsterHP = () => Math.round((teamPossible() * POOL_FRAC) * DMG_MULT);
 const monsterLeft = () => Math.max(0, monsterHP() - teamDamage());
-const palPic = (k,size) => buddies[k] ? buddySvg(buddies[k].look, buddies[k].wear, {noBg:true, attrs:`style="height:${size}px;width:${size}px"`}) : `<span style="font-size:${Math.round(size*.8)}px;line-height:1">${avHtml(rawAv(k))}</span>`;
+const palPic = (k,size) => buddies[k] ? buddyFor(k, {noBg:true, attrs:`style="height:${size}px;width:${size}px"`}) : `<span style="font-size:${Math.round(size*.8)}px;line-height:1">${avHtml(rawAv(k))}</span>`;
 function monsterStrip(){ const m=monster(), left=monsterLeft(), pct=left/monsterHP()*100;
   return `<div class="boss ${left?"":"dead"}">
     <span class="bpals">${Object.keys(KIDS).map(k=>`<button class="bpal" data-a="toot" aria-label="Toot attack">${palPic(k,46)}</button>`).join("")}<span class="bvs">${left?"⚔️":"🏆"}</span></span>
@@ -1942,11 +1949,11 @@ function dmgPopNow(n){
     <div class="dp-mom">💪 <span>Momster says: <b>${momSay}</b></span></div>
     <button class="chip go" onclick="this.closest('.dmgpop-ov').remove()" style="margin-top:10px">💪 Keep helping Momster!</button>
   </div>`;
-  document.body.appendChild(o); setTimeout(()=>{ if(o.parentNode) o.remove(); }, DMGPOP_MS);
+  document.body.appendChild(o);
   try{ play([].concat(firstToday?["BJ:Every chore you finish takes health from the villain!"]:[], [villainKey(m,react), "momster_"+(left<=0?"win":(pct<=35?"almost":"cheer"))])); }catch(e){}
 }
-/* How long the quick damage pop (after each job) and the bigger damage card (after a routine) stay on screen. */
-const POW_MS = 3500, DMGPOP_MS = 5000;
+/* How long the quick damage pop (after each job) stays on screen. The bigger damage card (after a routine) stays until it is tapped. */
+const POW_MS = 3500;
 let powState = { n: 0, timer: null };   // damage shown by the quick pop that is on screen right now
 function clearPow(){ clearTimeout(powState.timer); powState.timer=null; powState.n=0; document.querySelectorAll(".battle").forEach(x=>x.remove()); }
 function pow(n){ const m=monster(); const k=view.kid; const add=n||5;
@@ -1987,7 +1994,7 @@ function stickerBook(k){ const have=new Set(buddies[k].stickers||[]);
 
 // --- Dance party ---
 function danceParty(k){ const b=buddies[k];
-  layer.innerHTML = `<div class="ov disco" data-a="stopDance"><div class="dancer">${buddySvg(b.look,b.wear,{noBg:true,attrs:'style="width:min(70vw,60vh);height:min(70vw,60vh)"'})}</div>
+  layer.innerHTML = `<div class="ov disco" data-a="stopDance"><div class="dancer">${buddyFor(k,{noBg:true,attrs:'style="width:min(70vw,60vh);height:min(70vw,60vh)"'})}</div>
     <div class="dlabel">🕺 Dance party! 💃</div><button class="chip big" data-a="stopDance" style="position:absolute;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%)">Stop</button></div>`;
   b.dances=(b.dances||0)+1; saveBuddy(k);
   const prevLvl=soundLevel; play(["whoosh","dance","music","goodnight"]);
@@ -2075,7 +2082,7 @@ function sideSilly(el){ const r=Math.floor(Math.random()*6); el.classList.remove
   else if(r===4){ puff("🤧"); play(["BJ:ACHOO! Ugh. I sneezed on your job."]); }
   else { puff("💨"); if(tootsOn()) toot(); play(["BJ:Who stepped on a duck?!"]); } }
 function victoryDance(){ const m=monster();
-  layer.innerHTML=`<div class="ov disco" data-a="stopDance"><div class="vdance">${Object.keys(KIDS).map(k=>`<span class="dancer">${buddySvg(buddies[k].look,buddies[k].wear,{noBg:true,attrs:'style="width:min(34vw,34vh);height:min(34vw,34vh)"'})}</span>`).join("")}</div>
+  layer.innerHTML=`<div class="ov disco" data-a="stopDance"><div class="vdance">${Object.keys(KIDS).map(k=>`<span class="dancer">${buddyFor(k,{noBg:true,attrs:'style="width:min(34vw,34vh);height:min(34vw,34vh)"'})}</span>`).join("")}</div>
     <div class="vmon">${m[2]}<i>😵</i></div><div class="dlabel">BUSTED! Victory dance! 🕺💃</div>
     <button class="chip big" data-a="stopDance" style="position:absolute;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%)">Stop</button></div>`;
   play(["whoosh","music"]); clearTimeout(window._danceT); window._danceT=setTimeout(()=>{ if(document.querySelector(".disco")) close(); }, 18000);
@@ -2119,51 +2126,43 @@ const MAKEOVER = {
   hero:{look:{eyes:"sparkle",mouth:"grin"}, wear:{face:"hmask",neck:"cape",fit:"f_hero"}},
   knight:{look:{eyes:"round",mouth:"grin"}, wear:{hat:"khelm",fit:"f_armor",hold:"sword",hold2:"shield"}},
   ninja:{look:{eyes:"round",ears:"none"}, wear:{face:"nmask",fit:"f_gi"}}};
-// A hero style is a costume layered over the kid's own sidekick. "base" remembers their own look for every
-// piece a costume can touch, so switching styles never leaves leftovers (no ninja mask on a princess).
+// A hero style is a costume drawn OVER the kid's own sidekick. It never changes what the sidekick owns or wears:
+//   * the costume's pieces are not added to the closet or unlocked, and are not in the shop's "worn" list;
+//   * it dresses only slots (hat, mask, cape, outfit, hands) the kid left empty, so anything the kid puts on shows instead;
+//   * it sets the sidekick's eyes, mouth, nose and ears while it is on (the kid's own are kept underneath).
 const T_LOOK = ["eyes","mouth","nose","ears"], T_WEAR = ["hat","face","face2","neck","fit","hold","hold2"];
-const THEME_ITEMS = new Set(Object.values(MAKEOVER).flatMap(m=>Object.values(m.wear)));
-function styleBase(k){ const b=buddies[k], cur=(settings.heroStyle||{})[k], m=MAKEOVER[cur];
-  const base = b.base ? JSON.parse(JSON.stringify(b.base)) : {look:{}, wear:{}};
-  if(!b.base){ // first time (or older data): start from what they're wearing, minus any costume pieces
-    T_LOOK.forEach(key=>{ base.look[key] = (m && m.look[key]===b.look[key]) ? ({eyes:"googly",mouth:"fangs",nose:"none",ears:"none"})[key] : b.look[key]; });
-    T_WEAR.forEach(sl=>{ const v=(b.wear||{})[sl]; if(v && !THEME_ITEMS.has(v)) base.wear[sl]=v; });
-    if(!base.wear.hold && !base.wear.hold2) base.wear.hold="balloon";
-  } else if(m){ // keep anything the kid changed themselves while in costume
-    T_LOOK.forEach(key=>{ if(b.look[key]!==m.look[key]) base.look[key]=b.look[key]; });
-    T_WEAR.forEach(sl=>{ const v=(b.wear||{})[sl]; if(v!==m.wear[sl] && !(v && THEME_ITEMS.has(v))){ if(v) base.wear[sl]=v; else if(!m.wear[sl]) delete base.wear[sl]; } });
-  }
-  return base; }
-function styledBuddy(k, st){ const b=buddies[k], base=styleBase(k), m=MAKEOVER[st];
-  const look=Object.assign({}, b.look), wear=Object.assign({}, b.wear||{});
-  T_LOOK.forEach(key=>{ look[key] = (m && m.look[key]!==undefined) ? m.look[key] : (base.look[key]!==undefined ? base.look[key] : look[key]); });
-  T_WEAR.forEach(sl=>{ const v = m && m.wear[sl]!==undefined ? m.wear[sl] : base.wear[sl]; if(v) wear[sl]=v; else delete wear[sl]; });
-  return {look, wear, base}; }
-// Older saves (before costumes remembered the kid's own look) can still be wearing pieces of an old costume.
-// Quietly re-dress those sidekicks in just their current costume.
-function fixCostumes(){ Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; if(!b) return; const st=(settings.heroStyle||{})[k], m=MAKEOVER[st];
-  const stray = T_WEAR.some(sl=>{ const v=(b.wear||{})[sl]; return v && THEME_ITEMS.has(v) && !(m && m.wear[sl]===v) && !(b.base && b.base.wear[sl]===v); });
-  if(!(m && !b.base) && !stray) return;
-  if(m){ const r=styledBuddy(k, st); b.look=r.look; b.wear=r.wear; b.base=r.base; }
-  else { const w=Object.assign({},b.wear||{}); T_WEAR.forEach(sl=>{ if(w[sl] && THEME_ITEMS.has(w[sl])) delete w[sl]; }); if(!w.hold&&!w.hold2) w.hold="balloon"; b.wear=w; }
-  saveBuddy(k); }); }
-function applyStyle(k, st){ const b=buddies[k], r=styledBuddy(k, st==="none"?null:st);
+function dressed(k, st){ const b=buddies[k], id=st===undefined ? (settings.heroStyle||{})[k] : st, m=MAKEOVER[id];
+  if(!m) return {look:b.look, wear:b.wear||{}};
+  const look=Object.assign({}, b.look, m.look), wear=Object.assign({}, b.wear||{});
+  ["hat","face","neck","fit"].forEach(sl=>{ if(!wear[sl] && m.wear[sl]) wear[sl]=m.wear[sl]; });
+  const mine=new Set([wear.hold, wear.hold2, wear.pet]), away=b.stowed||[];
+  const toys=[m.wear.hold, m.wear.hold2].filter(x=>x && !mine.has(x) && !away.includes(x)); let i=0;   // costume toys go in whichever hands are empty, left first; ones put away or already held stay out
+  if(!wear.hold && toys[i]) wear.hold=toys[i++];
+  if(!wear.hold2 && !wear.pet && toys[i]) wear.hold2=toys[i++];
+  return {look, wear}; }
+const buddyFor = (k, opts) => { const d=dressed(k); return buddySvg(d.look, d.wear, opts); };
+// Older saves merged the costume into the sidekick (and unlocked its pieces). Put the kid's own look and items back; the costume is drawn on top now.
+function fixCostumes(){ Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; if(!b || b.costumeFixed) return; b.costumeFixed=true;
+  if(b.base){
+    T_LOOK.forEach(key=>{ if(b.base.look && b.base.look[key]!==undefined) b.look[key]=b.base.look[key]; });
+    const w=Object.assign({}, b.wear||{}); T_WEAR.forEach(sl=>{ if(b.base.wear && b.base.wear[sl]) w[sl]=b.base.wear[sl]; else delete w[sl]; });
+    b.wear=normalizeWear(w); delete b.base; }
+  else { const m=MAKEOVER[(settings.heroStyle||{})[k]]; if(m){ const w=Object.assign({}, b.wear||{});
+    Object.keys(m.wear).forEach(sl=>{ if(w[sl]===m.wear[sl]) delete w[sl]; }); b.wear=normalizeWear(w); } }
+  saveBuddy(k); }); }                                 // runs once per sidekick; after that the costume is only ever drawn on top
+function applyStyle(k, st){ const b=buddies[k];
   settings.heroStyle=Object.assign({},settings.heroStyle||{});
   if(st==="none") delete settings.heroStyle[k]; else settings.heroStyle[k]=st;
-  saveSettings();
-  b.look=r.look; b.wear=r.wear; b.made=true;
-  if(st==="none") delete b.base; else b.base=r.base;
-  Object.values(r.wear).forEach(id=>{ if(id && !(b.owned||[]).includes(id)) b.owned=(b.owned||[]).concat(id); });
-  saveBuddy(k); close(); render();
-  if(st==="none"){ party(["😊","⭐","✨"]); cheer("😊", "Just "+KIDS[k].name+"!"); play(["pop",nameKey("justme",KIDS[k].name)]); return; }
-  const S=styleOf(k); party(st==="princess"?["👑","✨","💖","🦄"]:[S[1],"⭐","✨"]); cheer(S[1], heroName(k)+", ready!"); play(["fanfare",nameKey("ready_"+st,KIDS[k].name)]); }
+  b.stowed=[]; saveSettings(); b.made=true; saveBuddy(k); close(); render();
+  if(st==="none"){ party(["😊","⭐","✨"]); cheer("😊", "Just "+KIDS[k].name+"!", null, null, true); play(["pop",nameKey("justme",KIDS[k].name)]); return; }
+  const S=styleOf(k); party(st==="princess"?["👑","✨","💖","🦄"]:[S[1],"⭐","✨"]); cheer(S[1], heroName(k)+", ready!", null, null, true); play(["fanfare",nameKey("ready_"+st,KIDS[k].name)]); }
 const STYLES = [["hero","💥","Super","POW!"],["princess","👑","Princess","SPARKLE SMASH!"],["knight","🛡️","Knight","CLANG!"],["ninja","🥷","Ninja","HI-YA!"]];
 const styleOf = k => STYLES.find(x=>x[0]===((settings.heroStyle||{})[k]))||null;
 // The on-screen hit word of each hero style is a sound, not a sentence, so it plays a sound effect instead of a voice.
 const STYLE_SFX = {hero:["punch"], princess:["sparkle","punch"], knight:["punch","crack"], ninja:["whoosh","punch"]};
 const heroName = k => { const st=styleOf(k); return st ? st[2]+" "+KIDS[k].name : KIDS[k].name; };
 function styleSheet(k){ const cur=styleOf(k), curId=cur?cur[0]:"none";
-  const opt=(id,emo,name,sub)=>{ const r=styledBuddy(k, id==="none"?null:id);
+  const opt=(id,emo,name,sub)=>{ const r=dressed(k, id==="none"?null:id);
     return `<button class="stl ${curId===id?"on":""}" data-a="setStyle" data-s="${id}"><span class="stl-pic">${buddySvg(r.look,r.wear,{noBg:true,attrs:'style="width:100%;height:100%"'})}</span><span class="stl-n">${emo} ${name}</span><small>${sub}</small></button>`; };
   layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet stlsheet"><h2>Pick your hero style!</h2><p>Your sidekick gets a free costume to match. Switch anytime!</p>
     <div class="styles">${STYLES.map(x=>opt(x[0],x[1],x[2],x[3])).join("")}${opt("none","😊","Just me","My own look")}</div>
@@ -2813,20 +2812,33 @@ function normalizeWear(w){ w=w||{};
   if(w.pet && w.hold && w.hold2){ w.hold=w.hold2; delete w.hold2; }   // a pet uses a hand: drop the older toy
   return w; }
 // Put a toy or pet into the two hands, dropping the older item when the hands are full.
-function equipHands(w, slot, id){
-  if(slot==="pet"){ w.pet=id; if(w.hold && w.hold2){ w.hold=w.hold2; delete w.hold2; } return; }
-  if(!w.hold){ w.hold=id; }
-  else if(!w.hold2 && !w.pet){ w.hold2=id; }
-  else if(w.pet){ w.hold=id; }                              // toy + pet already: swap the toy
-  else { w.hold=w.hold2; w.hold2=id; }                      // two toys: the older one goes
+function equipHands(b, w, slot, id){
+  const older = () => b.lastHand==="hold2" ? "hold" : "hold2";      // the hand that was filled first
+  if(slot==="pet"){ w.pet=id; if(w.hold && w.hold2) delete w[older()]; return; }
+  if(!w.hold){ w.hold=id; b.lastHand="hold"; }                       // first toy: left hand
+  else if(!w.hold2 && !w.pet){ w.hold2=id; b.lastHand="hold2"; }     // second toy: right hand
+  else if(w.pet && !w.hold2){ w.hold=id; b.lastHand="hold"; }        // toy + pet: the new toy replaces the toy
+  else { const h=older(); w[h]=id; b.lastHand=h; }                   // two toys: the new one replaces the older, in the same hand
 }
+// What the sidekick is holding right now, as shown (costume toys included). Two hands: two toys, or a toy and a pet.
+function heldItems(k){ const b=buddies[k], d=dressed(k).wear, out=[];
+  ["hold","hold2","pet"].forEach(key=>{ if(d[key]) out.push({key, id:d[key], own:(b.wear||{})[key]===d[key]}); });
+  return out; }
+// Both hands are full and another toy or pet was tapped: ask which one to put away (never swap silently).
+function handsFullSheet(k, id){ const it=itemById(id), held=heldItems(k);
+  const btns=held.map(h=>{ const x=itemById(h.id); return `<button class="chip big" data-a="putAway" data-v="${id}" data-h="${h.key}">Put away ${x?x[2]+" "+x[3]:h.id}</button>`; }).join("");
+  layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet handsfull" style="max-width:420px;text-align:center"><h2>✋ Hands full!</h2>
+    <p>Your hands are full. Put one thing away to hold the ${esc(it?it[2]+" "+it[3]:"new thing")}.</p>
+    <div class="row" style="justify-content:center;flex-wrap:wrap">${btns}</div>
+    <div class="row" style="justify-content:center"><button class="cancel" data-a="bTab" data-t="${bTab}">Never mind</button></div></div></div>`;
+  play(["boing","BJ:Your hands are full! Put one away to hold this."]); }
 function wearToggle(b, slot, id, forceOn){ b.wear=b.wear||{}; const w=b.wear, keys=slotKeys(slot), at=keys.find(k=>w[k]===id);
   if(at && !forceOn){ delete w[at]; return; } if(at) return;
-  if(slot==="hold"||slot==="pet") equipHands(w, slot, id); else w[keys[0]]=id;
+  if(slot==="hold"||slot==="pet") equipHands(b, w, slot, id); else w[keys[0]]=id;
   normalizeWear(w);
   if(!forceOn) play(["pop","wear"]); }
 function buddySheet(k){ if(!k) return; const b=buddies[k], have=coins(k);
-  const big=buddySvg(b.look,b.wear,{});
+  const big=buddyFor(k,{});
   const TABN={build:"Build",hat:"Hats",face:"Faces",neck:"Neck",fit:"Outfits",hold:"Toys",pet:"Pets",bg:"Places",stickers:"Stickers"};
   const tabs=[["build","🎨"]].concat(SLOTS.map(x=>[x[0],x[1]]),[["stickers","📒"]]).map(([id,e])=>`<button class="btab ${bTab===id?"on":""}" data-a="bTab" data-t="${id}"><span class="ti">${e}</span><span class="tn">${TABN[id]}</span></button>`).join("");
   let opts="";
@@ -2846,7 +2858,8 @@ function buddySheet(k){ if(!k) return; const b=buddies[k], have=coins(k);
       const cls = on?"on":(bArm===id?"armed":(!own&&cost>have?"cant":""));
       return `<button class="bopt ${cls}" data-a="bItem" data-v="${id}">${RARE.some(r=>r[1]===id)?'<span class="tag">✨</span>':(seasonItems().some(r=>r[1]===id)?`<span class="tag">${THEME_ICON[MONTH()]}</span>`:"")}<span class="ie">${itemById(id)[5] ? buddySvg(b.look,{[slotKeys(slot)[0]]:id},{noBg:true, vb:slot==="hat"?"20 0 160 120":(slot==="face"?"44 76 112 72":"0 0 200 200")}) : e}</span><span class="iname">${esc(name)}</span><span class="pill ${own?(on?"p-on":"p-wear"):(cost>have?"p-cant":"p-buy")}">${own?(on?"✓ On":"Wear"):(bArm===id?"Buy? 🪙"+cost:"🪙 "+cost)}</span></button>`; }).join("");
   }
-  const hint = bTab==="stickers"||bTab==="build" ? "" : `<div class="bsec" style="margin-top:0">Finish a whole group of jobs to earn 🪙${bTab==="hold"||bTab==="pet"?" · Two hands: two toys, or a toy and a pet":""}</div>`;
+  const costumeNote = styleOf(k) && !(bTab==="stickers") ? `<div class="bsec" style="margin-top:0">${styleOf(k)[1]} Your ${styleOf(k)[2]} costume fills any empty spots. What you pick yourself shows instead.</div>` : "";
+  const hint = costumeNote + (bTab==="stickers"||bTab==="build" ? "" : `<div class="bsec" style="margin-top:0">Finish a whole group of jobs to earn 🪙${bTab==="hold"||bTab==="pet"?" · Two hands: two toys, or a toy and a pet":""}</div>`);
   opts = hint + opts;
   paintSheet("buddySheet", bTab+":"+bPart, `<div class="ov" data-a="closeOv"><div class="sheet" id="buddySheet" style="max-width:1000px;width:100%;--k:${KIDS[k].color}">
     <div class="bwrap"><div class="bprev"><button class="sidepoke" data-a="poke" aria-label="Poke your sidekick">${big}</button><div class="bfoot"><div class="bcoins">🪙 ${have} to spend<small style="display:block;font-size:12px;font-weight:700;opacity:.75">Coins never take away your stars!</small></div><button class="chip go big" data-a="bDone">Done</button></div></div>
@@ -3095,8 +3108,7 @@ document.addEventListener("click", e=>{
       saveLocal(specialKey(k), 1); render(); play(["pop","BJ:Ooh, good choice!"]); break; }
     case "pkDo": { const p=todayPick(k); if(!p) break; const w=weeks[k], day=ymd(new Date()); const list=(w.done[day]=w.done[day]||[]);
       if(!list.includes(t.dataset.j)){ const before=stars(k), wasDefeated=monsterLeft()<=0; list.push(t.dataset.j); saveWeek(k); awardCategory(k, "pk", day, wasDefeated, "Special mission!");
-        const after=stars(k); render(); party(["🎯","⭐","⭐"]); cheer("🎯","Special mission complete! +2 ⭐");
-        play(["ding","fanfare"].concat(readsAll()?["BJ:"+endSentence(p.t)]:[],["BJ:Special mission complete! Two big stars!"])); setTimeout(()=>dmgPop(2*DMG_MULT),700); }
+        const after=stars(k); render(); party(["🎯","⭐","⭐"]); cheer("🎯","Special mission complete! +2 ⭐",["ding","fanfare"].concat(readsAll()?["BJ:"+endSentence(p.t)]:[],["BJ:Special mission complete! Two big stars!"])); setTimeout(()=>dmgPop(2*DMG_MULT),700); }
       break; }
     case "pickReward": { const cur=rewardOf(k);
       if(!cur){ if(!REWARDS.length){ play(["BJ:Your prize is a surprise! Fill your jar to find out!"]); break; } rewardSheet(k); play(["pickprize"]); break; }
@@ -3197,11 +3209,21 @@ document.addEventListener("click", e=>{
     case "bTab": bTab=t.dataset.t; bArm=null; buddySheet(k); play(["pop"]); break;
     case "bLook": buddies[k].look=Object.assign({},buddies[k].look,{[t.dataset.f]:t.dataset.v}, t.dataset.f==="body"&&t.dataset.v!=="blob"?{ears:"none",tail:"none"}:{}); buddies[k].made=true; saveBuddy(k); buddySheet(k); render(); play(["pop"]); break;
     case "bItem": { const it=itemById(t.dataset.v), [slot,id,e,name,cost]=it, b=buddies[k];
+      if(b.owned.includes(id) && (slot==="hold"||slot==="pet") && !isWearing(b.wear||{},slot,id)){
+        const held=heldItems(k), shown=held.find(h=>h.id===id);
+        if(shown){ b.wear=b.wear||{}; b.wear[shown.key]=id; b.stowed=(b.stowed||[]).filter(x=>x!==id); normalizeWear(b.wear); saveBuddy(k); buddySheet(k); render(); play(["BJ:"+name]); break; }   // already shown by the costume: now it is theirs
+        if(held.length>=2 && !(slot==="pet" && held.some(h=>h.key==="pet"))){ handsFullSheet(k,id); break; } }
       if(b.owned.includes(id)){ wearToggle(b,slot,id); b.made=true; saveBuddy(k); buddySheet(k); render(); play(["BJ:"+name]); break; }
       if(!cost && cost!==0 || RARE.some(r=>r[1]===id)){ break; }
       if(cost>coins(k)){ bArm=null; buddySheet(k); play(["BJ:"+name, "needcoins"]); break; }
       if(bArm===id){ setTimeout(()=>checkStickers(k),50); b.spent=(b.spent||0)+cost; b.owned=b.owned.concat(id); wearToggle(b,slot,id,true); b.made=true; bArm=null; saveBuddy(k); buddySheet(k); render(); party([e,"🪙","✨"]); play(["coin","magic","bought"]); }
       else { bArm=id; buddySheet(k); play(["BJ:"+name, "tapbuy"]); } } break;
+    case "putAway": { const id=t.dataset.v, key=t.dataset.h, it=itemById(id), b=buddies[k];
+      const h=heldItems(k).find(x=>x.key===key); b.wear=b.wear||{};
+      if(h){ if(h.own) delete b.wear[key]; else b.stowed=(b.stowed||[]).concat(h.id); }
+      if(it[0]==="hold" && (key==="hold"||key==="hold2")){ b.wear[key]=id; b.lastHand=key; normalizeWear(b.wear); }   // the new toy goes in the hand that was just emptied
+      else { normalizeWear(b.wear); wearToggle(b, it[0], id, true); }
+      b.made=true; saveBuddy(k); buddySheet(k); render(); play(["BJ:"+it[3]]); } break;
     case "bDone": close(); render(); break;
     case "resetBuddies": layer.innerHTML = `<div class="ov" data-a="closeOv"><div class="sheet" style="max-width:420px;text-align:center">
       <h2>Reset sidekicks?</h2><p>Sidekicks go back to plain, items are removed, and coins start over from 0.</p>
@@ -3261,13 +3283,13 @@ function tapJob(k, id){ settleCoins(k);
   saveWeek(k);
   const left=jobsFor(r,todayDow()).filter(j=>!isDone(k,j.id)).length, after=stars(k), g=goal();
   if(!left) awardCategory(k, r.id, day, wasDefeated, r.name+" done!");
-  if(before<g && after>=g && otherFull){ render(); party(["⭐","🎉",teamPrize().e,"🤝"]); cheer(teamPrize().e,"TEAM WIN! "+teamPrize().t); play(["fanfare","jarfull","teamwin"]); }
-  else if(before<g && after>=g){ render(); party(["⭐","🎉",rewardOf(k)?.e||"🎁","🌟"]); cheer(rewardOf(k)?.e||"🎁","Wow! Your star jar is full! Go tell a grown-up!"); play(["fanfare","jarfull"]); }
+  if(before<g && after>=g && otherFull){ render(); party(["⭐","🎉",teamPrize().e,"🤝"]); cheer(teamPrize().e,"TEAM WIN! "+teamPrize().t,["fanfare","jarfull","teamwin"]); }
+  else if(before<g && after>=g){ render(); party(["⭐","🎉",rewardOf(k)?.e||"🎁","🌟"]); cheer(rewardOf(k)?.e||"🎁","Wow! Your star jar is full! Go tell a grown-up!",["fanfare","jarfull"]); }
   else if(!left){ bumpStreak(k, r.id, day); setTimeout(render,700); party(["⭐","🌟","✨"]); setTimeout(()=>{ const dd=(weeks[k].done||{})[day]||[];
         const dmgR=(jobsFor(r,todayDow(),k).reduce((n,j)=>n+pts(j.id)+(dd.includes(j.id)&&isWeak(j.id)?1:0),0)+1+(raceWon?1:0)+(comboList().length>cbB?COMBO_DMG:0))*DMG_MULT;
         dmgPop(Math.max(1,dmgR)); },650); const sk = r.id==="bt" ? streak(k) : 0, fire = [3,5,7,10,14].includes(sk);
-    setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r)); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r)); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐"); }, 1400);
-    play(["fanfare","bonus", raceWon?"raceWin":null, fire?"streak":null, r.doneSnd||"alldone"]);
+    setTimeout(()=>{ if(raceWon) cheer("🏆","You beat the clock! +2 ⭐ and "+effortPraise(k,r),["raceWin"]); else if(fire) cheer("🔥", sk+" in a row! "+effortPraise(k,r),["streak"]); else cheer(r.doneIcon||"🎉", effortPraise(k,r)+" +1 bonus ⭐",[r.doneSnd||"alldone", praiseSpoken(k)]); }, 1400);
+    play(["fanfare","bonus"]);
     if(!eggReady(k)) setTimeout(()=>popup(()=>play(["jokeintro", pickJoke()]), 5500), 4200); }
   else { render(); let hit = Math.max(1,teamDamage()-dmgB);
     const ms = mysteryLeft(k)>0 && Math.random()<0.12;

@@ -1097,3 +1097,10 @@ nlead_princess,momster,name lead-in,Princess,NEW,yes (kid name),"plays before a 
 nlead_knight,momster,name lead-in,Knight,NEW,yes (kid name),"plays before a kid's name: ""Knight <name>, ready to help Momster!""",,momster
 nlead_ninja,momster,name lead-in,Ninja,NEW,yes (kid name),"plays before a kid's name: ""Ninja <name>, ready to help Momster!""",,momster
 ntail_ready,momster,name tail,"ready to help Momster!",NEW,yes (kid name),"plays after a kid's name in the hero-style lines",,momster
+t_your-hands-are-full-put-one-away-to-hold_46951e37,momster,screen text,Your hands are full! Put one away to hold this.,NEW,yes,hands-full popup in the sidekick shop,,momster
+t_nice-hustle-all-done-without-being-asked_bde71da7,momster,app line,Nice hustle! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
+t_look-at-that-all-done-without-being-aske_f9d0a992,momster,app line,Look at that! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
+t_boom-all-done-without-being-asked-twice_cfbd6c40,momster,app line,Boom! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
+t_you-crushed-it-all-done-without-being-as_aae4a4e3,momster,app line,You crushed it! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
+t_way-to-go-all-done-without-being-asked-t_c9ca8445,momster,app line,Way to go! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster
+t_nailed-it-all-done-without-being-asked-t_4bd0f1e9,momster,app line,Nailed it! All done without being asked twice!,NEW,yes,praise card after a routine; the card also lists the family's own jobs (not spoken),,momster

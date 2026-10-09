@@ -96,7 +96,7 @@ async function run(){
     ok(same(W.face,{face:"f2"}), "one face item at a time");
     ok(same(W.singles,{neck:"n2",fit:"o2",bg:"p2"}), "one neck item, outfit and place");
     ok(same(W.twoToys,{hold:"t1",hold2:"t2"}), "two toys can be worn");
-    ok(same(W.threeToys,{hold:"t2",hold2:"t3"}), "a third toy replaces the older one");
+    ok(same(W.threeToys,{hold:"t3",hold2:"t2"}), "a third toy replaces the older one, in the same hand it was in");
     ok(same(W.toyPet,{hold:"t1",pet:"a1"}), "a toy and a pet can be worn");
     ok(same(W.toyPetNewToy,{hold:"t2",pet:"a1"}), "with a toy and a pet, a new toy swaps the toy");
     ok(same(W.petSwap,{hold:"t2",pet:"a2"}), "never two pets: a new pet replaces the old one");
