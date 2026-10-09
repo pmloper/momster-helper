@@ -231,6 +231,7 @@ details summary{font-size:20px;font-weight:800;cursor:pointer;margin:6px 0}
 @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
 .eggBtn{background:color-mix(in srgb,#9B5DE5 25%,var(--card))!important;animation:wiggle 1s infinite}
 .bopt .tag{position:absolute;top:2px;right:4px;font-size:14px}
+[data-say]{cursor:pointer}
 .stk{border:3px dashed var(--line);border-radius:18px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;font-size:13px;font-weight:800;color:var(--soft);text-align:center;line-height:1.1}
 .stk span{font-size:38px;line-height:1.2;filter:grayscale(1) contrast(.6);opacity:.35}
 .stk.got{border-style:solid;color:var(--ink);border-color:var(--gold2);background:color-mix(in srgb,var(--gold) 15%,var(--card))}.stk.got span{filter:none;opacity:1}
@@ -1976,7 +1977,7 @@ function checkStickers(k, quiet){ const b=buddies[k], st=kidStats(k), have=new S
   if(!quiet && b.stickersInit){ setTimeout(()=>cheer(fresh[0][1],"New sticker: "+fresh[0][2]+"!",["sparkle","sticker"]), 2600); }
   if(!b.stickersInit){ b.stickersInit=true; saveBuddy(k); } }
 function stickerBook(k){ const have=new Set(buddies[k].stickers||[]);
-  return `<div class="bsec" style="margin-top:0">${have.size} of ${STICKERS.length} stickers</div>` + STICKERS.map(([id,e,n])=>`<div class="stk ${have.has(id)?"got":""}"><span>${e}</span>${have.has(id)?esc(n):"???"}</div>`).join(""); }
+  return `<div class="bsec" style="margin-top:0">${have.size} of ${STICKERS.length} stickers</div>` + STICKERS.map(([id,e,n])=>`<div class="stk ${have.has(id)?"got":""}"${have.has(id)?` data-say="${esc(n)}"`:""}><span>${e}</span>${have.has(id)?esc(n):"???"}</div>`).join(""); }
 
 // --- Dance party ---
 function danceParty(k){ const b=buddies[k];
@@ -2095,14 +2096,14 @@ function hqSheet(tab){ tab=tab||"report"; const ri=rankInfo(), per=weekStats(), 
   const totalJobs=Object.values(per).reduce((n,x)=>n+x.jobs,0);
   const report = `<div class="hq-rep"><div class="hq-big">${left? `${m[2]} ${esc(m[1])} has <b>${left}</b> ❤️ left` : `💥 ${esc(m[1])} is BUSTED!`}</div>
     <div class="hq-stats"><span><b>${totalJobs}</b>jobs done</span><span><b>${combos}</b>combo attacks</span><span><b>${weakHits()}</b>weak-spot hits</span><span><b>${teamDamage()}</b>total damage</span><span><b>${tootN()}</b>family toots 💨</span></div>
-    <div class="hq-aw">${Object.keys(KIDS).map(k=>{ const a=award(k); return `<div class="hq-kid" style="--k:${KIDS[k].color}"><span class="hq-pic">${palPic(k,64)}</span><span><small>${esc(heroName(k))}</small><b>${a[0]} ${a[1]}</b><em>${per[k].jobs} jobs · ⭐ ${per[k].stars}</em></span></div>`; }).join("")}
+    <div class="hq-aw">${Object.keys(KIDS).map(k=>{ const a=award(k); return `<div class="hq-kid" style="--k:${KIDS[k].color}"><span class="hq-pic">${palPic(k,64)}</span><span><small>${esc(heroName(k))}</small><b data-say="${esc(a[1])}">${a[0]} ${a[1]}</b><em>${per[k].jobs} jobs · ⭐ ${per[k].stars}</em></span></div>`; }).join("")}
     ${combos>=3?`<div class="hq-kid team"><span class="hq-pic">🤝</span><span><small>Team award</small><b>Combo Kings & Queens</b><em>${combos} combos this week!</em></span></div>`:""}</div></div>`;
   const trophies = `<div class="hq-tro">${MONSTERS.map(v=>{ const wks=busted.filter(w=>villainFor(w)[0]===v[0]); return wks.length
       ? `<div class="tro got" data-a="troHear" data-v="${v[0]}" role="button" tabindex="0"><span class="tro-f">${v[2]}<i>${v[3]}</i></span><b>${esc(v[1])}</b><span class="stamp">BUSTED${wks.length>1?" x"+wks.length:""}!</span><small>"${esc(KO_QUOTE[v[0]]||"")}"</small></div>`
       : `<div class="tro"><span class="tro-f">❓</span><b>???</b><small>Not busted yet</small></div>`; }).join("")}</div>`;
   const pct = ri.next ? Math.min(100,(ri.pts-ri.r[0])/(ri.next[0]-ri.r[0])*100) : 100;
   layer.innerHTML=`<div class="ov" data-a="closeOv"><div class="sheet hq"><div class="ghead"><h2>🏆 Hero HQ</h2><button class="btn primary sm" data-a="closeOvBtn">Done</button></div>
-    <div class="hq-rank"><span class="hq-ri">${ri.r[1]}</span><span><small>Team rank</small><b>${ri.r[2]}</b><span class="mbar"><i style="width:${pct}%;background:linear-gradient(90deg,#7C5CFF,#FF5DA2)"></i></span><em>${ri.next? `Next: ${ri.next[1]} ${ri.next[2]}. Help Momster beat villains and earn stars to level up!` : "Top rank! Legends forever!"}</em></span></div>
+    <div class="hq-rank"><span class="hq-ri">${ri.r[1]}</span><span><small>Team rank</small><b data-say="${esc(ri.r[2])}">${ri.r[2]}</b><span class="mbar"><i style="width:${pct}%;background:linear-gradient(90deg,#7C5CFF,#FF5DA2)"></i></span><em>${ri.next? `Next: ${ri.next[1]} ${ri.next[2]}. Help Momster beat villains and earn stars to level up!` : "Top rank! Legends forever!"}</em></span></div>
     ${Object.keys(KIDS).length>1?(()=>{ const tp=teamPrize(), both=Object.keys(KIDS).every(k=>stars(k)>=goal()); return `<div class="hq-team"><b>${esc(tp.e)}</b><span><small>Team prize</small>${both?(team.given?"Team prize done! 🎉":"TEAM WIN! "+esc(tp.t)+"!"):esc(tp.t)}<em>When everyone fills their star jar</em></span><span class="ok">${Object.keys(KIDS).map(k=>{ const fin=stars(k)>=goal(); return `<span class="tav ${fin?"fin":""}">${palPic(k,34)}${fin?'<i>✅</i>':""}</span>`; }).join(" ")}</span></div>`; })():""}
     <div class="hq-tabs"><button class="${tab==="report"?"on":""}" data-a="hqTab" data-t="report">📋 Mission report</button><button class="${tab==="tro"?"on":""}" data-a="hqTab" data-t="tro">🏆 Trophy wall</button></div>
     ${tab==="report"?report:trophies}</div></div>`; }
@@ -3030,6 +3031,8 @@ fileIn.addEventListener("change", async()=>{ const f=fileIn.files[0]; fileIn.val
   try{ await saveVoice(uplKey, await blobToRec(f)); play([uplKey]); recSheet(); }catch(e){ toast("That file is too big. Keep clips short (a few seconds)."); } });
 
 /* ---------- Actions ---------- */
+// Tap-to-hear: a plain label marked data-say reads itself aloud. A label inside a button keeps the button's own action.
+document.addEventListener("click", e=>{ const s=e.target.closest("[data-say]"); if(!s) return; const a=e.target.closest("[data-a]"); if(a && a.dataset.a!=="closeOv" && a.contains(s)) return; play(["BJ:"+s.dataset.say]); });
 document.addEventListener("click", e=>{
   const t = e.target.closest("[data-a]"); if(!t) return;
   const a=t.dataset.a, k=view.kid;
@@ -3188,7 +3191,7 @@ document.addEventListener("click", e=>{
     case "bTab": bTab=t.dataset.t; bArm=null; buddySheet(k); play(["pop"]); break;
     case "bLook": buddies[k].look=Object.assign({},buddies[k].look,{[t.dataset.f]:t.dataset.v}, t.dataset.f==="body"&&t.dataset.v!=="blob"?{ears:"none",tail:"none"}:{}); buddies[k].made=true; saveBuddy(k); buddySheet(k); render(); play(["pop"]); break;
     case "bItem": { const it=itemById(t.dataset.v), [slot,id,e,name,cost]=it, b=buddies[k];
-      if(b.owned.includes(id)){ wearToggle(b,slot,id); b.made=true; saveBuddy(k); buddySheet(k); render(); break; }
+      if(b.owned.includes(id)){ wearToggle(b,slot,id); b.made=true; saveBuddy(k); buddySheet(k); render(); play(["BJ:"+name]); break; }
       if(!cost && cost!==0 || RARE.some(r=>r[1]===id)){ break; }
       if(cost>coins(k)){ bArm=null; buddySheet(k); play(["BJ:"+name, "needcoins"]); break; }
       if(bArm===id){ setTimeout(()=>checkStickers(k),50); b.spent=(b.spent||0)+cost; b.owned=b.owned.concat(id); wearToggle(b,slot,id,true); b.made=true; bArm=null; saveBuddy(k); buddySheet(k); render(); party([e,"🪙","✨"]); play(["coin","magic","bought"]); }
