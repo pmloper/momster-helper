@@ -12,6 +12,8 @@ import { execFile } from 'node:child_process';
 
 const REPO = path.resolve(import.meta.dirname, '..');
 let fails = 0;
+// the tests must not pick up a real key (or proxy) from the machine they run on
+const cleanEnv = () => { const e = { ...process.env }; for (const k of ['ELEVENLABS_API_KEY', 'ELEVEN_LABS_API', 'ELEVEN_LABS_API_KEY', 'XI_API_KEY', 'HTTPS_PROXY', 'https_proxy']) delete e[k]; return e; };
 const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fails++; };
 const KEY = 'sk-test-DO-NOT-LEAK-1234';
 
@@ -37,7 +39,7 @@ function workdir() {
   fs.writeFileSync(path.join(d, 'audio/speak-overrides.json'), '{}');
   return d;
 }
-const run = (cwd, args, env = {}) => new Promise(resolve => execFile(process.execPath, [path.join(REPO, 'tools/generate-clips.mjs'), ...args], { cwd, env: { ...process.env, ELEVENLABS_BASE_URL: base, ...env } }, (err, stdout, stderr) => resolve({ code: err ? err.code : 0, out: stdout + stderr })));
+const run = (cwd, args, env = {}) => new Promise(resolve => execFile(process.execPath, [path.join(REPO, 'tools/generate-clips.mjs'), ...args], { cwd, env: { ...cleanEnv(), ELEVENLABS_BASE_URL: base, ...env } }, (err, stdout, stderr) => resolve({ code: err ? err.code : 0, out: stdout + stderr })));
 const withKey = { ELEVENLABS_API_KEY: KEY };
 const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
 

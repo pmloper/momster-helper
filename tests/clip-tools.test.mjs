@@ -9,9 +9,11 @@ import { execFile, execFileSync } from 'node:child_process';
 
 const REPO = path.resolve(import.meta.dirname, '..');
 let fails = 0;
+// the tests must not pick up a real key (or proxy) from the machine they run on
+const cleanEnv = () => { const e = { ...process.env }; for (const k of ['ELEVENLABS_API_KEY', 'ELEVEN_LABS_API', 'ELEVEN_LABS_API_KEY', 'XI_API_KEY', 'HTTPS_PROXY', 'https_proxy']) delete e[k]; return e; };
 const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fails++; };
 try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); } catch (e) { console.log('SKIP ffmpeg is not installed'); process.exit(0); }
-const run = (cwd, script, args, env = {}) => new Promise(r => execFile(process.execPath, [path.join(REPO, 'tools', script), ...args], { cwd, env: { ...process.env, ...env } }, (err, stdout, stderr) => r({ code: err ? err.code : 0, out: stdout + stderr })));
+const run = (cwd, script, args, env = {}) => new Promise(r => execFile(process.execPath, [path.join(REPO, 'tools', script), ...args], { cwd, env: { ...cleanEnv(), ...env } }, (err, stdout, stderr) => r({ code: err ? err.code : 0, out: stdout + stderr })));
 const tone = (file, graph) => execFileSync('ffmpeg', ['-y', '-v', 'quiet', '-filter_complex', graph, '-map', '[o]', '-b:a', '128k', file], { stdio: 'ignore' });
 const probe = f => parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f]).toString());
 
