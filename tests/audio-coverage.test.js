@@ -152,7 +152,9 @@ async function run(){
     const lit = []; for(const m of srcAll.matchAll(/"BJ:([^"\n]+)"(\s*[+])?/g)){ if(!m[2]) lit.push(m[1]); }
     const litKeys = JSON.parse(await ev(`JSON.stringify(${JSON.stringify([...new Set(lit)])}.map(t=>({src:"literal in source",raw:"BJ:"+t,id:textKey(t),text:t})))`));
     // toot reactions are a list inside tootAttack()
-    const L = (srcAll.match(/const L=\[([^\]]*)\]/)||["",""])[1].match(/"[^"]+"/g)||[]; const tootLines = L.map(s=>s.slice(1,-1)).filter(t=>!/blame/i.test(t));
+    const tootBody = (srcAll.match(/const L=\[[\s\S]*?setTimeout\(\(\)=>\{ const old=boss/)||[""])[0];
+    const tootLines = (tootBody.match(/"[^"\n]+"/g)||[]).map(x=>x.slice(1,-1)).filter(t=>/[a-z]/i.test(t) && t.length>3 && !/^I blame |^const |boss$/.test(t));
+    ok(tootLines.length===10, "found the villain's ten toot reactions in the source ("+tootLines.length+")");
     const tootKeys = JSON.parse(await ev(`JSON.stringify(${JSON.stringify([...new Set(tootLines)])}.map(t=>({src:"toot reaction",raw:"BJ:"+t,id:textKey(t),text:t})))`));
     const all = found.concat(litKeys, tootKeys);
 
