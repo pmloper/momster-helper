@@ -1,5 +1,8 @@
 {
-  "_readme": "Use this when a line is read wrong. Key = the line's key in audio/lines.csv, value = the exact words to send to the voice (respell it: 'sock-cerer' -> 'sock sir-er'). The line's own text, and so its clip name, never changes.",
-  "t_finish-a-whole-group-of-jobs-to-earn_45c9238b": "Finish a whole group of jobs to earn coins.",
-  "t_finish-a-whole-group-of-jobs-to-earn-two_d6751ea6": "Finish a whole group of jobs to earn coins. Two hands: two toys, or a toy and a pet."
+ "_readme": "Use this when a line is read wrong. Key = the line's key in audio/lines.csv, value = the exact words to send to the voice (respell it: 'sock-cerer' -> 'sock sir-er'). The line's own text, and so its clip name, never changes.",
+ "t_finish-a-whole-group-of-jobs-to-earn_45c9238b": "Finish a whole group of jobs to earn coins.",
+ "t_finish-a-whole-group-of-jobs-to-earn-two_d6751ea6": "Finish a whole group of jobs to earn coins. Two hands: two toys, or a toy and a pet.",
+ "nm_beau": "Bo",
+ "nm_nevaeh": "Neh-vay-uh",
+ "nm_thea": "Thee-uh"
 }
