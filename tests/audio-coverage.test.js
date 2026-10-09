@@ -2,7 +2,7 @@
 // A clip is named after its exact text, so a line that is missing here is silent in the app and an edited line orphans its clip.
 //   * Spoken lines: collected by running the app's own data tables and flows in a real browser (jobs, prizes, missions, villain
 //     taunts and moods, jokes, combos, ranks, shop items, intro texts...) plus every literal "BJ:" line in the source.
-//   * Kid-name sentences are reported by template (they are generated per name, not listed in the CSV).
+//   * Kid-name sentences are reported by template (stitched from lead-in, name and tail clips; the pieces are listed in the CSV).
 //   * Known dynamic lines (they contain a number or a name that changes) cannot be recorded one by one; they are listed, not failed.
 //   * On-screen text with no matching line is reported (non-failing) for the tap-to-hear work.
 // Usage: node tests/audio-coverage.test.js   (AUDIO_REPORT=1 prints every gap; CHROME env var overrides the browser path)
@@ -167,7 +167,7 @@ async function run(){
     const DYNAMIC = [
       "Numbers on screen (health, damage, star and coin counts, \"N family toots!\"): not spoken; only the number words 6 to 100 are, for \"N more to go!\"",
       "A family's own text: custom jobs, prizes and special missions (generated per family, or silent)",
-      "Kid-name sentences: hi, justme, blame, ready_hero/princess/knight/ninja (generated per name)"
+      "Kid-name sentences: hi, justme, blame, ready_hero/princess/knight/ninja (stitched from lead-in + name + tail clips; names are nm_<slug> rows)"
     ];
     const dynamicIds = a => false;
     const missing = new Map();

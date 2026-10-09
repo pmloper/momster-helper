@@ -15,15 +15,24 @@ After adding or removing files, run `node tools/build-audio-manifest.mjs` to ref
 
 ## Kid names
 
-Sentences that include a kid's name are one generated clip per name and template, at
-`audio/names/<template>/<name-slug>.mp3` (slug = lowercase, accents removed, other characters become `-`).
-Templates: `hi`, `justme`, `blame`, `ready_hero`, `ready_princess`, `ready_knight`, `ready_ninja`.
+A sentence with a kid's name is stitched from three clips played back to back: a lead-in, the name on its own, and for the hero-style lines a tail.
 
-1. Put one first name per line in a text file.
-2. `node tools/names-sentences.mjs names.txt > audio/names-to-generate.csv` gives the exact sentence and file path for each clip.
-3. Generate the clips, then `node tools/build-audio-manifest.mjs`.
+| Sentence | Pieces (keys in `momster/`) |
+|---|---|
+| `Hi <name>!` | `nlead_hi` + `nm_<slug>` |
+| `Back to just <name>!` | `nlead_justme` + `nm_<slug>` |
+| `I blame <name>!` | `nlead_blame` + `nm_<slug>` |
+| `Super / Princess / Knight / Ninja <name>, ready to help Momster!` | `nlead_hero / princess / knight / ninja` + `nm_<slug>` + `ntail_ready` |
 
-A name with no clip is read by the device voice (whole sentence).
+`<slug>` = lowercase, accents removed, other characters become `-`. The lead-ins and tail are ordinary rows in `lines.csv`. If any piece is missing, the device voice reads the whole sentence instead.
+
+Common names ship with the app (`audio/common-names.txt`, about 250):
+
+1. `node tools/add-names.mjs audio/common-names.txt` adds a `nm_<slug>` row to `lines.csv` for each name not already listed.
+2. Generate, check, review and promote them like any other line (`--category "kid name"`).
+3. A name that comes out wrong is fixed with a respelling in `speak-overrides.json` under its `nm_<slug>` key.
+
+Names that are not in the list are generated on demand once a family enters them (needs Convex; not built yet).
 
 ## Momster's tutorial
 

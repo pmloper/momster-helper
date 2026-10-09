@@ -1130,11 +1130,16 @@ function curVoice(){ const v=settings && settings.voice; return MOMSTER_VOICES.i
    Only the short sound effects are embedded in this page. */
 let soundKid = null;   // the kid whose voice the sound sheet edits when it is opened from the home screen (no kid selected)
 const AUDIO_DIR = "audio/", DEFAULT_VOICE_DIR = "momster";
-let AUDIO_INDEX = {}, NAME_INDEX = {};   // voice folder -> Set of line keys with a file; name template -> Set of name slugs
+let AUDIO_INDEX = {};   // voice folder -> Set of line keys with a file
 function loadAudioIndex(){ try{ fetch(AUDIO_DIR+"manifest.json",{cache:"no-cache"}).then(r=>r.ok?r.json():{}).then(m=>{
-  const ix={}, nx={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); });
-  Object.keys((m&&m.names)||{}).forEach(t=>{ if(Array.isArray(m.names[t])) nx[t]=new Set(m.names[t]); }); AUDIO_INDEX=ix; NAME_INDEX=nx; }).catch(()=>{}); }catch(e){} }
-const nameFile = (t, n) => { const sl=nameSlug(n); return sl && NAME_INDEX[t] && NAME_INDEX[t].has(sl) ? AUDIO_DIR+"names/"+t+"/"+sl+".mp3" : null; };
+  const ix={}; Object.keys(m||{}).forEach(v=>{ if(Array.isArray(m[v])) ix[v]=new Set(m[v]); }); AUDIO_INDEX=ix; }).catch(()=>{}); }catch(e){} }
+// A kid's name is stitched from three clips: a lead-in, the name on its own, and sometimes a tail ("Super" + Emma + "ready to help Momster!").
+// Only when every piece has a clip; otherwise the device voice reads the whole sentence (see nextClip).
+const NAME_PARTS = { hi:["nlead_hi"], justme:["nlead_justme"], blame:["nlead_blame"],
+  ready_hero:["nlead_hero","ntail_ready"], ready_princess:["nlead_princess","ntail_ready"], ready_knight:["nlead_knight","ntail_ready"], ready_ninja:["nlead_ninja","ntail_ready"] };
+function nameParts(t, n){ const p=NAME_PARTS[t], sl=nameSlug(n); if(!p || !sl) return null;
+  const keys=[p[0], "nm_"+sl].concat(p[1]?[p[1]]:[]);
+  return keys.every(x=>voiceFile(x)) ? keys.map(x=>"NP:"+x) : null; }
 loadAudioIndex();
 // Momster's voice (a family's own recording will come first here later). Null means no file, so nothing plays.
 function voiceFile(k){ const cv=curVoice(), dirs=cv===DEFAULT_VOICE_DIR ? [DEFAULT_VOICE_DIR] : [cv,DEFAULT_VOICE_DIR];
@@ -1161,9 +1166,10 @@ const MOMSTER_CLIPS = Store.get("momster_voice") || {}; // recorded mom voice li
 function nextClip(){
   const k=queue.shift(); if(!k) return;
   // Kid-name sentence: generated clip, else the device voice reads the whole sentence.
-  if(k.startsWith("N:")){ const i=k.indexOf(":",2), t=k.slice(2,i), n=k.slice(i+1), f=nameFile(t,n);
-    if(f) return playUrl(f,k);
+  if(k.startsWith("N:")){ const i=k.indexOf(":",2), t=k.slice(2,i), n=k.slice(i+1), parts=nameParts(t,n);
+    if(parts){ queue.unshift(...parts); return nextClip(); }
     return enVoices().length ? speakName(nameLineText(t,n), nextClip) : nextClip(); }
+  if(k.startsWith("NP:")){ const f=voiceFile(k.slice(3)); return f ? playUrl(f,k) : nextClip(); }
   // Any other written line plays its generated clip, or nothing if the clip does not exist yet.
   if(k.startsWith("BJ:")){ const f=voiceFile(textKey(k.slice(3))); return f ? playUrl(f,k) : nextClip(); }
   if(k.startsWith("V:")){ const i=k.indexOf(":",2), f=villainFile(k.slice(2,i), textKey(k.slice(i+1))); return f ? playUrl(f,k) : nextClip(); }
