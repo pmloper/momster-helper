@@ -1220,13 +1220,24 @@ function stitchCtxGet(){ try{ if(!stitchCtx){ const AC=window.AudioContext||wind
 function stitchLoad(url){ if(!stitchBuf.has(url)){ const ctx=stitchCtx||stitchCtxGet();
   stitchBuf.set(url, fetch(url).then(r=>{ if(!r.ok) throw new Error("clip "+r.status); return r.arrayBuffer(); }).then(b=>new Promise((ok,no)=>{ const p=ctx.decodeAudioData(b,ok,no); if(p&&p.catch) p.catch(no); })).catch(e=>{ stitchBuf.delete(url); throw e; })); }
   return stitchBuf.get(url); }
-// A card that speaks waits for a line that is already being said (a villain's reaction, say) to finish instead of cutting it off.
-// Sound effects do not count: those are short, and the card's own sound goes right over them.
-function speechPlaying(){ try{ return !!(player && player.src && !player.paused && !player.ended && curClipKey && !SFX.has(curClipKey) && curClipKey!=="music") || (stitchSrc.length>0); }catch(e){ return false; } }
-function playWhenIdle(keys){ if(!speechPlaying()) return play(keys);
-  let done=false; const go=()=>{ if(done) return; done=true; player.removeEventListener("ended",go); clearTimeout(t); setTimeout(()=>play(keys), 150); };
-  const t=setTimeout(go, 9000);   // never wait forever
-  player.addEventListener("ended", go); if(stitchSrc.length) { const last=stitchSrc[stitchSrc.length-1]; const prev=last.onended; last.onended=()=>{ if(prev) prev(); go(); }; } }
+// Speech that arrives on its own (a card, a mission announcement, a pop-up) waits for a line that is already being said instead of
+// cutting it off, and waits its turn behind other waiting speech. Sound effects do not count: they are short, and go right over.
+// With afterPrize it also waits while the "Pick your prize!" sheet is open, so the prize is picked before anything else talks.
+const speechBusy = () => { try{
+  if(stitchSrc.length>0 || underTimer) return true;
+  if(queue.some(k=>k && !SFX.has(k) && k!=="music")) return true;
+  return !!(player && player.src && !player.paused && !player.ended && curClipKey && !SFX.has(curClipKey) && curClipKey!=="music"); }catch(e){ return false; } };
+const speechPlaying = speechBusy;
+const prizeSheetOpen = () => { try{ return !!(layer && layer.querySelector(".rewards")); }catch(e){ return false; } };
+const politeQ = []; let politeTimer = null;
+function politeTick(){ const it=politeQ[0]; if(!it){ clearInterval(politeTimer); politeTimer=null; return; }
+  if(Date.now()-it.t0>90000){ politeQ.shift(); return; }                     // never wait forever
+  if(speechBusy() || (it.afterPrize && prizeSheetOpen())) return;
+  politeQ.shift(); play(it.keys); }
+function playPolite(keys, afterPrize){ if(!keys || !keys.length) return;
+  if(!politeQ.length && !speechBusy() && !(afterPrize && prizeSheetOpen())) return play(keys);
+  politeQ.push({keys, afterPrize:!!afterPrize, t0:Date.now()}); if(!politeTimer) politeTimer=setInterval(politeTick, 200); }
+const playWhenIdle = keys => playPolite(keys, false);
 let underSrc=[], underTimer=null; const sfxBuf=new Map();   // sound effects that play underneath the voice; decoded ahead of time
 function stopStitch(){ stitchTok++; stitchSrc.forEach(x=>{ try{ x.onended=null; x.stop(); }catch(e){} }); stitchSrc=[];
   underSrc.forEach(x=>{ try{ x.stop(); }catch(e){} }); underSrc=[]; clearTimeout(underTimer); underTimer=null; }
@@ -1866,14 +1877,14 @@ function playJoke(k, cat){ const {all,e}=jokeEntry(k,cat), keys=[]; if(!e.said){
 // After a group is finished the joke is offered on a card: the kid taps the card to hear it (tapping anywhere else just closes it).
 function jokeOffer(k, cat){ let c=null; popup(()=>{ c=document.createElement("div"); c.className="cheer tapcard jokecard";
   c.innerHTML='<div class="big">🤣</div><div>Joke time!</div><div class="tapnote">Tap here to hear a joke</div>';
-  c.addEventListener("click",()=>{ c.remove(); playJoke(k, cat); }); document.body.appendChild(c); play(["BJ:Tap the card to hear a joke!"]); }, 0, ()=>!!(c && c.isConnected)); }
+  c.addEventListener("click",()=>{ c.remove(); playJoke(k, cat); }); document.body.appendChild(c); playPolite(["BJ:Tap the card to hear a joke!"], false); }, 0, ()=>!!(c && c.isConnected)); }
 // Non-readers mode: read UI text out loud.
 // A tap anywhere that is not on a "tap to continue" card closes it (and does nothing else).
 document.addEventListener("click", e=>{ const c=document.querySelector(".cheer.tapcard"); if(!c || c.contains(e.target) || (e.target.closest && e.target.closest("#devBar"))) return; e.preventDefault(); e.stopPropagation(); c.remove(); }, true);
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
 // Non-reader mode: play the generated clip for each written line (silent if a clip does not exist yet).
-function sayRead(lines){ if(!readsAll()) return; const keys=(lines||[]).filter(Boolean).map(t=>"BJ:"+t); if(keys.length) play(keys); }
+function sayRead(lines){ if(!readsAll()) return; const keys=(lines||[]).filter(Boolean).map(t=>"BJ:"+t); if(keys.length) playPolite(keys, true); }
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- Fun layer: eggs, monster, stickers, dance, silly twists, seasons ---------- */
@@ -2044,7 +2055,7 @@ function dmgPopNow(n){
     <button class="chip go" onclick="this.closest('.dmgpop-ov').remove()" style="margin-top:10px">💪 Keep helping Momster!</button>
   </div>`;
   document.body.appendChild(o);
-  try{ play([].concat(firstToday?["BJ:Every chore you finish takes health from the villain!"]:[], [villainKey(m,react), "momster_"+(left<=0?"win":(pct<=35?"almost":"cheer"))])); }catch(e){}
+  try{ playPolite([].concat(firstToday?["BJ:Every chore you finish takes health from the villain!"]:[], [villainKey(m,react), "momster_"+(left<=0?"win":(pct<=35?"almost":"cheer"))]), false); }catch(e){}
 }
 /* How long the quick damage pop (after each job) stays on screen. The bigger damage card (after a routine) stays until it is tapped. */
 const POW_MS = 3500;
@@ -3173,7 +3184,7 @@ document.addEventListener("click", e=>{
   const a=t.dataset.a, k=view.kid;
   switch(a){
     case "kid": view.kid=t.dataset.k; view.routine=defaultRoutine(); render();
-      { const ev=activeEvent(); if(ev && !loadLocal("evsaid_"+ev.day+"_"+ev.id+"_"+t.dataset.k)){ saveLocal("evsaid_"+ev.day+"_"+ev.id+"_"+t.dataset.k,1); setTimeout(()=>{ party(["🚨",ev.e,"💪"]); play(["BJ:Emergency! "+ev.title+" "+ev.t+"!"]); }, 2500); } }
+      { const ev=activeEvent(); if(ev && !loadLocal("evsaid_"+ev.day+"_"+ev.id+"_"+t.dataset.k)){ saveLocal("evsaid_"+ev.day+"_"+ev.id+"_"+t.dataset.k,1); setTimeout(()=>{ party(["🚨",ev.e,"💪"]); playPolite(["BJ:Emergency! "+ev.title+" "+ev.t+"!"], true); }, 2500); } }
       { const r=ROUTINES.find(x=>x.id===view.routine);
         if(!weeks[view.kid].reward && REWARDS.length){ play([KIDS[view.kid].hi,"pickprize"]); rewardSheet(view.kid); }
         else play([KIDS[view.kid].hi, ...(loadLocal("mon_"+WEEK)?[]:(saveLocal("mon_"+WEEK,1),["monsterhi",monster()[4]?null:monster()[0]])), jobsFor(r,todayDow()).length? r.snd : "r_none", (view.routine==="am"&&raceOpen(view.kid)&&!(weeks[view.kid].race||{})[ymd(new Date())])?"racego":null]); } break;
@@ -3415,7 +3426,7 @@ function tapJob(k, id){ settleCoins(k);
     { const pw=Math.random()<.35||ms, gn=Math.random()<.2; play(["ding", job.snd].concat(isWeak(id)?["BJ:That one hurts the villain double!"]:[], pw?(styleOf(k)?STYLE_SFX[styleOf(k)[0]]:["punch",pick("p")]):[pick("c")], moreKeys(left), gn?["BJ:"+N_LINES[Math.floor(Math.random()*N_LINES.length)]]:[])); } }
   if(comboList().length>cbB) setTimeout(()=>comboFx(r), 2600);
   checkMonster(); checkStickers(k);
-  if(!left && eggReady(k)) setTimeout(()=>popup(()=>{ eggTaps=0; eggSheet(k); play(["eggearn"]); },0,()=>!!layer.innerHTML), 3200);
+  if(!left && eggReady(k)) setTimeout(()=>popup(()=>{ eggTaps=0; eggSheet(k); playPolite(["eggearn"], false); },0,()=>!!layer.innerHTML), 3200);
 }
 function clearLp(){ clearTimeout(lpTimer); lpTimer=null; document.querySelectorAll(".tile.pressing").forEach(x=>x.classList.remove("pressing")); }
 let lpStart=null;
