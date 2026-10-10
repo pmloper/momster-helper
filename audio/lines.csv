@@ -50,11 +50,11 @@ pow3,momster,battle pop,"Take that, villain!",NEW,yes,,,momster
 pow4,momster,battle pop,Bonk!,existing,yes,,,momster
 monsterhi,momster,general,Uh oh! A villain is here! Do your jobs to beat it!,NEW,yes,,,momster
 monsterwin,momster,general,You beat the villain! Hooray! Bonus coins for everyone!,NEW,yes,,,momster
-m_sock,momster,villain name,The Stinky Sock Goblin!,existing,yes,,,momster
-m_crumb,momster,villain name,The Crumb Gobbler!,existing,yes,,,momster
-m_dust,momster,villain name,The Dust Bunny Boss!,existing,yes,,,momster
-m_toy,momster,villain name,The Toy Tornado!,existing,yes,,,momster
-m_slime,momster,villain name,The Sludge Slime!,existing,yes,,,momster
+m_sock,momster,villain name,Stinky Sock Goblin,existing,yes,,,momster
+m_crumb,momster,villain name,Captain Crumbs,existing,yes,,,momster
+m_dust,momster,villain name,Dust Bunny Boss,existing,yes,,,momster
+m_toy,momster,villain name,Toy Tornado,existing,yes,,,momster
+m_slime,momster,villain name,Sludge Slime,existing,yes,,,momster
 sticker,momster,general,New sticker for your sticker book!,existing,yes,,,momster
 dance,momster,general,Dance party!,existing,yes,,,momster
 goodnight,momster,general,Time for bed! Good night!,existing,yes,,,momster
