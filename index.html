@@ -683,8 +683,9 @@ body{background-image:radial-gradient(color-mix(in srgb,var(--gold) 18%,transpar
 .bface{border:0;background:none;color:inherit;cursor:pointer;padding:0;overflow:visible;-webkit-tap-highlight-color:transparent}
 .bface.poked{animation:poke .7s cubic-bezier(.3,1.6,.5,1)}
 @keyframes poke{0%{transform:scale(1)}20%{transform:scale(1.35,.7)}45%{transform:scale(.85,1.3) translateY(-14px) rotate(-10deg)}70%{transform:scale(1.1,.9) rotate(8deg)}100%{transform:scale(1)}}
-.taunt{position:absolute;right:calc(100% + 6px);top:-10px;z-index:5;background:var(--card);color:var(--ink);border:3px solid #E5484D;border-radius:18px 18px 4px 18px;padding:8px 14px;font-family:var(--disp);font-weight:700;font-size:clamp(15px,2.4vh,20px);line-height:1.25;width:max-content;max-width:260px;text-align:left;box-shadow:var(--shadow);animation:tauntin 2.6s ease-out forwards;pointer-events:none}
-@keyframes tauntin{0%{opacity:0;transform:scale(.4) translateX(20px)}12%{opacity:1;transform:scale(1.05)}20%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
+.taunt{position:absolute;right:calc(100% + 6px);top:-10px;z-index:5;background:var(--card);color:var(--ink);border:3px solid #E5484D;border-radius:18px 18px 4px 18px;padding:8px 14px;font-family:var(--disp);font-weight:700;font-size:clamp(15px,2.4vh,20px);line-height:1.25;width:max-content;max-width:260px;text-align:left;box-shadow:var(--shadow);animation:tauntin .45s ease-out forwards;pointer-events:none;transition:opacity .3s}
+.taunt.out{opacity:0!important}
+@keyframes tauntin{0%{opacity:0;transform:scale(.4) translateX(20px)}60%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
 .crumb{position:absolute;left:50%;top:40%;font-size:20px;pointer-events:none;animation:crumb 1s ease-out forwards}
 @keyframes crumb{0%{transform:translate(-50%,0) scale(.5);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),var(--dy)) rotate(200deg) scale(1);opacity:0}}
 .boss{overflow:visible;position:relative}
@@ -2015,10 +2016,17 @@ const TAUNTS = {
   m_stink:["Silent but deadly: my SPECIAL move!","Whoever smelt it, DEALT it!","I blame the dog! I ALWAYS blame the dog!","You cannot defeat what you cannot inhale!"]};
 const KO_LINES = ["Okay okay, you win!","My mess... it's gone!","I'll be back next week!","Tell my mess I loved her!","I'm going to be a mess at GRANDMA'S house!","Fine! Take the tiara. It itched anyway!"];
 let tauntN = 0;
+// The villain's speech bubble stays up for as long as he is talking (at least 2.6 seconds), then fades.
+function holdBubble(b, minMs){ const t0=Date.now(); let quiet=0;
+  const gone=()=>{ b.classList.add("out"); setTimeout(()=>b.remove(),320); };
+  const iv=setInterval(()=>{ if(!b.isConnected){ clearInterval(iv); return; } const age=Date.now()-t0; if(age<minMs) return;
+    if(age>14000){ clearInterval(iv); gone(); return; }
+    if(speechBusy()){ quiet=0; return; }
+    if(!quiet) quiet=Date.now(); if(Date.now()-quiet>900){ clearInterval(iv); gone(); } }, 150); }
 function bossTap(el){ const m=monster(), left=monsterLeft()>0, lines=left?(TAUNTS[m[0]]||["Grrr! Mess forever!"]).concat([moodLine()]):KO_LINES, vj=VJOKES[m[0]], line=(left&&vj&&tauntN%3===2)? vj[(tauntN++/3|0)%vj.length] : lines[tauntN++ % lines.length];
   el.classList.remove("poked"); void el.offsetWidth; el.classList.add("poked"); clearTimeout(el._pk); el._pk=setTimeout(()=>el.classList.remove("poked"),750);
   const old=el.querySelector(".taunt"); if(old) old.remove();
-  const b=document.createElement("span"); b.className="taunt"; b.textContent=line; el.appendChild(b); setTimeout(()=>b.remove(),2600);
+  const b=document.createElement("span"); b.className="taunt"; b.textContent=line; el.appendChild(b); holdBubble(b,2600);
   for(let i=0;i<5;i++){ const c=document.createElement("span"); c.className="crumb"; c.textContent=m[3]; c.style.setProperty("--dx",(Math.random()*120-60)+"px"); c.style.setProperty("--dy",(-30-Math.random()*50)+"px"); c.style.animationDelay=(i*40)+"ms"; el.appendChild(c); setTimeout(()=>c.remove(),1100); }
   play(["boing",villainKey(m,line)]); }
 document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="bossTap"]'); if(t) bossTap(t); });
@@ -2173,9 +2181,10 @@ function tootAttack(el){ const boss=document.querySelector(".boss .bface"); if(!
   if(tootsOn()) toot(); else play(["whoosh"]);
   { const c=tootN(); if([10,25,50,100,200,500].includes(c)){ const said=c>=500?"The dog is packing its bags.":c>=100?"The EPA has been notified. Twice.":"The dog is taking the blame."; setTimeout(()=>{ cheer("💨", c+" family toots! "+said, ["BJ:"+c+" family toots!", "BJ:"+said]); },1400); } }
   const L=["EWWW! Rude!","P-U! Who did that?!","My nose! MY NOSE!","That's my move!","Gross! Even I have standards!","Whoever smelt it, dealt it!","That should be ILLEGAL!","My eyes are WATERING!"]
-    .concat(["The dog did it! I saw him!","That one smelled like JUSTICE!"]);
+    .concat(["The dog did it! I saw him!","That one smelled like JUSTICE!",
+    "Excuse YOU!","Was that a toot or a tiny thunderstorm?","Open a window! Open ALL the windows!","My whole face is wilting!","That one had a FLAVOR!","Somebody call the toot police!","Did a trumpet just sneeze?","Phew! I can see the smell!","Hold on, I need a gas mask!"]);
   setTimeout(()=>{ const old=boss.querySelector(".taunt"); if(old) old.remove(); const line=L[Math.floor(Math.random()*L.length)]; const t=document.createElement("span"); t.className="taunt"; t.textContent="🤢 "+line;
-    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); if(!document.querySelector(".cheer.tapcard")) play([villainKey(monster(),line)]); setTimeout(()=>t.remove(),2600); }, 700); }   // the villain talks over nothing: a banner that is still up keeps its voice
+    boss.appendChild(t); boss.classList.remove("poked"); void boss.offsetWidth; boss.classList.add("poked"); sr("The villain says: "+line); if(!document.querySelector(".cheer.tapcard")) play([villainKey(monster(),line)]); holdBubble(t,2600); }, 700); }   // the villain talks over nothing: a banner that is still up keeps its voice
 function sideSilly(el){ const r=Math.floor(Math.random()*6); el.classList.remove("silly"); void el.offsetWidth; el.classList.add("silly");
   const puff=(e)=>{ const p=document.createElement("span"); p.className="spuff"; p.textContent=e; el.appendChild(p); setTimeout(()=>p.remove(),1100); };
   if(r===0){ puff("💨"); if(tootsOn()) toot(); play(["BJ:Oops! Excuse me!"]); }

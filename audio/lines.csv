@@ -1112,3 +1112,12 @@ t_500-family-toots_d45132d6,momster,toot milestone,500 family toots!,NEW,yes,pla
 t_you-earned-a-coin_315f69b0,momster,app line,You earned a coin!,NEW,yes,card after finishing a routine (1 coin),,momster
 t_you-earned-2-coins_c796f206,momster,app line,You earned 2 coins!,NEW,yes,card after finishing a routine once the villain is beaten (2 coins),,momster
 t_tap-the-card-to-hear-a-joke_29f44893,momster,app line,Tap the card to hear a joke!,NEW,yes,"joke card after finishing a group of jobs (does not say Joke time: the Joke time clip plays once, with the first joke)",,momster
+t_excuse-you_4e8f3e26,momster,toot reaction,Excuse YOU!,NEW,yes,villain reacts after a toot,,villains:any
+t_was-that-a-toot-or-a-tiny-thunderstorm_bcb6f42e,momster,toot reaction,Was that a toot or a tiny thunderstorm?,NEW,yes,villain reacts after a toot,,villains:any
+t_open-a-window-open-all-the-windows_40b30465,momster,toot reaction,Open a window! Open ALL the windows!,NEW,yes,villain reacts after a toot,,villains:any
+t_my-whole-face-is-wilting_5a7aba9e,momster,toot reaction,My whole face is wilting!,NEW,yes,villain reacts after a toot,,villains:any
+t_that-one-had-a-flavor_e0556fc9,momster,toot reaction,That one had a FLAVOR!,NEW,yes,villain reacts after a toot,,villains:any
+t_somebody-call-the-toot-police_8b44eb7f,momster,toot reaction,Somebody call the toot police!,NEW,yes,villain reacts after a toot,,villains:any
+t_did-a-trumpet-just-sneeze_5f97398d,momster,toot reaction,Did a trumpet just sneeze?,NEW,yes,villain reacts after a toot,,villains:any
+t_phew-i-can-see-the-smell_565bc529,momster,toot reaction,Phew! I can see the smell!,NEW,yes,villain reacts after a toot,,villains:any
+t_hold-on-i-need-a-gas-mask_393f43b1,momster,toot reaction,"Hold on, I need a gas mask!",NEW,yes,villain reacts after a toot,,villains:any

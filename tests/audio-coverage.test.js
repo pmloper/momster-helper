@@ -159,7 +159,7 @@ async function run(){
     // toot reactions are a list inside tootAttack()
     const tootBody = (srcAll.match(/const L=\[[\s\S]*?setTimeout\(\(\)=>\{ const old=boss/)||[""])[0];
     const tootLines = (tootBody.match(/"[^"\n]+"/g)||[]).map(x=>x.slice(1,-1)).filter(t=>/[a-z]/i.test(t) && t.length>3 && !/^I blame |^const |boss$/.test(t));
-    ok(tootLines.length===10, "found the villain's ten toot reactions in the source ("+tootLines.length+")");
+    ok(tootLines.length===19, "found the villain's nineteen toot reactions in the source ("+tootLines.length+")");
     const tootKeys = JSON.parse(await ev(`JSON.stringify(${JSON.stringify([...new Set(tootLines)])}.map(t=>({src:"toot reaction",raw:"V:any:"+t,id:textKey(t),text:t,villain:"any"})))`));
     const all = found.concat(litKeys, tootKeys);
 
