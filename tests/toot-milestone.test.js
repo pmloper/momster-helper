@@ -86,6 +86,21 @@ async function run(){
     ok(v && vEnd && m, "the villain's line and the milestone both played: " + JSON.stringify(evs.map(e=>e.join(" "))));
     ok(v && vEnd && m && m[2] >= vEnd[2], "the milestone waits until the villain has finished his line (villain ended at " + (vEnd&&vEnd[2]) + " ms, milestone started at " + (m&&m[2]) + " ms)");
     ok(await ev(`(document.querySelector(".cheer")||{}).textContent||""`).then(t=>t.includes("10 family toots!")), "the card itself is already on screen while it waits");
+    // Every milestone has its own punchline, and every one is recorded
+    await send("Page.navigate", { url: URL_ }); await ready(); await sleep(1500);
+    const punch = JSON.parse(await ev(`JSON.stringify(TOOT_PUNCH)`));
+    const counts = Object.keys(punch).map(Number);
+    ok(counts.join() === "10,25,50,100,200,500", "milestones are 10, 25, 50, 100, 200 and 500");
+    ok(new Set(Object.values(punch)).size === counts.length, "each milestone has a different punchline");
+    const recorded = JSON.parse(await ev(`JSON.stringify(Object.values(TOOT_PUNCH).concat(Object.keys(TOOT_PUNCH).map(c=>c+" family toots!")).filter(t=>!voiceFile(textKey(t))))`));
+    ok(recorded.length === 0, "the count and the punchline are recorded for every milestone" + (recorded.length ? ": missing " + recorded.join("; ") : ""));
+    for (const c of [25, 200]) {
+      await ev(`saveLocal("toots", ${c - 1}); view.kid=null; render(); true`); await sleep(700);
+      await ev(`document.querySelector('[data-a="toot"]').click(); true`); await sleep(2200);
+      const t = await ev(`(document.querySelector(".cheer")||{}).textContent||""`);
+      ok(t.includes(c + " family toots!") && t.includes(punch[c]), "the " + c + " card shows its own punchline: " + t);
+      await ev(`document.querySelectorAll(".cheer").forEach(x=>x.remove()); popQ.length=0; popBusy=false; true`);
+    }
   } catch(e){ fails++; console.log("EXCEPTION "+(e && e.stack || e)); }
   finally { try { ws.close(); } catch(e){} try { proc.kill(); } catch(e){} try { server.close(); } catch(e){} }
   console.log(fails ? "\nFAILED: "+fails+" check(s)" : "\nALL PASS");

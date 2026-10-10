@@ -1121,3 +1121,6 @@ t_somebody-call-the-toot-police_8b44eb7f,momster,toot reaction,Somebody call the
 t_did-a-trumpet-just-sneeze_5f97398d,momster,toot reaction,Did a trumpet just sneeze?,NEW,yes,villain reacts after a toot,,villains:any
 t_phew-i-can-see-the-smell_565bc529,momster,toot reaction,Phew! I can see the smell!,NEW,yes,villain reacts after a toot,,villains:any
 t_hold-on-i-need-a-gas-mask_393f43b1,momster,toot reaction,"Hold on, I need a gas mask!",NEW,yes,villain reacts after a toot,,villains:any
+t_the-air-freshener-has-filed-a-complaint_8a1c189e,momster,toot milestone,The air freshener has filed a complaint.,NEW,yes,plays with the toot milestone banner (after the count),,momster
+t_even-the-dog-left-the-room_49f7d0fd,momster,toot milestone,Even the dog left the room.,NEW,yes,plays with the toot milestone banner (after the count),,momster
+t_scientists-want-to-study-this_9f1b2fea,momster,toot milestone,Scientists want to study this.,NEW,yes,plays with the toot milestone banner (after the count),,momster

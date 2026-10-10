@@ -2167,6 +2167,8 @@ const VJOKES = {m_sock:["What do you call a sock with a hole? HOLY sock! Hee hee
   m_stink:["What do you call a gassy knight? SIR TOOTS-A-LOT! That's me!","My armor doesn't stink! Okay, it does. BADLY!"]};
 const tootsOn = () => settings.toots!==false;
 const tootN = () => loadLocal("toots")||0;
+// Each family-toot milestone has its own punchline.
+const TOOT_PUNCH = {10:"The dog is taking the blame.", 25:"The air freshener has filed a complaint.", 50:"Even the dog left the room.", 100:"The EPA has been notified. Twice.", 200:"Scientists want to study this.", 500:"The dog is packing its bags."};
 const tootCount = n => { const v=tootN()+(n||0); saveLocal("toots",v); return v; };
 function toot(){ if(!tootsOn() || soundLevel===0) return; tootCount(1); try{ const C=window._ac||(window._ac=new (window.AudioContext||window.webkitAudioContext)()); if(C.state==="suspended") C.resume();
   const t=C.currentTime, d=.45+Math.random()*.5, o=C.createOscillator(), g=C.createGain(), f=C.createBiquadFilter(), lfo=C.createOscillator(), lg=C.createGain();
@@ -2179,7 +2181,7 @@ function tootAttack(el){ const boss=document.querySelector(".boss .bface"); if(!
   c.style.left=(a.left+a.width/2)+"px"; c.style.top=(a.top)+"px"; c.style.setProperty("--dx",(b.left-a.left)+"px"); c.style.setProperty("--dy",(b.top-a.top)+"px");
   document.body.appendChild(c); setTimeout(()=>c.remove(),1200);
   if(tootsOn()) toot(); else play(["whoosh"]);
-  { const c=tootN(); if([10,25,50,100,200,500].includes(c)){ const said=c>=500?"The dog is packing its bags.":c>=100?"The EPA has been notified. Twice.":"The dog is taking the blame."; setTimeout(()=>{ cheer("💨", c+" family toots! "+said, ["BJ:"+c+" family toots!", "BJ:"+said]); },1400); } }
+  { const c=tootN(); if([10,25,50,100,200,500].includes(c)){ const said=TOOT_PUNCH[c]; setTimeout(()=>{ cheer("💨", c+" family toots! "+said, ["BJ:"+c+" family toots!", "BJ:"+said]); },1400); } }
   const L=["EWWW! Rude!","P-U! Who did that?!","My nose! MY NOSE!","That's my move!","Gross! Even I have standards!","Whoever smelt it, dealt it!","That should be ILLEGAL!","My eyes are WATERING!"]
     .concat(["The dog did it! I saw him!","That one smelled like JUSTICE!",
     "Excuse YOU!","Was that a toot or a tiny thunderstorm?","Open a window! Open ALL the windows!","My whole face is wilting!","That one had a FLAVOR!","Somebody call the toot police!","Did a trumpet just sneeze?","Phew! I can see the smell!","Hold on, I need a gas mask!"]);
