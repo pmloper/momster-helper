@@ -3,3 +3,4 @@ artifacts/
 .env.local
 convex/_generated/
 audio/_candidates/
+dist/
