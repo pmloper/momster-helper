@@ -32,7 +32,7 @@ async function run(){
   const URL_ = "http://127.0.0.1:"+HTTP_PORT+"/index.html";
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mh-tm-"));
   const proc = spawn(CHROME, ["--headless=new","--remote-debugging-port="+CDP_PORT,"--user-data-dir="+dir,
-    "--no-first-run","--disable-gpu","--no-default-browser-check","--disable-extensions","--mute-audio","about:blank"], { stdio:"ignore" });
+    "--no-first-run","--disable-gpu","--no-default-browser-check","--disable-extensions","--mute-audio","--autoplay-policy=no-user-gesture-required","about:blank"], { stdio:"ignore" });
   let targets = null;
   for(let i=0;i<60;i++){
     try { targets = await (await fetch("http://127.0.0.1:"+CDP_PORT+"/json")).json(); if(targets.find(t=>t.type==="page")) break; }catch(e){}
@@ -63,7 +63,7 @@ async function run(){
     await ev(`localStorage.clear(); localStorage.setItem("starjobs_family", JSON.stringify(DEFAULT_FAMILY)); saveLocal("settings",{pin:"1234",goal:80,setupDone:true,avatars:{}}); saveLocal("intro_"+WEEK, 1); saveLocal("toots", 9); true`);
     await send("Page.navigate", { url: URL_ }); await ready(); await sleep(1500);
     await ev(`(function(){ window.__k=[]; const p=window.play; window.play=function(k){ window.__k.push(JSON.stringify(k)); return p.apply(this,arguments); }; view.kid=null; render(); return true; })()`); await sleep(800);
-    await ev(`document.querySelector('[data-a="toot"]').click(); true`); await sleep(2200);
+    await ev(`document.querySelector('[data-a="toot"]').click(); true`); await sleep(5500);   // the card waits for the villain to finish before it speaks
     ok((await ev(`(document.querySelector(".cheer")||{}).textContent||""`)).includes("10 family toots!"), "the 10th toot shows the milestone card");
     const keys = JSON.parse(await ev(`JSON.stringify(window.__k.map(x=>JSON.parse(x)).flat())`));
     ok(keys.includes("BJ:10 family toots!") && keys.includes("BJ:The dog is taking the blame.") && keys.indexOf("BJ:10 family toots!") < keys.indexOf("BJ:The dog is taking the blame."), "it says the count, then the funny line: " + keys.join(" , "));
@@ -75,6 +75,17 @@ async function run(){
     const after = JSON.parse(await ev(`JSON.stringify(window.__k.map(x=>JSON.parse(x)).flat())`));
     ok(!(await ev(`!!document.querySelector(".cheer.tapcard")`)), "a tap outside the card closes it");
     ok(!after.some(k=>String(k).startsWith("V:")), "and that tap did not make the villain talk over the card: " + after.join(" , "));
+    // The villain's reaction is finished before the milestone is spoken
+    await send("Page.navigate", { url: URL_ }); await ready(); await sleep(1500);
+    await ev(`saveLocal("toots", 9); view.kid=null; render(); true`); await sleep(800);
+    await ev(`(function(){ window.__ev=[]; const t0=performance.now(); const pu=window.playUrl; window.playUrl=function(u,k){ window.__ev.push(["start",String(k),Math.round(performance.now()-t0)]); return pu.apply(this,arguments); };
+      player.addEventListener("ended", ()=>window.__ev.push(["ended",String(curClipKey),Math.round(performance.now()-t0)])); return true; })()`);
+    await ev(`document.querySelector('[data-a="toot"]').click(); true`); await sleep(7000);
+    const evs = JSON.parse(await ev(`JSON.stringify(window.__ev)`));
+    const v = evs.find(e => e[0]==="start" && e[1].startsWith("V:")), vEnd = evs.find(e => e[0]==="ended" && e[1].startsWith("V:")), m = evs.find(e => e[0]==="start" && e[1]==="BJ:10 family toots!");
+    ok(v && vEnd && m, "the villain's line and the milestone both played: " + JSON.stringify(evs.map(e=>e.join(" "))));
+    ok(v && vEnd && m && m[2] >= vEnd[2], "the milestone waits until the villain has finished his line (villain ended at " + (vEnd&&vEnd[2]) + " ms, milestone started at " + (m&&m[2]) + " ms)");
+    ok(await ev(`(document.querySelector(".cheer")||{}).textContent||""`).then(t=>t.includes("10 family toots!")), "the card itself is already on screen while it waits");
   } catch(e){ fails++; console.log("EXCEPTION "+(e && e.stack || e)); }
   finally { try { ws.close(); } catch(e){} try { proc.kill(); } catch(e){} try { server.close(); } catch(e){} }
   console.log(fails ? "\nFAILED: "+fails+" check(s)" : "\nALL PASS");

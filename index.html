@@ -1220,6 +1220,13 @@ function stitchCtxGet(){ try{ if(!stitchCtx){ const AC=window.AudioContext||wind
 function stitchLoad(url){ if(!stitchBuf.has(url)){ const ctx=stitchCtx||stitchCtxGet();
   stitchBuf.set(url, fetch(url).then(r=>{ if(!r.ok) throw new Error("clip "+r.status); return r.arrayBuffer(); }).then(b=>new Promise((ok,no)=>{ const p=ctx.decodeAudioData(b,ok,no); if(p&&p.catch) p.catch(no); })).catch(e=>{ stitchBuf.delete(url); throw e; })); }
   return stitchBuf.get(url); }
+// A card that speaks waits for a line that is already being said (a villain's reaction, say) to finish instead of cutting it off.
+// Sound effects do not count: those are short, and the card's own sound goes right over them.
+function speechPlaying(){ try{ return !!(player && player.src && !player.paused && !player.ended && curClipKey && !SFX.has(curClipKey) && curClipKey!=="music") || (stitchSrc.length>0); }catch(e){ return false; } }
+function playWhenIdle(keys){ if(!speechPlaying()) return play(keys);
+  let done=false; const go=()=>{ if(done) return; done=true; player.removeEventListener("ended",go); clearTimeout(t); setTimeout(()=>play(keys), 150); };
+  const t=setTimeout(go, 9000);   // never wait forever
+  player.addEventListener("ended", go); if(stitchSrc.length) { const last=stitchSrc[stitchSrc.length-1]; const prev=last.onended; last.onended=()=>{ if(prev) prev(); go(); }; } }
 let underSrc=[], underTimer=null; const sfxBuf=new Map();   // sound effects that play underneath the voice; decoded ahead of time
 function stopStitch(){ stitchTok++; stitchSrc.forEach(x=>{ try{ x.onended=null; x.stop(); }catch(e){} }); stitchSrc=[];
   underSrc.forEach(x=>{ try{ x.stop(); }catch(e){} }); underSrc=[]; clearTimeout(underTimer); underTimer=null; }
@@ -1245,7 +1252,8 @@ function playStitched(parts){ const ctx=stitchCtxGet();
 function stitchWarm(){ try{ sfxWarm(); if(!AUDIO_READY || !stitchCtxGet()) return;
   FAMILY.kids.forEach(c=>Object.keys(NAME_PARTS).forEach(t=>{ const ks=nameParts(t,(c.name||"").trim()); if(ks) ks.forEach(k=>{ const u=voiceFile(k.slice(3)); if(u) stitchLoad(u).catch(()=>{}); }); })); }catch(e){} }
 const QUIET_KEYS = new Set(["ding","pop","coin","sparkle","magic"]); // chimes at ~55% so they don't blast
-function playUrl(u,k){ player.src=u; player.volume=QUIET_KEYS.has(k)? soundLevel*0.55 : soundLevel; const p=player.play();
+let curClipKey=null;
+function playUrl(u,k){ curClipKey=k||null; player.src=u; player.volume=QUIET_KEYS.has(k)? soundLevel*0.55 : soundLevel; const p=player.play();
   if(p&&p.then) p.then(()=>{soundOk=true;}).catch(err=>{ soundOk=false; console.warn("audio blocked",err); nextClip(); }); }
 player.addEventListener("ended", nextClip);
 let voiceLvl = (()=>{ const v=loadLocal("voiceLvl"); return (v===0||v===0.4||v===1)?v:1; })();
@@ -1849,7 +1857,7 @@ function cheer(big,text,keys,confetti,auto){ let c=null; popup(()=>{ if(confetti
   c=document.createElement("div"); c.className="cheer"+(auto?"":" tapcard"); c.innerHTML='<div class="big"></div><div></div>'+(auto?"":'<div class="tapnote">Tap to continue</div>');
   c.firstChild.textContent=big; c.children[1].textContent=text; document.body.appendChild(c);
   if(auto) setTimeout(()=>c.remove(),2400); else c.addEventListener("click",()=>c.remove());
-  if(keys) play(keys); }, 2400, auto ? null : ()=>!!(c && c.isConnected)); }
+  if(keys) playWhenIdle(keys); }, 2400, auto ? null : ()=>!!(c && c.isConnected)); }
 // Finishing a group of jobs unlocks ONE joke for that kid, that group, that day. The Joke button and the joke card both play that same joke,
 // and "Joke time!" is said only the first time it is played.
 function jokeEntry(k, cat){ const day=ymd(new Date()), all=loadLocal("jokes")||{}; if(all.day!==day){ for(const x of Object.keys(all)) delete all[x]; all.day=day; }
