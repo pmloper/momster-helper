@@ -1861,7 +1861,7 @@ function jokeOffer(k, cat){ let c=null; popup(()=>{ c=document.createElement("di
   c.addEventListener("click",()=>{ c.remove(); playJoke(k, cat); }); document.body.appendChild(c); play(["BJ:Tap the card to hear a joke!"]); }, 0, ()=>!!(c && c.isConnected)); }
 // Non-readers mode: read UI text out loud.
 // A tap anywhere that is not on a "tap to continue" card closes it (and does nothing else).
-document.addEventListener("click", e=>{ const c=document.querySelector(".cheer.tapcard"); if(!c || c.contains(e.target)) return; e.preventDefault(); e.stopPropagation(); c.remove(); }, true);
+document.addEventListener("click", e=>{ const c=document.querySelector(".cheer.tapcard"); if(!c || c.contains(e.target) || (e.target.closest && e.target.closest("#devBar"))) return; e.preventDefault(); e.stopPropagation(); c.remove(); }, true);
 const readMode = () => { try{ return loadLocal("readMode")||"readers"; }catch(e){ return "readers"; } };
 const readsAll = () => voiceLvl>0 && readMode()==="nonreaders" && soundLevel>0;
 // Non-reader mode: play the generated clip for each written line (silent if a clip does not exist yet).
@@ -1910,7 +1910,11 @@ const MONSTERS = [
  ["m_booger","Baron von Booger","🤧","👃",1,["teeth1","teeth2","plate","snack","b_sink"],"🧼 wiping & brushing","Escaped from a giant nose. Wipes boogers on the couch cushions!"],
  ["m_stink","Sir Toots-a-Lot","💨","🦨",1,["hamper","shoesdoor","h_socks","h_clothes","b_towels","bed"],"🧺 laundry & airing out","A gassy knight in stinky armor. Blames the dog for everything!"]];
 const VILLAIN_BASE = 2960;
-const monster = () => { const L=MONSTERS.length, n=Math.floor(new Date(WEEK+"T12:00:00").getTime()/(7*864e5))-VILLAIN_BASE; return MONSTERS[((n%L)+L)%L]; };
+/* Development view: open the app with ?dev=1 (and ?dev=0 to turn it off) to get a bar for picking the villain and how hurt it is.
+   Nothing here saves to the family's data, awards coins, or shows without the switch. */
+const DEV = (function(){ try{ const q=new URLSearchParams(location.search); if(q.has("dev")) localStorage.setItem("momster_dev", q.get("dev")==="0"?"":"1"); return localStorage.getItem("momster_dev")==="1"; }catch(e){ return false; } })();
+let devVillain = (function(){ try{ return DEV ? sessionStorage.getItem("dev_villain") : null; }catch(e){ return null; } })(), devPct = (function(){ try{ const v=DEV ? sessionStorage.getItem("dev_pct") : null; return v===null||v===""?null:+v; }catch(e){ return null; } })();
+const monster = () => { if(DEV && devVillain){ const v=MONSTERS.find(x=>x[0]===devVillain); if(v) return v; } const L=MONSTERS.length, n=Math.floor(new Date(WEEK+"T12:00:00").getTime()/(7*864e5))-VILLAIN_BASE; return MONSTERS[((n%L)+L)%L]; };
 const isWeak = id => (monster()[5]||[]).includes(String(id));
 const COMBO_DMG = 3;
 const DMG_MULT = 5;   // kid-visible health numbers: 1 star of effort = 5 health of damage
@@ -1974,7 +1978,7 @@ const MOODS = [[85,["HA! This house is MINE now!","You'll NEVER clean me up!","M
 function moodLine(){ const left=monsterLeft(), pct=left/monsterHP()*100; if(!left) return "I'll be back next week... with MORE mess!";
   const lines=MOODS.find(([t])=>pct>t)[1]; return lines[new Date().getDay()%lines.length]; }
 const monsterHP = () => Math.round((teamPossible() * POOL_FRAC) * DMG_MULT);
-const monsterLeft = () => Math.max(0, monsterHP() - teamDamage());
+const monsterLeft = () => DEV && devPct!==null ? Math.round(monsterHP()*devPct) : Math.max(0, monsterHP() - teamDamage());
 const palPic = (k,size) => buddies[k] ? buddyFor(k, {noBg:true, attrs:`style="height:${size}px;width:${size}px"`}) : `<span style="font-size:${Math.round(size*.8)}px;line-height:1">${avHtml(rawAv(k))}</span>`;
 function monsterStrip(){ const m=monster(), left=monsterLeft(), pct=left/monsterHP()*100;
   return `<div class="boss ${left?"":"dead"}">
@@ -2000,7 +2004,7 @@ function bossTap(el){ const m=monster(), left=monsterLeft()>0, lines=left?(TAUNT
   play(["boing",villainKey(m,line)]); }
 document.addEventListener("click", e=>{ const t=e.target.closest('[data-a="bossTap"]'); if(t) bossTap(t); });
 document.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".kidTime")){ e.preventDefault(); e.target.click(); } });
-function checkMonster(){ if(monsterLeft()>0) return false; let won=false;
+function checkMonster(){ if(DEV && devPct!==null) return false; if(monsterLeft()>0) return false; let won=false;
   Object.keys(KIDS).forEach(k=>{ const b=buddies[k]; b.monsters=b.monsters||[]; if(!b.monsters.includes(WEEK)){ b.monsters=b.monsters.concat(WEEK); b.coinAwards=b.coinAwards||{}; b.coinAwards["villain:"+WEEK]=VILLAIN_COINS; saveBuddy(k); won=true; } });
   if(won){ const m=monster(); setTimeout(()=>cheer("💥","Busted! You beat "+m[1]+"! +"+VILLAIN_COINS+" 🪙",["punch","fanfare","monsterwin"],["💥",m[2],m[3],"🪙","🎉"]), 900); setTimeout(()=>popup(()=>{ if(!layer.innerHTML) victoryDance(); },0,()=>!!document.querySelector(".disco")), 3600); checkRank(); }
   return won; }
@@ -2432,6 +2436,30 @@ function comboFx(r){ const c=COMBO_NAMES[r.id]||["💥","Team Attack"];
 const spokenText = t => String(t||"").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F\u200D]/gu,"").replace(/\s+/g," ").trim();
 const villainIntroText = m => "Urgent message! A villain has invaded the house: "+m[1]+". "+(m[7]||"")+" Weak to "+spokenText(m[6])+": double damage!";
 let introOpen=false;
+// The development bar (only with ?dev=1): pick any villain, set how hurt it is, and trigger its scenes. It never touches saved data.
+function devBar(){ if(document.getElementById("devBar")) return;
+  const bar=document.createElement("div"); bar.id="devBar";
+  bar.style.cssText="position:fixed;left:8px;bottom:8px;z-index:200;background:#17102b;color:#fff;border:2px solid #7a38cc;border-radius:12px;padding:6px 8px;font:13px/1.3 system-ui,sans-serif;max-width:calc(100vw - 16px);box-shadow:0 4px 14px rgba(0,0,0,.4)";
+  const btn="background:#3a2d63;color:#fff;border:1px solid #7a38cc;border-radius:8px;padding:5px 8px;font:inherit;cursor:pointer";
+  const set=(v,p)=>{ devVillain=v||null; devPct=p; try{ sessionStorage.setItem("dev_villain", devVillain||""); sessionStorage.setItem("dev_pct", devPct===null?"":String(devPct)); }catch(e){} layer.innerHTML=""; render(); paint(); };
+  const paint=()=>{ const m=monster(), open=bar.dataset.open!=="0";
+    bar.innerHTML = open
+      ? `<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><b>🛠 DEV</b>
+          <select id="devSel" style="${btn}">${`<option value="">This week's villain (auto)</option>`+MONSTERS.map(v=>`<option value="${v[0]}" ${devVillain===v[0]?"selected":""}>${v[2]} ${v[1]}</option>`).join("")}</select>
+          ${[["Full",1],["60%",.6],["30%",.3],["Defeated",0]].map(([n,pc])=>`<button data-dv="hp" data-p="${pc}" style="${btn}${devPct===pc?";background:#7a38cc":""}">${n}</button>`).join("")}
+          <button data-dv="hp" data-p="" style="${btn}">Real health</button>
+          <button data-dv="intro" style="${btn}">Intro</button><button data-dv="hit" style="${btn}">Hit −10</button><button data-dv="taunt" style="${btn}">Taunt</button><button data-dv="dance" style="${btn}">Victory dance</button><button data-dv="min" style="${btn}">▾</button></div>
+          <div style="opacity:.8;margin-top:4px">Showing: ${m[2]} ${esc(m[1])} · ${devPct===null?"real health":Math.round(devPct*100)+"% health"} · nothing here is saved</div>`
+      : `<button data-dv="max" style="${btn}">🛠 DEV ▴</button>`; };
+  bar.addEventListener("change", e=>{ if(e.target.id==="devSel") set(e.target.value, devPct); });
+  bar.addEventListener("click", e=>{ const b=e.target.closest("[data-dv]"); if(!b) return; e.stopPropagation(); const a=b.dataset.dv;
+    if(a==="hp") set(devVillain, b.dataset.p===""?null:+b.dataset.p);
+    else if(a==="intro"){ layer.innerHTML=""; introOpen=false; villainIntro(); }
+    else if(a==="hit") dmgPop(10);
+    else if(a==="taunt"){ const t=document.querySelector('[data-a="bossTap"]'); if(t) t.click(); else toast("Go to the home screen to poke the villain"); }
+    else if(a==="dance") victoryDance();
+    else if(a==="min"){ bar.dataset.open="0"; paint(); } else if(a==="max"){ bar.dataset.open="1"; paint(); } }, true);
+  document.body.appendChild(bar); paint(); }
 function villainIntro(){ if(window.tourOn) return; const m=monster(); introOpen=true;
   layer.innerHTML=`<div class="ov"><div class="sheet intro"><div class="i-alert">🚨 URGENT MESSAGE 🚨</div><p>A villain has invaded the house!</p>
     <div class="i-face">${m[2]}<i>${m[3]}</i></div><h2>${esc(m[1])}</h2><p>${esc(m[7]||"")}</p>
@@ -3530,6 +3558,7 @@ document.addEventListener("click", e=>{
 try{ document.documentElement.setAttribute("data-season", new Date().getMonth()===9 ? "spooky" : ""); }catch(e){}
 window._deferredInstall=null; window.addEventListener("beforeinstallprompt",(e)=>{ e.preventDefault(); window._deferredInstall=e; try{ if(!loadLocal("installedHint")) render(); }catch(err){} });
 render();
+if(DEV) devBar();
 if(!FAMILY_SET) wizStart();
 else if(!settings.setupDone && !loadLocal("wizOffered")){ saveLocal("wizOffered",1); }
 window.MB_DEBUG = {TWISTS, MONSTERS, TAUNTS, VJOKES, JOKES, N_LINES, MOODS, KO_LINES, KO_QUOTE, wiz: (typeof wiz!=="undefined" ? wiz : null)};
