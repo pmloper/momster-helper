@@ -1,4 +1,4 @@
-// Local syntax + structure checks for the v59 polish (kept current for v79-per-kid-race build).
+// Local syntax + structure checks for the v59 polish (kept current for v82-store-coins build).
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -12,9 +12,9 @@ console.log('lines', lines.length);
 const scriptTagCount = (html.match(/<script\b/g) || []).length;
 console.log('script tag count:', scriptTagCount);
 
-// CACHE check (v79-per-kid-race Preview)
+// CACHE check (v82-store-coins Preview)
 const sw = fs.readFileSync(path.join(repoDir, 'sw.js'), 'utf8');
-console.log(sw.includes('momster-helper-v79-per-kid-race') ? 'OK: CACHE v79-per-kid-race' : 'ERROR: CACHE not v79-per-kid-race');
+console.log(sw.includes('momster-helper-v82-store-coins') ? 'OK: CACHE v82-store-coins' : 'ERROR: CACHE not v82-store-coins');
 
 // wizSheet routing
 const routed = html.includes('paintSheet("wizSheet"');

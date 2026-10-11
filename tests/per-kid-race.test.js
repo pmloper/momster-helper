@@ -60,8 +60,10 @@ async function run(){
   const fail = (W, H, name, msg) => { fails++; console.log("FAIL "+W+"x"+H+" "+name+": "+msg); };
   const eq = (W, H, name, got, want) => { if(JSON.stringify(got) !== JSON.stringify(want)) fail(W,H,name,"got "+JSON.stringify(got)+" want "+JSON.stringify(want)); };
 
-  // Frozen clock: a weekday, 07:20 local, same calendar day as the real one (so WEEK keys stay valid).
-  const FREEZE = `(function(){ const RD=Date, f=new RD(); f.setHours(7,20,0,0); const fx=f.getTime();
+  // Frozen clock: 07:20 local on the Wednesday of the current week, so the race runs on any day the tests do.
+  // It is installed before the app's scripts on every page load (todayDow is a const in the app, so the clock
+  // itself has to say it is a weekday, and WEEK keys are then computed from the same frozen day).
+  const FREEZE = `(function(){ const RD=Date, f=new RD(); f.setDate(f.getDate()-f.getDay()+3); f.setHours(7,20,0,0); const fx=f.getTime();
     class FD extends RD{ constructor(...a){ if(a.length) super(...a); else super(fx); } static now(){ return fx; } }
     window.Date=FD; window.todayDow=()=>3; true; })()`;
   async function ready(){
@@ -77,20 +79,21 @@ async function run(){
     await ev(FREEZE);
     if(settingsJs) await ev(settingsJs);
   }
+  await send("Page.addScriptToEvaluateOnNewDocument", { source: FREEZE });
   const SET = (obj, mode) => `(function(){ Object.assign(settings, ${JSON.stringify(obj)}); settings.rideMode=${JSON.stringify(mode||"walk")}; settings.rideDate=ymd(new Date()); settings.event=null; saveSettings(); render(); })()`;
   const enterKid = async (kid) => { await ev(`document.querySelector('[data-a="kid"][data-k="${kid}"]').click()`); await sleep(700); await ev(`view.routine="am"; render(); true`); await sleep(200); };
   const goHome = async () => { await ev(`view.kid=null; render(); true`); await sleep(300); };
   const raceText = () => ev(`(document.querySelector(".race")||{}).textContent||null`);
-  const chipText = () => ev(`(document.querySelector(".ridechip")||{}).textContent||null`);
+  const chipText = () => ev(`([...document.querySelectorAll(".kidBtn .kidTime")].map(e=>e.textContent.trim()).join(" | "))||null`);
 
   const DIFF = { kidEnds: { k1:{walk:"07:30",bus:"07:35",drive:"07:55"}, k2:{walk:"07:45",bus:"07:50",drive:"08:05"} }, walkEnd:"07:40", busEnd:"07:45", driveEnd:"07:50" };
 
   // ---- static checks (viewport independent) -------------------------------------------------------
   { const html = fs.readFileSync(path.join(REPO,"index.html"),"utf8"), sw = fs.readFileSync(path.join(REPO,"sw.js"),"utf8");
-    const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin||DEFAULT_PIN")) || "";
+    const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin")) || "";
     if(!/kidEnds\s*:/.test(snap) || !/raceOff\s*:/.test(snap)) fail(0,0,"firebase_sync","settings snapshot whitelist drops kidEnds/raceOff");
     const m = sw.match(/const CACHE = "([^"]+)"/);
-    if(!m || m[1] !== "momster-helper-v79-per-kid-race") fail(0,0,"sw_cache","SW cache not bumped to v79-per-kid-race: "+(m&&m[1])); }
+    if(!m || m[1] !== "momster-helper-v82-store-coins") fail(0,0,"sw_cache","SW cache not bumped to v82-store-coins: "+(m&&m[1])); }
 
   for(const [W,H] of VIEWPORTS){
     await send("Emulation.setDeviceMetricsOverride", { width:W, height:H, deviceScaleFactor:2, mobile:true });
@@ -114,9 +117,10 @@ async function run(){
       await goHome(); await enterKid("k2"); { const t = await raceText(); if(!t || !new RegExp("\\b"+m2+" min").test(t)) fail(W,H,mode+":k2 clock","expected "+m2+" min, got "+t); }
       await goHome(); { const t = await chipText(); const f = v => { const [h,mm]=v.split(":").map(Number); return ((h%12)||12)+":"+String(mm).padStart(2,"0")+" am"; };
         if(!t || !t.includes(f(k1)) || !t.includes(f(k2))) fail(W,H,mode+":chip","chip should show both kid times "+f(k1)+" and "+f(k2)+", got "+t);
-        if(!/Li\s/.test(t) || !/Lo\s/.test(t)) fail(W,H,mode+":chip-names","Lily and Logan need distinct visible labels, got "+t);
-        const two=await ev(`(() => {const h=document.querySelector('.hello h1').getBoundingClientRect(),b=document.querySelector('.ridechip').getBoundingClientRect();return {title:h.width,chipRight:b.right,vw:innerWidth}})()`);
-        if(two.title<60 || two.chipRight>two.vw) fail(W,H,mode+":two-kid header","title and chip must fit: "+JSON.stringify(two));
+        const two=await ev(`(() => { const cards=[...document.querySelectorAll(".kidBtn")]; return { topBarChip: !!document.querySelector(".hello .kidTime, .hello [data-a=rideQuick]"), cards: cards.map(c=>{ const t=c.querySelector(".kidTime"), cr=c.getBoundingClientRect(), tr=t&&t.getBoundingClientRect(); return { kid:c.dataset.k, text:t&&t.textContent.trim(), inside: !!tr && tr.right<=cr.right+0.5 && tr.top>=cr.top-0.5 && tr.left>=cr.left && tr.bottom<=cr.bottom, topRight: !!tr && cr.right-tr.right<30 && tr.top-cr.top<30 }; }) }; })()`);
+        if(two.topBarChip) fail(W,H,mode+":no top-bar chip","the leave-by time must not be in the top bar: "+JSON.stringify(two));
+        for(const c of two.cards) if(!c.inside || !c.topRight) fail(W,H,mode+":card chip "+c.kid,"time must sit in the card's top right corner: "+JSON.stringify(c));
+        { const want={k1:f(k1),k2:f(k2)}; for(const c of two.cards) if(!c.text || !c.text.includes(want[c.kid])) fail(W,H,mode+":card time "+c.kid,"card should show "+want[c.kid]+", got "+(c.text||null)); }
         eq(W,H,mode+":chip-mode", !!(t && t.includes({walk:"🛴",bus:"🚌",drive:"🚗"}[mode])), true);
         eq(W,H,mode+":ride-unchanged", await ev(`rideToday()`), mode); }
     }
@@ -145,7 +149,7 @@ async function run(){
     eq(W,H,"toggle:off persisted", await ev(`JSON.parse(localStorage.getItem("starjobs_settings")).raceOff`), true);
     await ev(`close(); true`); await sleep(200);
     await goHome();
-    eq(W,H,"toggle:off chip hidden", await ev(`!!document.querySelector(".ridechip")`), false);
+    eq(W,H,"toggle:off chips hidden", await ev(`!!document.querySelector(".kidTime")`), false);
     await enterKid("k1");
     eq(W,H,"toggle:off race bar hidden", await ev(`!!document.querySelector(".race")`), false);
     eq(W,H,"toggle:off raceOpen", await ev(`[raceOpen("k1"), raceOpen("k2"), raceDay()]`), [false,false,false]);
@@ -165,7 +169,7 @@ async function run(){
     await ev(`close(); render(); true`); await sleep(200);
     eq(W,H,"toggle:on restores k1", await ev(`raceEnd("k1")`), "07:30");
     eq(W,H,"toggle:on restores k2", await ev(`raceEnd("k2")`), "07:45");
-    await goHome(); eq(W,H,"toggle:on chip back", await ev(`!!document.querySelector(".ridechip")`), true);
+    await goHome(); eq(W,H,"toggle:on chips back", await ev(`!!document.querySelector(".kidTime")`), true);
 
     // ---- Grown-ups per-kid editors: save, blank, persist, geometry ------------------------------------
     await fresh(SET({ walkEnd:"07:40", busEnd:"07:45", driveEnd:"07:50" }, "walk"));
@@ -226,11 +230,9 @@ async function run(){
     // Distinct leave-by times for four kids must not erase the home title or overflow.
     await fresh(SET({kidEnds:{k1:{walk:"07:30"},k2:{walk:"07:38"},k3:{walk:"07:42"},k4:{walk:"07:48"}}},"walk"));
     await ev(`FAMILY.kids.push({id:"k3",name:"Alice",color:"#7048E8",av:"⭐"},{id:"k4",name:"Ben",color:"#E5484D",av:"⭐"}); applyKids(); view.kid=null; render(); true`);
-    const four = await ev(`(() => { const h=document.querySelector('.hello h1'), b=document.querySelector('.ridechip'), r=h.getBoundingClientRect(), c=b.getBoundingClientRect();
-      return {titleWidth:r.width,chipRight:c.right,chipText:b.textContent,bodyScroll:document.body.scrollWidth,vw:innerWidth}; })()`);
-    if(four.titleWidth<100 || four.chipRight>four.vw || four.bodyScroll>four.vw+1)
-      fail(W,H,"four-kid home header","title and chip must fit: "+JSON.stringify(four));
-    for(const t of ["7:30","7:38","7:42","7:48"]) if(!four.chipText.includes(t)) fail(W,H,"four-kid times","missing "+t+": "+four.chipText);
+    const four = await ev(`(() => { const cards=[...document.querySelectorAll(".kidBtn")]; return { times: cards.map(c=>(c.querySelector(".kidTime")||{}).textContent||null), fits: cards.every(c=>{ const t=c.querySelector(".kidTime"); if(!t) return false; const cr=c.getBoundingClientRect(), tr=t.getBoundingClientRect(); return tr.right<=cr.right+0.5 && tr.left>=cr.left; }), title: document.querySelector('.hello h1').getBoundingClientRect().width, bodyScroll:document.body.scrollWidth, vw:innerWidth }; })()`);
+    if(!four.fits || four.title<100 || four.bodyScroll>four.vw+1) fail(W,H,"four-kid home","each kid's time must fit in its own card and the page must not overflow: "+JSON.stringify(four));
+    for(const t of ["7:30","7:38","7:42","7:48"]) if(!four.times.some(x=>x&&x.includes(t))) fail(W,H,"four-kid times","missing "+t+": "+JSON.stringify(four.times));
   }
 
   try { proc.kill(); } catch(e){}

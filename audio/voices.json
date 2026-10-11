@@ -1,0 +1,100 @@
+{
+  "_readme": "Voices for tools/generate-clips.mjs. Fill in each voice_id from your ElevenLabs account (never put the API key here; it comes from the ELEVENLABS_API_KEY environment variable). 'momster' must be the same voice, model and settings that made the tutorial lines (audio/momster/tour_*.mp3). Each villain has a fixed voice of their own; 'description' is a prompt you can paste into ElevenLabs Voice Design to get a candidate.",
+  "model_id": "eleven_v4",
+  "output_format": "mp3_44100_128",
+  "defaults": {
+    "stability": 0.32
+  },
+  "voices": {
+    "momster": {
+      "voice_id": "iukn3a1vSSNFmdi5NZS4",
+      "description": "Momster, the helper: warm, upbeat, a little silly. Same voice as the tutorial lines.",
+      "settings": {
+        "stability": 0.32
+      }
+    },
+    "villains/m_sock": {
+      "voice_id": "OTMqA7lryJHXgAnPIQYt",
+      "description": "Stinky Sock Goblin: raspy, gleeful, scheming goblin who cackles.",
+      "settings": {}
+    },
+    "villains/m_crumb": {
+      "voice_id": "PPzYpIqttlTYA83688JI",
+      "description": "Captain Crumbs: hearty, boastful pirate captain who loves snacks."
+    },
+    "villains/m_dust": {
+      "voice_id": "87n4zM8Wuy87vFILuKvE",
+      "description": "Dust Bunny Boss: wheezy, sneezy mob boss with a raspy whisper."
+    },
+    "villains/m_toy": {
+      "voice_id": "mSOmKHC6GZcZbSTGlqHO",
+      "description": "Toy Tornado: hyper, breathless, always spinning and out of control."
+    },
+    "villains/m_slime": {
+      "voice_id": "kAXSxs17BYwCxcleeuLV",
+      "description": "Sludge Slime: gurgly, bubbly, gloopy voice that oozes."
+    },
+    "villains/m_troll": {
+      "voice_id": "Df0A8fHl2LOO7kDNIlpg",
+      "description": "Grumpy Tiara Troll: deep, grumbly, cranky troll who mutters."
+    },
+    "villains/m_booger": {
+      "voice_id": "BRruTxiLM2nszrcCIpz1",
+      "description": "Baron von Booger: snooty, nasal, fake-posh baron who sniffs."
+    },
+    "villains/m_stink": {
+      "voice_id": "fBD19tfE58bkETeiwUoC",
+      "description": "Sir Toots-a-Lot: pompous medieval knight, muffled inside stinky armor."
+    }
+  },
+  "_categories_v2": {
+    "joke": {
+      "stability": 0.4,
+      "style": 0.5
+    },
+    "joke of the day (setup)": {
+      "stability": 0.45,
+      "style": 0.4
+    },
+    "joke of the day (punchline)": {
+      "stability": 0.35,
+      "style": 0.6
+    },
+    "cheer": {
+      "stability": 0.35,
+      "style": 0.6
+    },
+    "villain taunt": {
+      "stability": 0.3,
+      "style": 0.65
+    },
+    "villain joke": {
+      "stability": 0.3,
+      "style": 0.65
+    },
+    "villain mood": {
+      "stability": 0.3,
+      "style": 0.65
+    },
+    "villain defeated": {
+      "stability": 0.3,
+      "style": 0.65
+    },
+    "toot reaction": {
+      "stability": 0.3,
+      "style": 0.65
+    },
+    "shop item": {
+      "stability": 0.7,
+      "style": 0.0
+    },
+    "sticker name": {
+      "stability": 0.7,
+      "style": 0.0
+    },
+    "screen text": {
+      "stability": 0.6,
+      "style": 0.1
+    }
+  }
+}

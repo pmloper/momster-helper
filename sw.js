@@ -1,10 +1,11 @@
 // Momster Helper service worker: offline-capable but update-friendly
 // CACHE version bumps on every deploy; navigation requests hit the network first
 // so users get the new version on their next visit, falling back to cache offline.
-const CACHE = "momster-helper-v79-per-kid-race";
+const CACHE = "momster-helper-v82-store-coins";
 const ASSETS = ["./", "./index.html", "./manifest.json",
   "./icons/icon-192.png", "./icons/icon-512.png",
-  "./icons/maskable-192.png", "./icons/maskable-512.png"];
+  "./icons/maskable-192.png", "./icons/maskable-512.png",
+  "./cloud.js", "./cloud-core.js", "./cloud-db.js", "./vendor/convex.js", "./favicon-64.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
@@ -20,6 +21,16 @@ self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
   if (e.request.method !== "GET") return;
+
+  // Audio manifest: always network first so newly added clips are picked up right away.
+  if (url.pathname.endsWith("/audio/manifest.json")) {
+    e.respondWith(fetch(e.request).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, copy));
+      return res;
+    }).catch(() => caches.match(e.request, {ignoreSearch: true}).then(hit => hit || new Response("{}", {headers: {"Content-Type": "application/json"}}))));
+    return;
+  }
 
   // App shell (navigations): network first, cache fallback. Users get updates; offline still works.
   if (e.request.mode === "navigate") {

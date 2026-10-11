@@ -1,7 +1,7 @@
 {
   "name": "Momster Helper",
   "short_name": "Momster Helper",
-  "description": "Kids' chore adventure: stars, coins, sidekicks, and weekly mess villains.",
+  "description": "Kids' chore adventure: stars, coins, hero helpers, and weekly mess villains.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

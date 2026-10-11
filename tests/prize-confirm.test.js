@@ -1,15 +1,29 @@
 // Regression: choosing a prize must keep the chosen tile, the sheet header and the
 // Yes / Keep looking controls visible. Drives real Chrome via CDP (node >= 22, no deps).
-// Usage: node tests/prize-confirm.test.js   [base-url]   (CHROME env var overrides the binary)
+// Usage: node tests/prize-confirm.test.js   [base-url]   (no base-url: serves the repo itself)   (CHROME env var overrides the binary)
 const { spawn } = require("child_process"), fs = require("fs"), path = require("path"), os = require("os");
 const CHROME = process.env.CHROME || ["/usr/bin/google-chrome","/usr/bin/chromium","/snap/bin/chromium","C:/Program Files/Google/Chrome/Application/chrome.exe"].find(p=>fs.existsSync(p));
 const BASE = process.argv[2] || "http://127.0.0.1:9334/";
 const URL_ = BASE + "index.html";
 const VIEWPORTS = [[360,640]]; // wider phone and optional-prize flow covered in prize-confirm-trap.test.js
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// With no base-url argument, serve the repository ourselves on the default port (nothing else starts a server).
+function serveRepo(port){
+  const http = require("http"), REPO = path.resolve(__dirname, "..");
+  const types = { ".html":"text/html", ".js":"application/javascript", ".json":"application/json", ".png":"image/png", ".svg":"image/svg+xml", ".webp":"image/webp", ".mp3":"audio/mpeg" };
+  const svr = http.createServer((req, res) => {
+    let p = decodeURIComponent(req.url.split("?")[0]); if(p === "/") p = "/index.html";
+    const file = path.join(REPO, p);
+    if(!file.startsWith(REPO) || !fs.existsSync(file) || fs.statSync(file).isDirectory()){ res.writeHead(404); res.end(); return; }
+    res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream" });
+    res.end(fs.readFileSync(file));
+  });
+  return new Promise(resolve => svr.listen(port, "127.0.0.1", () => { svr.unref(); resolve(svr); }));
+}
 
 (async () => {
   if (!CHROME) { console.log("NO BROWSER"); process.exit(2); }
+  if (!process.argv[2]) await serveRepo(9334);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mh-"));
   const proc = spawn(CHROME, ["--headless=new","--remote-debugging-port=9333","--user-data-dir="+dir,"--no-first-run","--disable-gpu","about:blank"], {stdio:"ignore"});
   let targets; for (let i=0;i<50;i++){ try{ targets = await (await fetch("http://127.0.0.1:9333/json")).json(); if(targets.find(t=>t.type==="page")) break; }catch(e){} await sleep(200); }

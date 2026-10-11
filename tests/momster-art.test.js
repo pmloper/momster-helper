@@ -21,7 +21,7 @@ const check = (ok, msg) => { log((ok ? "PASS " : "FAIL ") + msg); if (!ok) fails
 const defs = html.match(/function momsterSvg\s*\(/g) || [];
 check(defs.length === 1, "exactly one momsterSvg() definition");
 const calls = (html.match(/\$\{momsterSvg\(/g) || []).length;
-check(calls === 3, `momsterSvg reused at 3 call sites (home header, wizard card, boss strip) - found ${calls}`);
+check(calls === 2, `momsterSvg reused at 2 call sites (home header, wizard card; she is no longer in the boss strip) - found ${calls}`);
 check(!/\$\{buddySvg\([^)]*h_crown/.test(html), "no crowned orange buddySvg blob left as a Momster stand-in");
 const start = html.indexOf("function momsterSvg");
 const fn = html.slice(start, html.indexOf("</svg>`; }", start) + 10);
@@ -32,7 +32,7 @@ const strip = html.slice(html.indexOf("function monsterStrip"), html.indexOf("co
 check(/data-a="bossTap"/.test(strip) && /data-a="toot"/.test(strip) && /class="mbar"/.test(strip), "boss strip keeps villain button, kid buttons, health bar");
 check(strip.includes('${left?m[2]:"😵"}'), "villain face (m[2]) still drawn by monsterStrip");
 check(html.includes('<div class="i-face">${m[2]}'), "villain intro face untouched");
-check(fs.readFileSync(path.join(root, "sw.js"), "utf8").includes("momster-helper-v79-per-kid-race"), "SW cache bumped");
+check(fs.readFileSync(path.join(root, "sw.js"), "utf8").includes("momster-helper-v82-store-coins"), "SW cache bumped");
 
 // ---- browser checks ----
 const CHROME = process.env.CHROME || ["C:/Program Files/Google/Chrome/Application/chrome.exe",
@@ -106,21 +106,21 @@ async function load(cdp, base) {
       await cdp.send("Emulation.setDeviceMetricsOverride", { width: vp.w, height: vp.h, deviceScaleFactor: 2, mobile: true });
       await load(cdp, base);
       const L = await cdp.ev(`(()=>{ const q=s=>document.querySelector(s), R=e=>{const r=e.getBoundingClientRect();return {l:r.left,r:r.right,t:r.top,b:r.bottom,w:r.width,h:r.height}};
-        const boss=q(".boss"), mom=q(".bmom svg"), pals=[...document.querySelectorAll(".bpal")], face=q(".bface"), bar=q(".boss .mbar"), info=q(".boss .minfo"), h1=q(".hello h1 svg[data-momster]");
-        if(!boss||!mom) return null;
-        return {boss:R(boss), mom:R(mom), pals:pals.map(R), face:R(face), bar:R(bar), info:R(info), h1:h1&&R(h1), helloH:R(q(".hello h1")), sw:document.documentElement.scrollWidth, iw:innerWidth, momEvents:getComputedStyle(q(".bmom")).pointerEvents}; })()`);
+        const boss=q(".boss"), mom=q(".boss svg[data-momster]"), hbar=q(".hello.bar-card"), pals=[...document.querySelectorAll(".bpal")], face=q(".bface"), bar=q(".boss .mbar"), info=q(".boss .minfo"), h1=q(".hello h1 svg[data-momster]");
+        if(!boss) return null;
+        return {boss:R(boss), momInBanner:!!mom, hbar:R(hbar), h1ov:h1&&getComputedStyle(h1).overflow, pals:pals.map(R), face:R(face), bar:R(bar), info:R(info), h1:h1&&R(h1), helloH:R(q(".hello h1")), sw:document.documentElement.scrollWidth, iw:innerWidth}; })()`);
       const tag = `${vp.w}x${vp.h}`;
       if (!L || L.__error) { check(false, `[${tag}] boss strip rendered ${JSON.stringify(L)}`); continue; }
       check(L.sw <= L.iw, `[${tag}] no horizontal overflow (scrollWidth ${L.sw} <= ${L.iw})`);
-      check(L.mom.w >= 44 && L.mom.h >= 44 && L.mom.w <= 72, `[${tag}] Momster ally ${Math.round(L.mom.w)}px (readable 48-72)`);
+      check(L.momInBanner === false, `[${tag}] no Momster in the "This week's villain" banner`);
       check(L.boss.l >= 0 && L.boss.r <= L.iw + 0.5, `[${tag}] boss strip inside viewport (${Math.round(L.boss.l)}..${Math.round(L.boss.r)})`);
       check(L.pals.length >= 1 && L.pals.every(p => p.w > 20 && p.r <= L.iw), `[${tag}] ${L.pals.length} kid buttons present and on-screen`);
       check(L.face.w > 30 && L.face.r <= L.iw + 0.5, `[${tag}] villain button visible (${Math.round(L.face.w)}px)`);
       check(L.bar.w >= 100 && L.info.w >= 100, `[${tag}] health bar ${Math.round(L.bar.w)}px / info column ${Math.round(L.info.w)}px not squeezed`);
       const tap = await cdp.ev(`(()=>{ const b=document.querySelector('.bpal').getBoundingClientRect(); const e=document.elementFromPoint(b.left+b.width/2,b.top+b.height/2); return !!(e&&e.closest('.bpal')); })()`);
-      check(tap === true, `[${tag}] kid button centre still receives taps (ally overlaps but is non-interactive)`);
+      check(tap === true, `[${tag}] kid button centre still receives taps`);
       check(L.h1 && L.helloH.h < 40, `[${tag}] header Momster present; header h1 height ${Math.round(L.helloH.h)}px`);
-      check(L.momEvents === "none", `[${tag}] ally is non-interactive (combat taps untouched)`);
+      check(L.h1 && L.h1ov === "hidden" && L.h1.b <= L.hbar.b + 0.5, `[${tag}] header Momster is cropped to her box and ends inside the header bar (art bottom ${L.h1 && Math.round(L.h1.b)} <= bar bottom ${Math.round(L.hbar.b)}, overflow ${L.h1ov})`);
       await cdp.shot(`home-${tag}.png`);
       await cdp.shot(`boss-strip-${tag}.png`, { x: 0, y: Math.max(0, L.boss.t - 6), width: vp.w, height: L.boss.h + 12 });
       await cdp.shot(`header-${tag}.png`, { x: 0, y: 0, width: vp.w, height: Math.min(120, L.boss.t) });

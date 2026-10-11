@@ -9,9 +9,23 @@ const CHROME = process.env.CHROME || ["/usr/bin/google-chrome","/usr/bin/chromiu
 const BASE = process.argv[2] || "http://127.0.0.1:9334/";
 const VIEWPORTS = [process.env.VIEWPORT === '412' ? [412,938] : [360,640]]; // one viewport per browser to avoid large embedded-audio page reload pressure
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// With no base-url argument, serve the repository ourselves on the default port (nothing else starts a server).
+function serveRepo(port){
+  const http = require("http"), REPO = path.resolve(__dirname, "..");
+  const types = { ".html":"text/html", ".js":"application/javascript", ".json":"application/json", ".png":"image/png", ".svg":"image/svg+xml", ".webp":"image/webp", ".mp3":"audio/mpeg" };
+  const svr = http.createServer((req, res) => {
+    let p = decodeURIComponent(req.url.split("?")[0]); if(p === "/") p = "/index.html";
+    const file = path.join(REPO, p);
+    if(!file.startsWith(REPO) || !fs.existsSync(file) || fs.statSync(file).isDirectory()){ res.writeHead(404); res.end(); return; }
+    res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream" });
+    res.end(fs.readFileSync(file));
+  });
+  return new Promise(resolve => svr.listen(port, "127.0.0.1", () => { svr.unref(); resolve(svr); }));
+}
 
 (async () => {
   if (!CHROME) { console.log("NO BROWSER"); process.exit(2); }
+  if (!process.argv[2]) await serveRepo(9334);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "mhp-"));
   const proc = spawn(CHROME, ["--headless=new","--remote-debugging-port=9335","--user-data-dir="+dir,"--no-first-run","--disable-gpu",BASE], {stdio:"ignore"});
   let targets; for (let i=0;i<50;i++){ try{ targets = await (await fetch("http://127.0.0.1:9335/json")).json(); if(targets.find(t=>t.type==="page")) break; }catch(e){} await sleep(200); }

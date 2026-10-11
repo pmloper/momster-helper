@@ -128,7 +128,7 @@ function startServer(rootDir, port) {
     const text=sheet.textContent;
     const hasTalking=/Talking|reads jobs/i.test(text);
     const hasSFX=/Sound effects|music/i.test(text);
-    const hasVoiceSection=/helper voice|Robot characters|Fun voices|More real voices|Voice for/i.test(text);
+    const hasVoiceSection=/helper voice|Momster's voice|Voice for/i.test(text);
     const rwButtons=[...sheet.querySelectorAll('.rw')];
     const vlvlCount=sheet.querySelectorAll('[data-a="vlvl"]').length;
     const volCount=sheet.querySelectorAll('[data-a="vol"]').length;
@@ -202,8 +202,8 @@ function startServer(rootDir, port) {
     if(!sheet) return { opened:false };
     // Pick a voice tile other than the current selection
     const tiles=[...sheet.querySelectorAll('[data-a="vc"]')];
-    if(tiles.length<2) return { opened:true, skipped:'not enough voice tiles' };
-    const target=tiles.find(t=>!t.classList.contains('on')) || tiles[1];
+    if(tiles.length<1) return { opened:true, skipped:'no voice tiles' };
+    const target=tiles.find(t=>!t.classList.contains('on')) || tiles[0];   // there is one voice now (Momster's), so preview that one
     const before=document.querySelector('.top.bar-card [data-a="voiceSheet"]') ? 'had-btn' : 'no-btn';
     // Single tap should preview (play voice), not close
     target.click();
