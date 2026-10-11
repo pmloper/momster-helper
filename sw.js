@@ -1,7 +1,7 @@
 // Momster Helper service worker: offline-capable but update-friendly
 // CACHE version bumps on every deploy; navigation requests hit the network first
 // so users get the new version on their next visit, falling back to cache offline.
-const CACHE = "momster-helper-v81-cloud-sync";
+const CACHE = "momster-helper-v82-store-coins";
 const ASSETS = ["./", "./index.html", "./manifest.json",
   "./icons/icon-192.png", "./icons/icon-512.png",
   "./icons/maskable-192.png", "./icons/maskable-512.png",

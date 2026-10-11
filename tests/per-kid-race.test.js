@@ -60,8 +60,10 @@ async function run(){
   const fail = (W, H, name, msg) => { fails++; console.log("FAIL "+W+"x"+H+" "+name+": "+msg); };
   const eq = (W, H, name, got, want) => { if(JSON.stringify(got) !== JSON.stringify(want)) fail(W,H,name,"got "+JSON.stringify(got)+" want "+JSON.stringify(want)); };
 
-  // Frozen clock: a weekday, 07:20 local, same calendar day as the real one (so WEEK keys stay valid).
-  const FREEZE = `(function(){ const RD=Date, f=new RD(); f.setHours(7,20,0,0); const fx=f.getTime();
+  // Frozen clock: 07:20 local on the Wednesday of the current week, so the race runs on any day the tests do.
+  // It is installed before the app's scripts on every page load (todayDow is a const in the app, so the clock
+  // itself has to say it is a weekday, and WEEK keys are then computed from the same frozen day).
+  const FREEZE = `(function(){ const RD=Date, f=new RD(); f.setDate(f.getDate()-f.getDay()+3); f.setHours(7,20,0,0); const fx=f.getTime();
     class FD extends RD{ constructor(...a){ if(a.length) super(...a); else super(fx); } static now(){ return fx; } }
     window.Date=FD; window.todayDow=()=>3; true; })()`;
   async function ready(){
@@ -77,6 +79,7 @@ async function run(){
     await ev(FREEZE);
     if(settingsJs) await ev(settingsJs);
   }
+  await send("Page.addScriptToEvaluateOnNewDocument", { source: FREEZE });
   const SET = (obj, mode) => `(function(){ Object.assign(settings, ${JSON.stringify(obj)}); settings.rideMode=${JSON.stringify(mode||"walk")}; settings.rideDate=ymd(new Date()); settings.event=null; saveSettings(); render(); })()`;
   const enterKid = async (kid) => { await ev(`document.querySelector('[data-a="kid"][data-k="${kid}"]').click()`); await sleep(700); await ev(`view.routine="am"; render(); true`); await sleep(200); };
   const goHome = async () => { await ev(`view.kid=null; render(); true`); await sleep(300); };
@@ -90,7 +93,7 @@ async function run(){
     const snap = html.split("\n").find(l => l.includes("settings = {pin:d.pin")) || "";
     if(!/kidEnds\s*:/.test(snap) || !/raceOff\s*:/.test(snap)) fail(0,0,"firebase_sync","settings snapshot whitelist drops kidEnds/raceOff");
     const m = sw.match(/const CACHE = "([^"]+)"/);
-    if(!m || m[1] !== "momster-helper-v81-cloud-sync") fail(0,0,"sw_cache","SW cache not bumped to v81-cloud-sync: "+(m&&m[1])); }
+    if(!m || m[1] !== "momster-helper-v82-store-coins") fail(0,0,"sw_cache","SW cache not bumped to v82-store-coins: "+(m&&m[1])); }
 
   for(const [W,H] of VIEWPORTS){
     await send("Emulation.setDeviceMetricsOverride", { width:W, height:H, deviceScaleFactor:2, mobile:true });
